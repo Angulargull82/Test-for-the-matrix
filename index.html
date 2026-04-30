@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>How to escape the matrix</title>
+<style>
+  :root{
+    --accent:#00ff66;
+    --accent2:#00d4ff;
+    --bg:#000;
+    --panel: rgba(8, 14, 10, 0.92);
+    --panel2: rgba(12, 20, 14, 0.98);
+    --text:#e7fff0;
+    --muted: rgba(231,255,240,0.72);
+    --danger:#ff4d4d;
+    --ok:#35e06f;
+    --shadow: rgba(0,255,102,0.28);
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{
+    width:100%;
+    height:100%;
+    overflow:hidden;
+    background:var(--bg);
+    font-family:Arial, Helvetica, sans-serif;
+    color:var(--text);
+  }
+
+  canvas{
+    position:fixed;
+    inset:0;
+    z-index:0;
+  }
+
+  .scanlines{
+    position:fixed;
+    inset:0;
+    z-index:1;
+    pointer-events:none;
+    background:repeating-linear-gradient(
+      to bottom,
+      rgba(255,255,255,0.03) 0px,
+      rgba(255,255,255,0.03) 1px,
+      transparent 2px,
+      transparent 5px
+    );
+    opacity:0.22;
+    mix-blend-mode:screen;
+  }
+
+  .vignette{
+    position:fixed;
+    inset:0;
+    z-index:2;
+    pointer-events:none;
+    background:radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.18) 58%, rgba(0,0,0,0.84) 100%);
+  }
+
+  .menu-btn{
+    position:fixed;
+    top:18px;
+    left:18px;
+    z-index:30;
+    border:0;
+    background:var(--accent);
+    color:#021108;
+    padding:10px 14px;
+    border-radius:12px;
+    font-size:20px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 10px 25px rgba(0,0,0,0.35), 0 0 20px var(--shadow);
+  }
+
+  .sidebar{
+    position:fixed;
+    top:0;
+    left:-310px;
+    width:310px;
+    height:100%;
+    z-index:40;
+    background:rgba(5,10,7,0.98);
+    border-right:1px solid rgba(0,255,102,0.22);
+    box-shadow: 0 0 30px rgba(0,255,102,0.12);
+    padding:18px;
+    transition:left .28s ease;
+    overflow-y:auto;
+  }
+  .sidebar.active{left:0}
+
+  .sidebar h3{
+    color:var(--accent);
+    letter-spacing:1.5px;
+    text-transform:uppercase;
+    margin-bottom:10px;
+    font-size:1rem;
+  }
+
+  .side-group{
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid rgba(0,255,102,0.14);
+  }
+
+  .side-btn{
+    display:block;
+    width:100%;
+    margin:8px 0;
+    padding:12px 14px;
+    border:1px solid rgba(0,255,102,0.22);
+    border-radius:12px;
+    background:#102015;
+    color:var(--accent);
+    cursor:pointer;
+    font-weight:700;
+    text-align:left;
+  }
+  .side-btn:hover{
+    filter:brightness(1.08);
+  }
+
+  .app{
+    position:relative;
+    z-index:10;
+    width:100%;
+    height:100vh;
+  }
+
+  .screen{
+    position:absolute;
+    inset:0;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+    text-align:center;
+  }
+  .screen.active{display:flex}
+
+  .shell{
+    width:min(1100px,100%);
+    background:var(--panel);
+    border:1px solid rgba(0,255,102,0.16);
+    border-radius:24px;
+    box-shadow:0 0 40px rgba(0,255,102,0.08);
+    backdrop-filter: blur(10px);
+    padding:24px;
+  }
+
+  .shell.compact{
+    width:min(860px,100%);
+  }
+
+  .topbar{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:14px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+  }
+
+  .brand{
+    text-align:left;
+  }
+
+  .brand h1{
+    font-size:clamp(2.1rem,5vw,4.8rem);
+    line-height:0.98;
+    color:var(--accent);
+    text-shadow:0 0 14px rgba(0,255,102,0.75), 0 0 34px rgba(0,255,102,0.28);
+    letter-spacing:1px;
+  }
+
+  .brand p{
+    margin-top:10px;
+    color:var(--muted);
+    line-height:1.55;
+    max-width:720px;
+  }
+
+  .chip-row{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    justify-content:flex-end;
+  }
+
+  .chip{
+    padding:9px 12px;
+    border-radius:999px;
+    background:rgba(0,255,102,0.10);
+    border:1px solid rgba(0,255,102,0.16);
+    color:var(--text);
+    font-size:0.86rem;
+    white-space:nowrap;
+  }
+
+  .btn{
+    border:0;
+    border-radius:16px;
+    padding:14px 18px;
+    font-weight:800;
+    cursor:pointer;
+    text-decoration:none;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-height:52px;
+    min-width:180px;
+    background:var(--accent);
+    color:#031109;
+    box-shadow:0 12px 26px rgba(0,0,0,0.34), 0 0 18px var(--shadow);
+    transition:transform .16s ease, filter .16s ease, box-shadow .16s ease;
+  }
+  .btn:hover{
+    transform:translateY(-2px);
+    filter:brightness(1.05);
+  }
+  .btn.secondary{
+    background:var(--accent2);
+    color:#041018;
+    box-shadow:0 12px 26px rgba(0,0,0,0.34), 0 0 18px rgba(0,212,255,0.25);
+  }
+  .btn.dark{
+    background:#102015;
+    color:var(--accent);
+    border:1px solid rgba(0,255,102,0.22);
+    box-shadow:0 12px 26px rgba(0,0,0,0.30), 0 0 16px rgba(0,255,102,0.10);
+  }
+  .btn.warn{
+    background:var(--danger);
+    color:#fff;
+    box-shadow:0 12px 26px rgba(0,0,0,0.30), 0 0 18px rgba(255,77,77,0.22);
+  }
+
+  .grid{
+    display:grid;
+    gap:16px;
+  }
+
+  .course-grid{
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    margin-top:22px;
+  }
+
+  .card{
+    background:var(--panel2);
+    border:1px solid rgba(0,255,102,0.15);
+    border-radius:20px;
+    padding:18px;
+    text-align:left;
+    box-shadow:0 0 28px rgba(0,255,102,0.06);
+  }
+
+  .card h2{
+    color:var(--accent);
+    margin-bottom:10px;
+    font-size:1.25rem;
+    letter-spacing:0.6px;
+  }
+
+  .card p{
+    color:var(--muted);
+    line-height:1.55;
+    margin-bottom:14px;
+  }
+
+  .tag{
+    display:inline-block;
+    margin-bottom:12px;
+    padding:7px 11px;
+    border-radius:999px;
+    background:rgba(0,255,102,0.10);
+    border:1px solid rgba(0,255,102,0.14);
+    color:var(--text);
+    font-size:0.82rem;
+  }
+
+  .course-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-start;
+    gap:16px;
+    flex-wrap:wrap;
+    margin-bottom:18px;
+  }
+
+  .back-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  .course-title{
+    text-align:left;
+    max-width:760px;
+  }
+  .course-title h2{
+    color:var(--accent);
+    font-size:clamp(1.8rem,4vw,3.3rem);
+    line-height:1.02;
+    margin-bottom:8px;
+    text-shadow:0 0 14px rgba(0,255,102,0.55);
+  }
+  .course-title p{
+    color:var(--muted);
+    line-height:1.55;
+  }
+
+  .quiz-wrap{
+    margin-top:14px;
+    display:grid;
+    gap:14px;
+    text-align:left;
+  }
+
+  .quiz-note{
+    color:var(--muted);
+    background:rgba(0,255,102,0.08);
+    border:1px solid rgba(0,255,102,0.12);
+    padding:12px 14px;
+    border-radius:14px;
+    line-height:1.5;
+  }
+
+  .question{
+    border-radius:18px;
+    border:1px solid rgba(0,255,102,0.14);
+    background:rgba(0,0,0,0.24);
+    padding:16px;
+  }
+
+  .question.correct{
+    border-color:rgba(53,224,111,0.55);
+    box-shadow:0 0 0 1px rgba(53,224,111,0.08) inset;
+  }
+
+  .question.wrong{
+    border-color:rgba(255,77,77,0.58);
+    box-shadow:0 0 0 1px rgba(255,77,77,0.10) inset;
+  }
+
+  .qtitle{
+    font-size:1rem;
+    font-weight:800;
+    color:var(--text);
+    margin-bottom:12px;
+    line-height:1.45;
+  }
+
+  .options{
+    display:grid;
+    gap:10px;
+  }
+
+  .opt{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:11px 12px;
+    border-radius:14px;
+    border:1px solid rgba(0,255,102,0.12);
+    background:rgba(255,255,255,0.03);
+    cursor:pointer;
+    color:var(--text);
+    transition:background .14s ease, transform .14s ease, border-color .14s ease;
+  }
+  .opt:hover{
+    transform:translateY(-1px);
+    border-color:rgba(0,255,102,0.22);
+    background:rgba(0,255,102,0.06);
+  }
+  .opt input{
+    accent-color:var(--accent);
+  }
+
+  .opt.correct{
+    background:rgba(53,224,111,0.16);
+    border-color:rgba(53,224,111,0.60);
+  }
+
+  .opt.wrong{
+    background:rgba(255,77,77,0.14);
+    border-color:rgba(255,77,77,0.56);
+  }
+
+  .feedback{
+    margin-top:12px;
+    padding:12px 13px;
+    border-radius:14px;
+    display:none;
+    line-height:1.5;
+  }
+  .feedback.show{display:block}
+  .feedback.ok{
+    background:rgba(53,224,111,0.12);
+    border:1px solid rgba(53,224,111,0.45);
+    color:#d6ffe2;
+  }
+  .feedback.bad{
+    background:rgba(255,77,77,0.12);
+    border:1px solid rgba(255,77,77,0.45);
+    color:#ffe0e0;
+  }
+
+  .result-bar{
+    margin-top:16px;
+    padding:14px 16px;
+    border-radius:16px;
+    background:rgba(0,255,102,0.08);
+    border:1px solid rgba(0,255,102,0.14);
+    color:var(--text);
+    text-align:left;
+    line-height:1.5;
+  }
+
+  .actions{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    justify-content:flex-start;
+    margin-top:16px;
+  }
+
+  .footer-note{
+    margin-top:16px;
+    color:rgba(231,255,240,0.60);
+    font-size:0.88rem;
+    text-align:left;
+  }
+
+  .hidden{
+    display:none !important;
+  }
+
+  @media (max-width: 900px){
+    .course-grid{
+      grid-template-columns:1fr;
+    }
+  }
+
+  @media (max-width: 640px){
+    .shell{
+      padding:18px;
+    }
+    .btn{
+      min-width:100%;
+    }
+    .chip-row{
+      justify-content:flex-start;
+    }
+    .brand{
+      text-align:left;
+    }
+  }
+</style>
+</head>
+<body>
+  <canvas id="matrix"></canvas>
+  <div class="scanlines"></div>
+  <div class="vignette"></div>
+
+  <button class="menu-btn" id="menuBtn">☰</button>
+
+  <aside class="sidebar" id="sidebar">
+    <h3>Navigation</h3>
+    <button class="side-btn" onclick="showScreen('home')">Home</button>
+    <button class="side-btn" onclick="showScreen('menu')">Course Menu</button>
+    <button class="side-btn" onclick="openCourse(1)">Course 1</button>
+    <button class="side-btn" onclick="openCourse(2)">Course 2</button>
+
+    <div class="side-group">
+      <h3>Matrix Controls</h3>
+      <button class="side-btn" onclick="toggleRain()">Toggle Rain</button>
+      <button class="side-btn" onclick="fasterRain()">Faster Rain</button>
+      <button class="side-btn" onclick="slowerRain()">Slower Rain</button>
+      <button class="side-btn" onclick="cycleAccent()">Change Accent</button>
+      <button class="side-btn" onclick="toggleGlitch()">Glitch Mode</button>
+      <button class="side-btn" onclick="randomTitle()">Random Title</button>
+      <button class="side-btn" onclick="toggleSound()">Sound On/Off</button>
+      <button class="side-btn" onclick="resetAll()">Reset</button>
+    </div>
+  </aside>
+
+  <div class="app">
+    <section id="home" class="screen active">
+      <div class="shell compact">
+        <div class="topbar">
+          <div class="brand">
+            <h1 id="homeTitle">How to escape the matrix</h1>
+            <p id="homeText">
+              A neon training terminal with built-in courses, a separate course menu, and quizzes that only reveal the answers after you submit everything. No cheating by accident. The machine insists on drama.
+            </p>
+          </div>
+          <div class="chip-row">
+            <div class="chip">Course system online</div>
+            <div class="chip">Answer reveal on submit</div>
+            <div class="chip" id="clockChip">--:--:--</div>
+          </div>
+        </div>
+
+        <div class="grid" style="gap:18px; margin-top:16px;">
+          <button class="btn" onclick="showScreen('menu')">Open Course Menu</button>
+          <button class="btn secondary" onclick="randomTitle()">Randomize Title</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="menu" class="screen">
+      <div class="shell">
+        <div class="topbar">
+          <div class="brand">
+            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Course Menu</h1>
+            <p>
+              Pick a course. Each one opens on its own screen, and the quiz waits until you have answered every question before it shows the results.
+            </p>
+          </div>
+          <div class="back-row">
+            <button class="btn dark" onclick="showScreen('home')">Back Home</button>
+          </div>
+        </div>
+
+        <div class="grid course-grid">
+          <div class="card">
+            <div class="tag">Course 1</div>
+            <h2>Wake Up</h2>
+            <p>
+              This course covers the basics of the Matrix idea and the red pill, blue pill choice.
+            </p>
+            <button class="btn" onclick="openCourse(1)">Open Course 1</button>
+          </div>
+
+          <div class="card">
+            <div class="tag">Course 2</div>
+            <h2>Signals and Choices</h2>
+            <p>
+              This course focuses on exit routes, system control, and the difference between staying safe and taking the leap.
+            </p>
+            <button class="btn secondary" onclick="openCourse(2)">Open Course 2</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="courseScreen" class="screen">
+      <div class="shell">
+        <div class="course-head">
+          <div class="course-title">
+            <h2 id="courseTitle">Course</h2>
+            <p id="courseIntro"></p>
+          </div>
+          <div class="back-row">
+            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
+            <button class="btn warn" onclick="resetCourse()">Retake Quiz</button>
+          </div>
+        </div>
+
+        <div class="quiz-wrap">
+          <div class="quiz-note">
+            Answer all questions first, then press <b>Submit answers</b>. After that, the quiz will show the correct answers, your score, and a short explanation for each question.
+          </div>
+
+          <div id="quizContainer" class="grid" style="gap:14px;"></div>
+
+          <div class="actions">
+            <button class="btn" id="submitQuizBtn" onclick="submitQuiz()">Submit answers</button>
+            <button class="btn secondary hidden" id="reviewBtn" onclick="scrollToResults()">Review results</button>
+          </div>
+
+          <div id="resultBar" class="result-bar hidden"></div>
+          <div id="footerNote" class="footer-note"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("matrix");
+    const ctx = canvas.getContext("2d");
+
+    const sidebar = document.getElementById("sidebar");
+    const menuBtn = document.getElementById("menuBtn");
+    const clockChip = document.getElementById("clockChip");
+    const homeTitle = document.getElementById("homeTitle");
+    const courseTitle = document.getElementById("courseTitle");
+    const courseIntro = document.getElementById("courseIntro");
+    const quizContainer = document.getElementById("quizContainer");
+    const resultBar = document.getElementById("resultBar");
+    const submitQuizBtn = document.getElementById("submitQuizBtn");
+    const reviewBtn = document.getElementById("reviewBtn");
+    const footerNote = document.getElementById("footerNote");
+
+    const courseScreen = document.getElementById("courseScreen");
+
+    const state = {
+      activeScreen: "home",
+      currentCourse: 1,
+      running: true,
+      glitch: false,
+      sound: false,
+      accentIndex: 0,
+      fontSize: 18,
+      speedMs: 35,
+      trailAlpha: 0.08,
+      letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()*&^%".split(""),
+      colors: [
+        { name: "Green", value: "#00ff66", shadow: "rgba(0,255,102,0.28)" },
+        { name: "Cyan", value: "#00d4ff", shadow: "rgba(0,212,255,0.24)" },
+        { name: "Pink", value: "#ff4dff", shadow: "rgba(255,77,255,0.22)" },
+        { name: "Amber", value: "#ffcc33", shadow: "rgba(255,204,51,0.22)" }
+      ],
+      audioCtx: null,
+      lastDraw: 0,
+      burstUntil: 0
+    };
+
+    const courses = {
+      1: {
+        title: "Course 1: Wake Up",
+        intro: "These questions cover the basic idea of the Matrix and the choice between illusion and truth.",
+        questions: [
+          {
+            q: "What is the Matrix in the movie?",
+            options: ["A simulated reality", "A city in space", "A secret weapon"],
+            correct: 0,
+            explanation: "The Matrix is a simulated reality created to control human minds."
+          },
+          {
+            q: "Who is Neo?",
+            options: ["The chosen one", "A machine builder", "A guard in Zion"],
+            correct: 0,
+            explanation: "Neo is the main character who is believed to be the chosen one."
+          },
+          {
+            q: "What does the red pill represent?",
+            options: ["Truth and awakening", "Sleep and comfort", "Forgetfulness"],
+            correct: 0,
+            explanation: "The red pill represents choosing truth, even if it is uncomfortable."
+          }
+        ]
+      },
+      2: {
+        title: "Course 2: Signals and Choices",
+        intro: "These questions focus on the idea of staying inside the system or trying to escape it.",
+        questions: [
+          {
+            q: "What does the blue pill represent?",
+            options: ["Staying in the illusion", "Instant freedom", "A new identity"],
+            correct: 0,
+            explanation: "The blue pill represents remaining in the comfortable illusion."
+          },
+          {
+            q: "Why do people in the Matrix use codes and signals?",
+            options: ["To communicate and control systems", "To make coffee", "To hide the sun"],
+            correct: 0,
+            explanation: "In a Matrix-style system, signals and code are used to communicate and control the environment."
+          },
+          {
+            q: "What is the best first step when facing a locked system?",
+            options: ["Learn how it works", "Close your eyes", "Give up immediately"],
+            correct: 0,
+            explanation: "The smartest first step is to understand the system before trying to change it."
+          }
+        ]
+      }
+    };
+
+    let currentQuizState = {
+      answers: [],
+      submitted: false
+    };
+
+    let drops = [];
+    let color = getAccent();
+
+    function getAccent(){
+      return state.colors[state.accentIndex].value;
+    }
+
+    function setAccentVar(){
+      const c = state.colors[state.accentIndex];
+      document.documentElement.style.setProperty("--accent", c.value);
+      document.documentElement.style.setProperty("--shadow", c.shadow);
+    }
+
+    function resizeCanvas(){
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      rebuildDrops();
+    }
+
+    function rebuildDrops(){
+      const cols = Math.floor(canvas.width / state.fontSize);
+      drops = Array.from({ length: cols }, () => Math.floor(Math.random() * 12));
+    }
+
+    function drawMatrix(){
+      ctx.fillStyle = `rgba(0,0,0,${state.trailAlpha})`;
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+
+      ctx.fillStyle = color;
+      ctx.font = `${state.fontSize}px monospace`;
+
+      for(let i = 0; i < drops.length; i++){
+        const char = state.letters[Math.floor(Math.random() * state.letters.length)];
+        const x = i * state.fontSize;
+        const y = drops[i] * state.fontSize;
+        ctx.fillText(char, x, y);
+
+        const burst = performance.now() < state.burstUntil;
+        if((y > canvas.height && Math.random() > (burst ? 0.92 : 0.975)) || (burst && Math.random() > 0.88)){
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+
+    function loop(ts){
+      if(state.running && ts - state.lastDraw >= state.speedMs){
+        drawMatrix();
+        state.lastDraw = ts;
+      }
+      requestAnimationFrame(loop);
+    }
+
+    function log(msg){
+      footerNote.textContent = msg;
+    }
+
+    function beep(freq = 520, duration = 0.08, type = "sine", gain = 0.04){
+      if(!state.sound) return;
+      if(!state.audioCtx){
+        state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      const audioCtx = state.audioCtx;
+      const osc = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      osc.type = type;
+      osc.frequency.value = freq;
+      gainNode.gain.value = gain;
+      osc.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      osc.start();
+      osc.stop(audioCtx.currentTime + duration);
+    }
+
+    function updateClock(){
+      clockChip.textContent = new Date().toLocaleTimeString();
+    }
+
+    function toggleSidebar(){
+      sidebar.classList.toggle("active");
+    }
+
+    function showScreen(id){
+      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+      document.getElementById(id).classList.add("active");
+      state.activeScreen = id;
+      sidebar.classList.remove("active");
+    }
+
+    function openCourse(id){
+      state.currentCourse = id;
+      renderCourse(id);
+      showScreen("courseScreen");
+      beep(640, 0.06, "triangle", 0.03);
+    }
+
+    function renderCourse(id){
+      const course = courses[id];
+      courseTitle.textContent = course.title;
+      courseIntro.textContent = course.intro;
+
+      currentQuizState = {
+        answers: Array(course.questions.length).fill(null),
+        submitted: false
+      };
+
+      resultBar.classList.add("hidden");
+      reviewBtn.classList.add("hidden");
+      submitQuizBtn.classList.remove("hidden");
+      submitQuizBtn.disabled = false;
+      submitQuizBtn.textContent = "Submit answers";
+
+      quizContainer.innerHTML = "";
+      course.questions.forEach((q, qIndex) => {
+        const qEl = document.createElement("div");
+        qEl.className = "question";
+        qEl.id = `q-${qIndex}`;
+
+        qEl.innerHTML = `
+          <div class="qtitle">${qIndex + 1}. ${q.q}</div>
+          <div class="options">
+            ${q.options.map((opt, optIndex) => `
+              <label class="opt">
+                <input type="radio" name="q${qIndex}" value="${optIndex}" />
+                <span>${opt}</span>
+              </label>
+            `).join("")}
+          </div>
+          <div class="feedback" id="fb-${qIndex}"></div>
+        `;
+
+        quizContainer.appendChild(qEl);
+      });
+
+      quizContainer.querySelectorAll('input[type="radio"]').forEach(input => {
+        input.addEventListener("change", (e) => {
+          const [name, qIndexStr] = [e.target.name, e.target.name.slice(1)];
+          currentQuizState.answers[Number(qIndexStr)] = Number(e.target.value);
+        });
+      });
+
+      log("Course loaded. Answer everything before submitting.");
+    }
+
+    function submitQuiz(){
+      const course = courses[state.currentCourse];
+      const total = course.questions.length;
+
+      const unanswered = currentQuizState.answers.some(a => a === null);
+      if(unanswered){
+        resultBar.classList.remove("hidden");
+        resultBar.innerHTML = `Please answer all ${total} questions first. Then press submit again.`;
+        resultBar.style.borderColor = "rgba(255,77,77,0.45)";
+        resultBar.style.background = "rgba(255,77,77,0.10)";
+        beep(240, 0.07, "square", 0.03);
+        return;
+      }
+
+      let score = 0;
+
+      course.questions.forEach((q, qIndex) => {
+        const qEl = document.getElementById(`q-${qIndex}`);
+        const feedbackEl = document.getElementById(`fb-${qIndex}`);
+        const selected = currentQuizState.answers[qIndex];
+        const correct = q.correct;
+
+        qEl.classList.remove("correct", "wrong");
+        qEl.classList.add(selected === correct ? "correct" : "wrong");
+
+        const options = qEl.querySelectorAll(".opt");
+        options.forEach((optEl, optIndex) => {
+          const input = optEl.querySelector("input");
+          input.disabled = true;
+          optEl.classList.remove("correct", "wrong");
+
+          if(optIndex === correct){
+            optEl.classList.add("correct");
+          }
+          if(optIndex === selected && selected !== correct){
+            optEl.classList.add("wrong");
+          }
+        });
+
+        const pickedText = q.options[selected];
+        const correctText = q.options[correct];
+
+        if(selected === correct) score++;
+
+        feedbackEl.classList.add("show");
+        feedbackEl.className = `feedback show ${selected === correct ? "ok" : "bad"}`;
+        feedbackEl.innerHTML = selected === correct
+          ? `Correct. ${q.explanation}`
+          : `Your answer: <b>${pickedText}</b><br>Correct answer: <b>${correctText}</b><br>${q.explanation}`;
+      });
+
+      resultBar.classList.remove("hidden");
+      resultBar.style.borderColor = "rgba(53,224,111,0.40)";
+      resultBar.style.background = "rgba(53,224,111,0.10)";
+      resultBar.innerHTML = `
+        <b>Score:</b> ${score}/${total}<br>
+        You answered every question, so the machine has revealed the answers.
+      `;
+
+      currentQuizState.submitted = true;
+      submitQuizBtn.disabled = true;
+      submitQuizBtn.textContent = "Submitted";
+      reviewBtn.classList.remove("hidden");
+      beep(880, 0.08, "triangle", 0.04);
+      setTimeout(() => beep(1100, 0.07, "sine", 0.03), 120);
+      log("Quiz submitted. Results revealed.");
+    }
+
+    function scrollToResults(){
+      resultBar.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function resetCourse(){
+      renderCourse(state.currentCourse);
+      beep(520, 0.06, "sine", 0.03);
+    }
+
+    function toggleRain(){
+      state.running = !state.running;
+      log(state.running ? "Matrix rain resumed." : "Matrix rain paused.");
+      beep(state.running ? 620 : 260, 0.06, "triangle", 0.03);
+    }
+
+    function fasterRain(){
+      state.speedMs = Math.max(12, state.speedMs - 6);
+      log(`Rain speed: ${state.speedMs} ms`);
+      beep(760, 0.05, "sine", 0.03);
+    }
+
+    function slowerRain(){
+      state.speedMs = Math.min(90, state.speedMs + 6);
+      log(`Rain speed: ${state.speedMs} ms`);
+      beep(320, 0.05, "sine", 0.03);
+    }
+
+    function cycleAccent(){
+      state.accentIndex = (state.accentIndex + 1) % state.colors.length;
+      setAccentVar();
+      color = getAccent();
+      const name = state.colors[state.accentIndex].name;
+      log(`Accent changed to ${name}.`);
+      beep(560 + state.accentIndex * 110, 0.06, "triangle", 0.03);
+    }
+
+    function toggleGlitch(){
+      state.glitch = !state.glitch;
+      document.body.style.filter = state.glitch ? `hue-rotate(${Math.random()*360}deg) contrast(1.1)` : "none";
+      log(state.glitch ? "Glitch mode enabled." : "Glitch mode disabled.");
+      beep(state.glitch ? 920 : 280, 0.06, "sawtooth", 0.025);
+    }
+
+    function randomTitle(){
+      const titles = [
+        "How to escape the matrix",
+        "Exit protocol engaged",
+        "Choose your pill",
+        "Signal breach detected",
+        "Reality loading...",
+        "The grid is talking"
+      ];
+      const subs = [
+        "A neon training terminal with built-in courses and no external forms.",
+        "Answer everything first. Then the answers arrive like a dramatic thunderclap.",
+        "Course menu on its own screen. Clean, readable, and slightly radioactive.",
+        "The machine approves this layout, reluctantly."
+      ];
+      homeTitle.textContent = titles[Math.floor(Math.random() * titles.length)];
+      document.getElementById("homeText").textContent = subs[Math.floor(Math.random() * subs.length)];
+      log("Title randomized.");
+      beep(610, 0.06, "triangle", 0.03);
+    }
+
+    function toggleSound(){
+      state.sound = !state.sound;
+      log(state.sound ? "Sound enabled." : "Sound muted.");
+      beep(720, 0.06, "square", 0.03);
+    }
+
+    function resetAll(){
+      state.running = true;
+      state.glitch = false;
+      state.sound = false;
+      state.accentIndex = 0;
+      state.speedMs = 35;
+      state.trailAlpha = 0.08;
+      document.body.style.filter = "none";
+      setAccentVar();
+      color = getAccent();
+      renderCourse(state.currentCourse);
+      showScreen("home");
+      log("Everything reset.");
+      beep(360, 0.05, "sine", 0.02);
+    }
+
+    menuBtn.addEventListener("click", toggleSidebar);
+    window.addEventListener("click", (e) => {
+      if(!sidebar.contains(e.target) && e.target !== menuBtn){
+        sidebar.classList.remove("active");
+      }
+    });
+
+    window.addEventListener("resize", resizeCanvas);
+    window.addEventListener("keydown", (e) => {
+      if(e.key === "g" || e.key === "G") toggleGlitch();
+      if(e.key === "r" || e.key === "R") toggleRain();
+      if(e.key === "s" || e.key === "S") toggleSound();
+      if(e.key === "f" || e.key === "F"){
+        if(!document.fullscreenElement){
+          document.documentElement.requestFullscreen().catch(() => {});
+        } else {
+          document.exitFullscreen().catch(() => {});
+        }
+      }
+      if(e.key === "h" || e.key === "H") showScreen("menu");
+      if(e.key === "Escape") sidebar.classList.remove("active");
+    });
+
+    setAccentVar();
+    resizeCanvas();
+    updateClock();
+    setInterval(updateClock, 1000);
+    renderCourse(1);
+    requestAnimationFrame(loop);
+  </script>
+</body>
+</html>
