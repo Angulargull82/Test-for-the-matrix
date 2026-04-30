@@ -62,7 +62,7 @@
     position:fixed;
     top:18px;
     left:18px;
-    z-index:30;
+    z-index:50;
     border:0;
     background:var(--accent);
     color:#021108;
@@ -80,10 +80,10 @@
     left:-310px;
     width:310px;
     height:100%;
-    z-index:40;
+    z-index:60;
     background:rgba(5,10,7,0.98);
     border-right:1px solid rgba(0,255,102,0.22);
-    box-shadow: 0 0 30px rgba(0,255,102,0.12);
+    box-shadow:0 0 30px rgba(0,255,102,0.12);
     padding:18px;
     transition:left .28s ease;
     overflow-y:auto;
@@ -142,12 +142,16 @@
     border:1px solid rgba(0,255,102,0.16);
     border-radius:24px;
     box-shadow:0 0 40px rgba(0,255,102,0.08);
-    backdrop-filter: blur(10px);
+    backdrop-filter:blur(10px);
     padding:24px;
   }
 
   .shell.compact{
     width:min(760px,100%);
+  }
+
+  .home-shell{
+    width:min(700px,100%);
   }
 
   .topbar{
@@ -278,13 +282,13 @@
 
   .course-wrap{
     width:min(1100px,100%);
-    max-height:calc(100vh - 48px);
+    height:min(100%, calc(100vh - 36px));
     overflow-y:auto;
     background:var(--panel);
     border:1px solid rgba(0,255,102,0.16);
     border-radius:24px;
     box-shadow:0 0 40px rgba(0,255,102,0.08);
-    backdrop-filter: blur(10px);
+    backdrop-filter:blur(10px);
     padding:24px;
   }
 
@@ -333,6 +337,24 @@
     padding:12px 14px;
     border-radius:14px;
     line-height:1.5;
+  }
+
+  .progress{
+    width:100%;
+    height:10px;
+    border-radius:999px;
+    background:rgba(255,255,255,0.06);
+    overflow:hidden;
+    border:1px solid rgba(0,255,102,0.12);
+  }
+
+  .progress-fill{
+    height:100%;
+    width:0%;
+    border-radius:999px;
+    background:linear-gradient(90deg, var(--accent), var(--accent2));
+    box-shadow:0 0 18px rgba(0,255,102,0.24);
+    transition:width .18s ease;
   }
 
   .question{
@@ -441,22 +463,90 @@
     text-align:left;
   }
 
-  .hidden{
-    display:none !important;
+  .login-grid{
+    display:grid;
+    gap:14px;
+    width:min(520px,100%);
+    margin:0 auto;
+    text-align:left;
   }
 
-  .scroll-pad{
-    padding-bottom: 10px;
+  .input{
+    width:100%;
+    padding:14px 16px;
+    border-radius:14px;
+    border:1px solid rgba(0,255,102,0.18);
+    background:rgba(0,0,0,0.26);
+    color:var(--text);
+    outline:none;
+    font-size:1rem;
   }
+  .input:focus{
+    border-color:rgba(0,255,102,0.38);
+    box-shadow:0 0 0 3px rgba(0,255,102,0.10);
+  }
+
+  .helper{
+    color:var(--muted);
+    font-size:0.92rem;
+    line-height:1.5;
+  }
+
+  .stats-grid{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0,1fr));
+    gap:12px;
+    margin-top:18px;
+  }
+
+  .stat{
+    border-radius:18px;
+    padding:14px;
+    background:rgba(0,0,0,0.25);
+    border:1px solid rgba(0,255,102,0.14);
+    text-align:left;
+  }
+
+  .stat .label{
+    color:var(--muted);
+    font-size:0.8rem;
+    text-transform:uppercase;
+    letter-spacing:0.8px;
+  }
+
+  .stat .value{
+    margin-top:6px;
+    font-size:1.2rem;
+    font-weight:900;
+    color:var(--text);
+  }
+
+  .history{
+    display:grid;
+    gap:10px;
+    margin-top:16px;
+  }
+
+  .history-item{
+    padding:12px 14px;
+    border-radius:14px;
+    background:rgba(0,0,0,0.24);
+    border:1px solid rgba(0,255,102,0.12);
+    color:var(--muted);
+    text-align:left;
+    line-height:1.45;
+  }
+
+  .hidden{display:none !important;}
 
   @media (max-width: 900px){
-    .course-grid{
-      grid-template-columns:1fr;
+    .course-grid,.stats-grid{
+      grid-template-columns:1fr 1fr;
     }
   }
 
   @media (max-width: 640px){
-    .shell, .course-wrap{
+    .shell,.course-wrap{
       padding:18px;
     }
     .btn{
@@ -467,6 +557,9 @@
     }
     .brand{
       text-align:left;
+    }
+    .course-grid,.stats-grid{
+      grid-template-columns:1fr;
     }
   }
 </style>
@@ -481,7 +574,9 @@
   <aside class="sidebar" id="sidebar">
     <h3>Navigation</h3>
     <button class="side-btn" onclick="showScreen('home')">Home</button>
+    <button class="side-btn" onclick="showScreen('login')">Login</button>
     <button class="side-btn" onclick="showScreen('menu')">Course Menu</button>
+    <button class="side-btn" onclick="showScreen('stats'); renderStats()">Stats</button>
     <button class="side-btn" onclick="openCourse(1)">Course 1</button>
     <button class="side-btn" onclick="openCourse(2)">Course 2</button>
 
@@ -494,30 +589,67 @@
       <button class="side-btn" onclick="toggleGlitch()">Glitch Mode</button>
       <button class="side-btn" onclick="randomTitle()">Random Title</button>
       <button class="side-btn" onclick="toggleSound()">Sound On/Off</button>
+      <button class="side-btn" onclick="burstMatrix()">Matrix Burst</button>
+      <button class="side-btn" onclick="logoutUser()">Logout</button>
       <button class="side-btn" onclick="resetAll()">Reset</button>
     </div>
   </aside>
 
   <div class="app">
     <section id="home" class="screen active">
-      <div class="shell compact">
+      <div class="shell home-shell">
         <div class="topbar">
           <div class="brand">
             <h1 id="homeTitle">How to escape the matrix</h1>
             <p id="homeText">
-              A clean neon start screen. Two buttons. No clutter. No junk drawer of controls sitting on the title like a raccoon in a keyboard.
+              A clean neon start screen. One door in, the rest tucked away behind the curtain.
             </p>
           </div>
           <div class="chip-row">
             <div class="chip">Course system online</div>
-            <div class="chip">Answer reveal on submit</div>
-            <div class="chip" id="clockChip">--:--:--</div>
+            <div class="chip" id="sessionChip">Guest mode</div>
           </div>
         </div>
 
         <div class="grid" style="gap:18px; margin-top:16px;">
-          <button class="btn" onclick="showScreen('menu')">Open Course Menu</button>
-          <button class="btn secondary" onclick="randomTitle()">Randomize Title</button>
+          <button class="btn" id="enterBtn" onclick="enterFlow()">Enter</button>
+          <button class="btn secondary" onclick="showScreen('menu')">Course Menu</button>
+        </div>
+
+        <div class="helper" id="homeHelper" style="margin-top:14px;">
+          Login is tucked into its own screen. Everything else waits in the wings.
+        </div>
+      </div>
+    </section>
+
+    <section id="login" class="screen">
+      <div class="shell compact">
+        <div class="topbar">
+          <div class="brand">
+            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Login</h1>
+            <p>
+              A tiny local login. No backend. No cloud goblin. Just your browser remembering your name.
+            </p>
+          </div>
+          <div class="back-row">
+            <button class="btn dark" onclick="showScreen('home')">Back Home</button>
+          </div>
+        </div>
+
+        <div class="login-grid">
+          <div>
+            <label class="helper" for="usernameInput">Username</label>
+            <input id="usernameInput" class="input" type="text" placeholder="Enter a name" maxlength="32" />
+          </div>
+
+          <div class="grid" style="gap:12px;">
+            <button class="btn" onclick="loginUser()">Enter the grid</button>
+            <button class="btn secondary" onclick="showScreen('menu')">Skip to menu</button>
+          </div>
+
+          <div class="helper">
+            Your name is stored locally in this browser so the site can greet you and keep a local attempt summary.
+          </div>
         </div>
       </div>
     </section>
@@ -528,7 +660,7 @@
           <div class="brand">
             <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Course Menu</h1>
             <p>
-              Pick a course. Each one opens on its own screen, and the quiz reveals answers only after you submit every question.
+              Pick a course. Each one opens on its own screen, and the quiz only reveals answers after every question is answered.
             </p>
           </div>
           <div class="back-row">
@@ -539,27 +671,33 @@
         <div class="grid course-grid">
           <div class="card">
             <div class="tag">Course 1</div>
-            <h2>Wake Up</h2>
+            <h2>Matrix Basics</h2>
             <p>
-              This course covers the basics of the Matrix idea and the red pill, blue pill choice.
+              A starter course. Safe, simple, and easy to replace later when you are ready with your final questions.
             </p>
             <button class="btn" onclick="openCourse(1)">Open Course 1</button>
           </div>
 
           <div class="card">
             <div class="tag">Course 2</div>
-            <h2>Signals and Choices</h2>
+            <h2>Scam Spotting</h2>
             <p>
-              This course focuses on exit routes, system control, and the difference between staying safe and taking the leap.
+              This version flips the joke into awareness mode so it teaches how to spot the warning signs instead of how to run the play.
             </p>
             <button class="btn secondary" onclick="openCourse(2)">Open Course 2</button>
           </div>
+        </div>
+
+        <div class="card" style="margin-top:16px;">
+          <div class="tag">Local summary</div>
+          <p id="menuSummary">No attempts yet.</p>
+          <button class="btn dark" onclick="showScreen('stats'); renderStats()">Open Stats</button>
         </div>
       </div>
     </section>
 
     <section id="courseScreen" class="screen">
-      <div class="course-wrap scroll-pad">
+      <div class="course-wrap">
         <div class="course-head">
           <div class="course-title">
             <h2 id="courseTitle">Course</h2>
@@ -576,6 +714,10 @@
             Answer all questions first, then press <b>Submit answers</b>. After that, the quiz will show the correct answers, your score, and a short explanation for each question.
           </div>
 
+          <div class="progress" aria-label="Quiz progress">
+            <div class="progress-fill" id="progressFill"></div>
+          </div>
+
           <div id="quizContainer" class="grid" style="gap:14px;"></div>
 
           <div class="actions">
@@ -588,441 +730,679 @@
         </div>
       </div>
     </section>
+
+    <section id="stats" class="screen">
+      <div class="shell">
+        <div class="topbar">
+          <div class="brand">
+            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Stats</h1>
+            <p>
+              Local-only memory of your attempts. It stays in this browser and turns into a little performance fossil bed.
+            </p>
+          </div>
+          <div class="back-row">
+            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat">
+            <div class="label">User</div>
+            <div class="value" id="statUser">Guest</div>
+          </div>
+          <div class="stat">
+            <div class="label">Attempts</div>
+            <div class="value" id="statAttempts">0</div>
+          </div>
+          <div class="stat">
+            <div class="label">Average Score</div>
+            <div class="value" id="statAvg">0%</div>
+          </div>
+          <div class="stat">
+            <div class="label">Best Score</div>
+            <div class="value" id="statBest">0%</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:16px; text-align:left;">
+          <div class="tag">Recent attempts</div>
+          <div id="historyList" class="history"></div>
+        </div>
+      </div>
+    </section>
   </div>
 
-  <script>
-    const canvas = document.getElementById("matrix");
-    const ctx = canvas.getContext("2d");
+<script>
+  const canvas = document.getElementById("matrix");
+  const ctx = canvas.getContext("2d");
 
-    const sidebar = document.getElementById("sidebar");
-    const menuBtn = document.getElementById("menuBtn");
-    const clockChip = document.getElementById("clockChip");
-    const homeTitle = document.getElementById("homeTitle");
-    const courseTitle = document.getElementById("courseTitle");
-    const courseIntro = document.getElementById("courseIntro");
-    const quizContainer = document.getElementById("quizContainer");
-    const resultBar = document.getElementById("resultBar");
-    const submitQuizBtn = document.getElementById("submitQuizBtn");
-    const reviewBtn = document.getElementById("reviewBtn");
-    const footerNote = document.getElementById("footerNote");
+  const sidebar = document.getElementById("sidebar");
+  const menuBtn = document.getElementById("menuBtn");
+  const clockChip = document.getElementById("sessionChip");
+  const homeTitle = document.getElementById("homeTitle");
+  const homeText = document.getElementById("homeText");
+  const enterBtn = document.getElementById("enterBtn");
+  const homeHelper = document.getElementById("homeHelper");
+  const usernameInput = document.getElementById("usernameInput");
+  const menuSummary = document.getElementById("menuSummary");
+  const courseTitle = document.getElementById("courseTitle");
+  const courseIntro = document.getElementById("courseIntro");
+  const quizContainer = document.getElementById("quizContainer");
+  const resultBar = document.getElementById("resultBar");
+  const submitQuizBtn = document.getElementById("submitQuizBtn");
+  const reviewBtn = document.getElementById("reviewBtn");
+  const footerNote = document.getElementById("footerNote");
+  const progressFill = document.getElementById("progressFill");
+  const statUser = document.getElementById("statUser");
+  const statAttempts = document.getElementById("statAttempts");
+  const statAvg = document.getElementById("statAvg");
+  const statBest = document.getElementById("statBest");
+  const historyList = document.getElementById("historyList");
 
-    const state = {
-      activeScreen: "home",
-      currentCourse: 1,
-      running: true,
-      glitch: false,
-      sound: false,
-      accentIndex: 0,
-      fontSize: 18,
-      speedMs: 35,
-      trailAlpha: 0.08,
-      letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()*&^%".split(""),
-      colors: [
-        { name: "Green", value: "#00ff66", shadow: "rgba(0,255,102,0.28)" },
-        { name: "Cyan", value: "#00d4ff", shadow: "rgba(0,212,255,0.24)" },
-        { name: "Pink", value: "#ff4dff", shadow: "rgba(255,77,255,0.22)" },
-        { name: "Amber", value: "#ffcc33", shadow: "rgba(255,204,51,0.22)" }
-      ],
-      audioCtx: null,
-      lastDraw: 0,
-      burstUntil: 0
-    };
+  const LS_USER = "matrix_user";
+  const LS_ATTEMPTS = "matrix_attempts";
 
-    const courses = {
-      1: {
-        title: "Course 1: Wake Up",
-        intro: "These questions cover the basic idea of the Matrix and the choice between illusion and truth.",
-        questions: [
-          {
-            q: "What is the Matrix in the movie?",
-            options: ["A simulated reality", "A city in space", "A secret weapon"],
-            correct: 0,
-            explanation: "The Matrix is a simulated reality created to control human minds."
-          },
-          {
-            q: "Who is Neo?",
-            options: ["The chosen one", "A machine builder", "A guard in Zion"],
-            correct: 0,
-            explanation: "Neo is the main character who is believed to be the chosen one."
-          },
-          {
-            q: "What does the red pill represent?",
-            options: ["Truth and awakening", "Sleep and comfort", "Forgetfulness"],
-            correct: 0,
-            explanation: "The red pill represents choosing truth, even if it is uncomfortable."
-          },
-          {
-            q: "What does the blue pill represent?",
-            options: ["Staying in the illusion", "Instant freedom", "A new identity"],
-            correct: 0,
-            explanation: "The blue pill represents choosing to stay in the comfortable illusion."
-          }
-        ]
-      },
-      2: {
-        title: "Course 2: Signals and Choices",
-        intro: "These questions focus on staying inside the system or trying to escape it.",
-        questions: [
-          {
-            q: "Why do people in the Matrix use codes and signals?",
-            options: ["To communicate and control systems", "To make coffee", "To hide the sun"],
-            correct: 0,
-            explanation: "Signals and code are used to communicate and control the environment."
-          },
-          {
-            q: "What is the best first step when facing a locked system?",
-            options: ["Learn how it works", "Close your eyes", "Give up immediately"],
-            correct: 0,
-            explanation: "The smartest first step is to understand the system before trying to change it."
-          },
-          {
-            q: "Which action fits the Matrix escape theme best?",
-            options: ["Question what is real", "Ignore every clue", "Trust random noise"],
-            correct: 0,
-            explanation: "The whole idea is to question what is real and what is constructed."
-          },
-          {
-            q: "What should you do before opening a course result?",
-            options: ["Answer every question first", "Click the finish button instantly", "Reload the page"],
-            correct: 0,
-            explanation: "The quiz is built so you answer everything before seeing the results."
-          }
-        ]
+  const state = {
+    activeScreen: "home",
+    currentCourse: 1,
+    running: true,
+    glitch: false,
+    sound: false,
+    accentIndex: 0,
+    fontSize: 18,
+    speedMs: 35,
+    trailAlpha: 0.08,
+    letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()*&^%".split(""),
+    colors: [
+      { name: "Green", value: "#00ff66", shadow: "rgba(0,255,102,0.28)" },
+      { name: "Cyan", value: "#00d4ff", shadow: "rgba(0,212,255,0.24)" },
+      { name: "Pink", value: "#ff4dff", shadow: "rgba(255,77,255,0.22)" },
+      { name: "Amber", value: "#ffcc33", shadow: "rgba(255,204,51,0.22)" }
+    ],
+    audioCtx: null,
+    lastDraw: 0,
+    burstUntil: 0
+  };
+
+  const courses = {
+    1: {
+      title: "Course 1: Matrix Basics",
+      intro: "A starter set. Safe, simple, and easy to replace later when your final questions are ready.",
+      questions: [
+        {
+          q: "What does the red pill represent in the Matrix story?",
+          options: ["Truth and awakening", "Comfort and sleep", "Random chance"],
+          correct: 0,
+          explanation: "The red pill is the choice to see the truth, even when it is uncomfortable."
+        },
+        {
+          q: "What does the blue pill represent?",
+          options: ["Staying inside the illusion", "Instant power", "A robot upgrade"],
+          correct: 0,
+          explanation: "The blue pill represents staying in the comfortable false reality."
+        },
+        {
+          q: "Who is Neo?",
+          options: ["The chosen one", "A machine city", "The architect's assistant"],
+          correct: 0,
+          explanation: "Neo is the central character who is believed to be the chosen one."
+        },
+        {
+          q: "What is the Matrix?",
+          options: ["A simulated reality", "A sports arena", "A computer game menu"],
+          correct: 0,
+          explanation: "In the film, the Matrix is a simulated world used to control human minds."
+        }
+      ]
+    },
+    2: {
+      title: "Course 2: Scam Spotting",
+      intro: "The same dramatic energy, flipped into awareness mode. It teaches how to spot scam warning signs instead of how to run them.",
+      questions: [
+        {
+          q: "A stranger demands payment by wire transfer or gift cards. What is that usually a sign of?",
+          options: ["A major red flag", "A normal business habit", "A secure refund process"],
+          correct: 0,
+          explanation: "Untraceable payment demands are common warning signs in scams."
+        },
+        {
+          q: "An email claims to be from the IRS and pushes you to pay immediately. What is the safest reaction?",
+          options: ["Verify independently through official channels", "Reply with your bank login", "Trust it because it sounds official"],
+          correct: 0,
+          explanation: "Unexpected urgency plus payment demands should be checked through official sources."
+        },
+        {
+          q: "A fake-looking store has polished reviews and clean design. What is the smartest next step?",
+          options: ["Check independent reviews and contact details", "Buy immediately", "Ignore the domain and hope for the best"],
+          correct: 0,
+          explanation: "Professional appearance alone is not enough. External verification matters."
+        },
+        {
+          q: "A tech support popup says your computer will be locked in 24 hours. What should you do?",
+          options: ["Close it and verify through official support", "Call the number right away", "Send them a gift card"],
+          correct: 0,
+          explanation: "Urgent lockout claims are classic scare tactics. Verify using trusted support channels."
+        },
+        {
+          q: "What information should never be shared in a suspicious message?",
+          options: ["Bank login credentials", "A public nickname", "Your favorite color"],
+          correct: 0,
+          explanation: "Bank credentials are highly sensitive and should never be given to an unverified sender."
+        },
+        {
+          q: "Romance scams often rely on what environment?",
+          options: ["Private messaging and emotional pressure", "Open library checkout desks", "Weather apps"],
+          correct: 0,
+          explanation: "Scammers often move targets into private chats and use emotional pressure."
+        },
+        {
+          q: "Someone avoids video chat and always has an excuse. Why is that a warning sign?",
+          options: ["It may be a verification problem", "It proves they are trustworthy", "It means the connection is perfect"],
+          correct: 0,
+          explanation: "Avoiding video chat can be a red flag when someone refuses basic identity checks."
+        },
+        {
+          q: "Which emotion do scammers often try to trigger?",
+          options: ["Fear and urgency", "Calm focus", "Boredom"],
+          correct: 0,
+          explanation: "Fear, urgency, and panic are commonly used to rush people into bad decisions."
+        }
+      ]
+    }
+  };
+
+  let currentQuizState = {
+    answers: [],
+    submitted: false
+  };
+
+  let drops = [];
+  let color = getAccent();
+
+  function getUser(){
+    return localStorage.getItem(LS_USER) || "";
+  }
+
+  function getAttempts(){
+    try{
+      return JSON.parse(localStorage.getItem(LS_ATTEMPTS) || "[]");
+    }catch{
+      return [];
+    }
+  }
+
+  function setAttempts(arr){
+    localStorage.setItem(LS_ATTEMPTS, JSON.stringify(arr));
+  }
+
+  function setUser(name){
+    localStorage.setItem(LS_USER, name);
+    syncUserUI();
+  }
+
+  function clearUser(){
+    localStorage.removeItem(LS_USER);
+    syncUserUI();
+  }
+
+  function syncUserUI(){
+    const user = getUser();
+    clockChip.textContent = user ? `Logged in: ${user}` : "Guest mode";
+    enterBtn.textContent = user ? `Continue as ${user}` : "Enter";
+    homeHelper.textContent = user
+      ? `Welcome back, ${user}. The machine remembered your name.`
+      : "Login is tucked into its own screen. Everything else waits in the wings.";
+    menuSummary.textContent = buildSummaryText();
+  }
+
+  function buildSummaryText(){
+    const attempts = getAttempts();
+    if(!attempts.length) return "No attempts yet.";
+
+    const last = attempts[0];
+    const avg = Math.round(attempts.reduce((a,b)=>a + (b.score / b.total), 0) / attempts.length * 100);
+    return `Last run: ${last.courseTitle} • ${last.score}/${last.total} • Average across attempts: ${avg}%`;
+  }
+
+  function getAccent(){
+    return state.colors[state.accentIndex].value;
+  }
+
+  function setAccentVar(){
+    const c = state.colors[state.accentIndex];
+    document.documentElement.style.setProperty("--accent", c.value);
+    document.documentElement.style.setProperty("--shadow", c.shadow);
+  }
+
+  function resizeCanvas(){
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    rebuildDrops();
+  }
+
+  function rebuildDrops(){
+    const cols = Math.floor(canvas.width / state.fontSize);
+    drops = Array.from({ length: cols }, () => Math.floor(Math.random() * 12));
+  }
+
+  function drawMatrix(){
+    ctx.fillStyle = `rgba(0,0,0,${state.trailAlpha})`;
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+
+    ctx.fillStyle = color;
+    ctx.font = `${state.fontSize}px monospace`;
+
+    for(let i = 0; i < drops.length; i++){
+      const char = state.letters[Math.floor(Math.random() * state.letters.length)];
+      const x = i * state.fontSize;
+      const y = drops[i] * state.fontSize;
+      ctx.fillText(char, x, y);
+
+      const burst = performance.now() < state.burstUntil;
+      if((y > canvas.height && Math.random() > (burst ? 0.92 : 0.975)) || (burst && Math.random() > 0.88)){
+        drops[i] = 0;
       }
-    };
+      drops[i]++;
+    }
+  }
 
-    let currentQuizState = {
-      answers: [],
+  function loop(ts){
+    if(state.running && ts - state.lastDraw >= state.speedMs){
+      drawMatrix();
+      state.lastDraw = ts;
+    }
+    requestAnimationFrame(loop);
+  }
+
+  function log(msg){
+    footerNote.textContent = msg;
+  }
+
+  function beep(freq = 520, duration = 0.08, type = "sine", gain = 0.04){
+    if(!state.sound) return;
+    if(!state.audioCtx){
+      state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    const audioCtx = state.audioCtx;
+    const osc = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    gainNode.gain.value = gain;
+    osc.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  }
+
+  function updateClock(){
+    const now = new Date().toLocaleTimeString();
+    const user = getUser();
+    document.getElementById("sessionChip").textContent = user ? `Logged in: ${user}` : "Guest mode";
+    if(state.activeScreen === "home"){
+      clockChip.textContent = user ? `Logged in: ${user}` : "Guest mode";
+    }
+  }
+
+  function toggleSidebar(){
+    sidebar.classList.toggle("active");
+  }
+
+  function showScreen(id){
+    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
+    document.getElementById(id).classList.add("active");
+    state.activeScreen = id;
+    sidebar.classList.remove("active");
+    if(id === "stats") renderStats();
+    if(id === "menu") menuSummary.textContent = buildSummaryText();
+  }
+
+  function enterFlow(){
+    if(getUser()){
+      showScreen("menu");
+    }else{
+      showScreen("login");
+      usernameInput.focus();
+    }
+  }
+
+  function loginUser(){
+    const name = usernameInput.value.trim();
+    if(!name){
+      flashMessage("Please enter a username first.");
+      return;
+    }
+    setUser(name);
+    showScreen("menu");
+    flashMessage(`Welcome, ${name}.`);
+    beep(720, 0.06, "triangle", 0.03);
+  }
+
+  function logoutUser(){
+    clearUser();
+    usernameInput.value = "";
+    showScreen("home");
+    flashMessage("Logged out.");
+  }
+
+  function flashMessage(text){
+    footerNote.textContent = text;
+  }
+
+  function openCourse(id){
+    state.currentCourse = id;
+    renderCourse(id);
+    showScreen("courseScreen");
+    beep(640, 0.06, "triangle", 0.03);
+  }
+
+  function renderCourse(id){
+    const course = courses[id];
+    courseTitle.textContent = course.title;
+    courseIntro.textContent = course.intro;
+
+    currentQuizState = {
+      answers: Array(course.questions.length).fill(null),
       submitted: false
     };
 
-    let drops = [];
-    let color = getAccent();
+    resultBar.classList.add("hidden");
+    reviewBtn.classList.add("hidden");
+    submitQuizBtn.classList.remove("hidden");
+    submitQuizBtn.disabled = false;
+    submitQuizBtn.textContent = "Submit answers";
 
-    function getAccent(){
-      return state.colors[state.accentIndex].value;
-    }
+    quizContainer.innerHTML = "";
+    progressFill.style.width = "0%";
 
-    function setAccentVar(){
-      const c = state.colors[state.accentIndex];
-      document.documentElement.style.setProperty("--accent", c.value);
-      document.documentElement.style.setProperty("--shadow", c.shadow);
-    }
+    course.questions.forEach((q, qIndex) => {
+      const qEl = document.createElement("div");
+      qEl.className = "question";
+      qEl.id = `q-${qIndex}`;
 
-    function resizeCanvas(){
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-      rebuildDrops();
-    }
-
-    function rebuildDrops(){
-      const cols = Math.floor(canvas.width / state.fontSize);
-      drops = Array.from({ length: cols }, () => Math.floor(Math.random() * 12));
-    }
-
-    function drawMatrix(){
-      ctx.fillStyle = `rgba(0,0,0,${state.trailAlpha})`;
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-
-      ctx.fillStyle = color;
-      ctx.font = `${state.fontSize}px monospace`;
-
-      for(let i = 0; i < drops.length; i++){
-        const char = state.letters[Math.floor(Math.random() * state.letters.length)];
-        const x = i * state.fontSize;
-        const y = drops[i] * state.fontSize;
-        ctx.fillText(char, x, y);
-
-        const burst = performance.now() < state.burstUntil;
-        if((y > canvas.height && Math.random() > (burst ? 0.92 : 0.975)) || (burst && Math.random() > 0.88)){
-          drops[i] = 0;
-        }
-        drops[i]++;
-      }
-    }
-
-    function loop(ts){
-      if(state.running && ts - state.lastDraw >= state.speedMs){
-        drawMatrix();
-        state.lastDraw = ts;
-      }
-      requestAnimationFrame(loop);
-    }
-
-    function log(msg){
-      footerNote.textContent = msg;
-    }
-
-    function beep(freq = 520, duration = 0.08, type = "sine", gain = 0.04){
-      if(!state.sound) return;
-      if(!state.audioCtx){
-        state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-      }
-      const audioCtx = state.audioCtx;
-      const osc = audioCtx.createOscillator();
-      const gainNode = audioCtx.createGain();
-      osc.type = type;
-      osc.frequency.value = freq;
-      gainNode.gain.value = gain;
-      osc.connect(gainNode);
-      gainNode.connect(audioCtx.destination);
-      osc.start();
-      osc.stop(audioCtx.currentTime + duration);
-    }
-
-    function updateClock(){
-      clockChip.textContent = new Date().toLocaleTimeString();
-    }
-
-    function toggleSidebar(){
-      sidebar.classList.toggle("active");
-    }
-
-    function showScreen(id){
-      document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-      document.getElementById(id).classList.add("active");
-      state.activeScreen = id;
-      sidebar.classList.remove("active");
-    }
-
-    function openCourse(id){
-      state.currentCourse = id;
-      renderCourse(id);
-      showScreen("courseScreen");
-      beep(640, 0.06, "triangle", 0.03);
-    }
-
-    function renderCourse(id){
-      const course = courses[id];
-      courseTitle.textContent = course.title;
-      courseIntro.textContent = course.intro;
-
-      currentQuizState = {
-        answers: Array(course.questions.length).fill(null),
-        submitted: false
-      };
-
-      resultBar.classList.add("hidden");
-      reviewBtn.classList.add("hidden");
-      submitQuizBtn.classList.remove("hidden");
-      submitQuizBtn.disabled = false;
-      submitQuizBtn.textContent = "Submit answers";
-
-      quizContainer.innerHTML = "";
-      course.questions.forEach((q, qIndex) => {
-        const qEl = document.createElement("div");
-        qEl.className = "question";
-        qEl.id = `q-${qIndex}`;
-
-        qEl.innerHTML = `
-          <div class="qtitle">${qIndex + 1}. ${q.q}</div>
-          <div class="options">
-            ${q.options.map((opt, optIndex) => `
-              <label class="opt">
-                <input type="radio" name="q${qIndex}" value="${optIndex}" />
-                <span>${opt}</span>
-              </label>
-            `).join("")}
-          </div>
-          <div class="feedback" id="fb-${qIndex}"></div>
-        `;
-
-        quizContainer.appendChild(qEl);
-      });
-
-      quizContainer.querySelectorAll('input[type="radio"]').forEach(input => {
-        input.addEventListener("change", (e) => {
-          const qIndex = Number(e.target.name.slice(1));
-          currentQuizState.answers[qIndex] = Number(e.target.value);
-        });
-      });
-
-      log("Course loaded. Answer everything before submitting.");
-    }
-
-    function submitQuiz(){
-      const course = courses[state.currentCourse];
-      const total = course.questions.length;
-
-      const unanswered = currentQuizState.answers.some(a => a === null);
-      if(unanswered){
-        resultBar.classList.remove("hidden");
-        resultBar.innerHTML = `Please answer all ${total} questions first. Then press submit again.`;
-        resultBar.style.borderColor = "rgba(255,77,77,0.45)";
-        resultBar.style.background = "rgba(255,77,77,0.10)";
-        beep(240, 0.07, "square", 0.03);
-        return;
-      }
-
-      let score = 0;
-
-      course.questions.forEach((q, qIndex) => {
-        const qEl = document.getElementById(`q-${qIndex}`);
-        const feedbackEl = document.getElementById(`fb-${qIndex}`);
-        const selected = currentQuizState.answers[qIndex];
-        const correct = q.correct;
-
-        qEl.classList.remove("correct", "wrong");
-        qEl.classList.add(selected === correct ? "correct" : "wrong");
-
-        const options = qEl.querySelectorAll(".opt");
-        options.forEach((optEl, optIndex) => {
-          const input = optEl.querySelector("input");
-          input.disabled = true;
-          optEl.classList.remove("correct", "wrong");
-
-          if(optIndex === correct){
-            optEl.classList.add("correct");
-          }
-          if(optIndex === selected && selected !== correct){
-            optEl.classList.add("wrong");
-          }
-        });
-
-        const pickedText = q.options[selected];
-        const correctText = q.options[correct];
-
-        if(selected === correct) score++;
-
-        feedbackEl.classList.add("show");
-        feedbackEl.className = `feedback show ${selected === correct ? "ok" : "bad"}`;
-        feedbackEl.innerHTML = selected === correct
-          ? `Correct. ${q.explanation}`
-          : `Your answer: <b>${pickedText}</b><br>Correct answer: <b>${correctText}</b><br>${q.explanation}`;
-      });
-
-      resultBar.classList.remove("hidden");
-      resultBar.style.borderColor = "rgba(53,224,111,0.40)";
-      resultBar.style.background = "rgba(53,224,111,0.10)";
-      resultBar.innerHTML = `
-        <b>Score:</b> ${score}/${total}<br>
-        You answered every question, so the machine has revealed the answers.
+      qEl.innerHTML = `
+        <div class="qtitle">${qIndex + 1}. ${q.q}</div>
+        <div class="options">
+          ${q.options.map((opt, optIndex) => `
+            <label class="opt">
+              <input type="radio" name="q${qIndex}" value="${optIndex}" />
+              <span>${opt}</span>
+            </label>
+          `).join("")}
+        </div>
+        <div class="feedback" id="fb-${qIndex}"></div>
       `;
 
-      currentQuizState.submitted = true;
-      submitQuizBtn.disabled = true;
-      submitQuizBtn.textContent = "Submitted";
-      reviewBtn.classList.remove("hidden");
-      beep(880, 0.08, "triangle", 0.04);
-      setTimeout(() => beep(1100, 0.07, "sine", 0.03), 120);
-      log("Quiz submitted. Results revealed.");
-    }
-
-    function scrollToResults(){
-      resultBar.scrollIntoView({ behavior: "smooth", block: "start" });
-    }
-
-    function resetCourse(){
-      renderCourse(state.currentCourse);
-      beep(520, 0.06, "sine", 0.03);
-    }
-
-    function toggleRain(){
-      state.running = !state.running;
-      log(state.running ? "Matrix rain resumed." : "Matrix rain paused.");
-      beep(state.running ? 620 : 260, 0.06, "triangle", 0.03);
-    }
-
-    function fasterRain(){
-      state.speedMs = Math.max(12, state.speedMs - 6);
-      log(`Rain speed: ${state.speedMs} ms`);
-      beep(760, 0.05, "sine", 0.03);
-    }
-
-    function slowerRain(){
-      state.speedMs = Math.min(90, state.speedMs + 6);
-      log(`Rain speed: ${state.speedMs} ms`);
-      beep(320, 0.05, "sine", 0.03);
-    }
-
-    function cycleAccent(){
-      state.accentIndex = (state.accentIndex + 1) % state.colors.length;
-      setAccentVar();
-      color = getAccent();
-      const name = state.colors[state.accentIndex].name;
-      log(`Accent changed to ${name}.`);
-      beep(560 + state.accentIndex * 110, 0.06, "triangle", 0.03);
-    }
-
-    function toggleGlitch(){
-      state.glitch = !state.glitch;
-      document.body.style.filter = state.glitch ? `hue-rotate(${Math.random()*360}deg) contrast(1.1)` : "none";
-      log(state.glitch ? "Glitch mode enabled." : "Glitch mode disabled.");
-      beep(state.glitch ? 920 : 280, 0.06, "sawtooth", 0.025);
-    }
-
-    function randomTitle(){
-      const titles = [
-        "How to escape the matrix",
-        "Exit protocol engaged",
-        "Choose your pill",
-        "Signal breach detected",
-        "Reality loading...",
-        "The grid is talking"
-      ];
-      const subs = [
-        "A clean neon start screen. No clutter, no chaos, just the two main doors.",
-        "Answer everything first. Then the answers arrive.",
-        "Course menu on its own screen. Easy on the eyes, tough on the machine.",
-        "The layout finally stopped crowding the title like a digital soup."
-      ];
-      homeTitle.textContent = titles[Math.floor(Math.random() * titles.length)];
-      document.getElementById("homeText").textContent = subs[Math.floor(Math.random() * subs.length)];
-      log("Title randomized.");
-      beep(610, 0.06, "triangle", 0.03);
-    }
-
-    function toggleSound(){
-      state.sound = !state.sound;
-      log(state.sound ? "Sound enabled." : "Sound muted.");
-      beep(720, 0.06, "square", 0.03);
-    }
-
-    function resetAll(){
-      state.running = true;
-      state.glitch = false;
-      state.sound = false;
-      state.accentIndex = 0;
-      state.speedMs = 35;
-      state.trailAlpha = 0.08;
-      document.body.style.filter = "none";
-      setAccentVar();
-      color = getAccent();
-      renderCourse(state.currentCourse);
-      showScreen("home");
-      log("Everything reset.");
-      beep(360, 0.05, "sine", 0.02);
-    }
-
-    menuBtn.addEventListener("click", toggleSidebar);
-    window.addEventListener("click", (e) => {
-      if(!sidebar.contains(e.target) && e.target !== menuBtn){
-        sidebar.classList.remove("active");
-      }
+      quizContainer.appendChild(qEl);
     });
 
-    window.addEventListener("resize", resizeCanvas);
-    window.addEventListener("keydown", (e) => {
-      if(e.key === "g" || e.key === "G") toggleGlitch();
-      if(e.key === "r" || e.key === "R") toggleRain();
-      if(e.key === "s" || e.key === "S") toggleSound();
-      if(e.key === "f" || e.key === "F"){
-        if(!document.fullscreenElement){
-          document.documentElement.requestFullscreen().catch(() => {});
-        } else {
-          document.exitFullscreen().catch(() => {});
+    quizContainer.querySelectorAll('input[type="radio"]').forEach(input => {
+      input.addEventListener("change", (e) => {
+        const qIndex = Number(e.target.name.slice(1));
+        currentQuizState.answers[qIndex] = Number(e.target.value);
+        updateProgress();
+      });
+    });
+
+    updateProgress();
+    quizContainer.scrollTop = 0;
+    log("Course loaded. Answer everything before submitting.");
+  }
+
+  function updateProgress(){
+    const total = currentQuizState.answers.length || 1;
+    const answered = currentQuizState.answers.filter(v => v !== null).length;
+    progressFill.style.width = `${(answered / total) * 100}%`;
+  }
+
+  function submitQuiz(){
+    const user = getUser() || "Guest";
+    const course = courses[state.currentCourse];
+    const total = course.questions.length;
+
+    const unanswered = currentQuizState.answers.some(a => a === null);
+    if(unanswered){
+      resultBar.classList.remove("hidden");
+      resultBar.innerHTML = `Please answer all ${total} questions first. Then press submit again.`;
+      resultBar.style.borderColor = "rgba(255,77,77,0.45)";
+      resultBar.style.background = "rgba(255,77,77,0.10)";
+      beep(240, 0.07, "square", 0.03);
+      return;
+    }
+
+    let score = 0;
+
+    course.questions.forEach((q, qIndex) => {
+      const qEl = document.getElementById(`q-${qIndex}`);
+      const feedbackEl = document.getElementById(`fb-${qIndex}`);
+      const selected = currentQuizState.answers[qIndex];
+      const correct = q.correct;
+
+      qEl.classList.remove("correct", "wrong");
+      qEl.classList.add(selected === correct ? "correct" : "wrong");
+
+      const options = qEl.querySelectorAll(".opt");
+      options.forEach((optEl, optIndex) => {
+        const input = optEl.querySelector("input");
+        input.disabled = true;
+        optEl.classList.remove("correct", "wrong");
+
+        if(optIndex === correct){
+          optEl.classList.add("correct");
         }
-      }
-      if(e.key === "h" || e.key === "H") showScreen("menu");
-      if(e.key === "Escape") sidebar.classList.remove("active");
+        if(optIndex === selected && selected !== correct){
+          optEl.classList.add("wrong");
+        }
+      });
+
+      const pickedText = q.options[selected];
+      const correctText = q.options[correct];
+
+      if(selected === correct) score++;
+
+      feedbackEl.classList.add("show");
+      feedbackEl.className = `feedback show ${selected === correct ? "ok" : "bad"}`;
+      feedbackEl.innerHTML = selected === correct
+        ? `Correct. ${q.explanation}`
+        : `Your answer: <b>${pickedText}</b><br>Correct answer: <b>${correctText}</b><br>${q.explanation}`;
     });
 
+    const attempt = {
+      user,
+      courseId: state.currentCourse,
+      courseTitle: course.title,
+      score,
+      total,
+      answers: [...currentQuizState.answers],
+      timestamp: new Date().toISOString()
+    };
+
+    const attempts = getAttempts();
+    attempts.unshift(attempt);
+    setAttempts(attempts.slice(0, 50));
+
+    resultBar.classList.remove("hidden");
+    resultBar.style.borderColor = "rgba(53,224,111,0.40)";
+    resultBar.style.background = "rgba(53,224,111,0.10)";
+    resultBar.innerHTML = `
+      <b>Score:</b> ${score}/${total}<br>
+      Answers revealed. Attempt saved locally in this browser.
+    `;
+
+    currentQuizState.submitted = true;
+    submitQuizBtn.disabled = true;
+    submitQuizBtn.textContent = "Submitted";
+    reviewBtn.classList.remove("hidden");
+    menuSummary.textContent = buildSummaryText();
+    beep(880, 0.08, "triangle", 0.04);
+    setTimeout(() => beep(1100, 0.07, "sine", 0.03), 120);
+    log("Quiz submitted. Results revealed.");
+  }
+
+  function scrollToResults(){
+    resultBar.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function resetCourse(){
+    renderCourse(state.currentCourse);
+    beep(520, 0.06, "sine", 0.03);
+  }
+
+  function toggleRain(){
+    state.running = !state.running;
+    log(state.running ? "Matrix rain resumed." : "Matrix rain paused.");
+    beep(state.running ? 620 : 260, 0.06, "triangle", 0.03);
+  }
+
+  function fasterRain(){
+    state.speedMs = Math.max(12, state.speedMs - 6);
+    log(`Rain speed: ${state.speedMs} ms`);
+    beep(760, 0.05, "sine", 0.03);
+  }
+
+  function slowerRain(){
+    state.speedMs = Math.min(90, state.speedMs + 6);
+    log(`Rain speed: ${state.speedMs} ms`);
+    beep(320, 0.05, "sine", 0.03);
+  }
+
+  function cycleAccent(){
+    state.accentIndex = (state.accentIndex + 1) % state.colors.length;
     setAccentVar();
-    resizeCanvas();
-    updateClock();
-    setInterval(updateClock, 1000);
-    renderCourse(1);
-    requestAnimationFrame(loop);
-  </script>
+    color = getAccent();
+    const name = state.colors[state.accentIndex].name;
+    log(`Accent changed to ${name}.`);
+    beep(560 + state.accentIndex * 110, 0.06, "triangle", 0.03);
+  }
+
+  function toggleGlitch(){
+    state.glitch = !state.glitch;
+    document.body.style.filter = state.glitch ? `hue-rotate(${Math.random()*360}deg) contrast(1.1)` : "none";
+    log(state.glitch ? "Glitch mode enabled." : "Glitch mode disabled.");
+    beep(state.glitch ? 920 : 280, 0.06, "sawtooth", 0.025);
+  }
+
+  function randomTitle(){
+    const titles = [
+      "How to escape the matrix",
+      "Exit protocol engaged",
+      "Choose your pill",
+      "Signal breach detected",
+      "Reality loading...",
+      "The grid is talking"
+    ];
+    const subs = [
+      "A clean neon start screen. No clutter, no chaos.",
+      "Answer everything first. Then the answers arrive.",
+      "Course menu on its own screen. Easy on the eyes.",
+      "The layout stopped crowding the title like a digital soup."
+    ];
+    homeTitle.textContent = titles[Math.floor(Math.random() * titles.length)];
+    homeText.textContent = subs[Math.floor(Math.random() * subs.length)];
+    log("Title randomized.");
+    beep(610, 0.06, "triangle", 0.03);
+  }
+
+  function toggleSound(){
+    state.sound = !state.sound;
+    log(state.sound ? "Sound enabled." : "Sound muted.");
+    beep(720, 0.06, "square", 0.03);
+  }
+
+  function burstMatrix(){
+    state.burstUntil = performance.now() + 1800;
+    state.trailAlpha = 0.045;
+    log("Matrix burst initiated.");
+    beep(1000, 0.08, "square", 0.04);
+    setTimeout(() => { state.trailAlpha = 0.08; }, 1800);
+  }
+
+  function renderStats(){
+    const attempts = getAttempts();
+    const user = getUser() || "Guest";
+
+    statUser.textContent = user;
+    statAttempts.textContent = String(attempts.length);
+
+    if(!attempts.length){
+      statAvg.textContent = "0%";
+      statBest.textContent = "0%";
+      historyList.innerHTML = `<div class="history-item">No attempts yet. Run a quiz and the summary will wake up.</div>`;
+      return;
+    }
+
+    const percentages = attempts.map(a => Math.round((a.score / a.total) * 100));
+    const avg = Math.round(percentages.reduce((a,b) => a + b, 0) / percentages.length);
+    const best = Math.max(...percentages);
+
+    statAvg.textContent = `${avg}%`;
+    statBest.textContent = `${best}%`;
+
+    historyList.innerHTML = attempts.slice(0, 8).map(a => {
+      const when = new Date(a.timestamp).toLocaleString();
+      return `
+        <div class="history-item">
+          <b>${a.courseTitle}</b><br>
+          ${a.score}/${a.total} • ${Math.round((a.score / a.total) * 100)}%<br>
+          ${when}
+        </div>
+      `;
+    }).join("");
+  }
+
+  function resetAll(){
+    state.running = true;
+    state.glitch = false;
+    state.sound = false;
+    state.accentIndex = 0;
+    state.speedMs = 35;
+    state.trailAlpha = 0.08;
+    document.body.style.filter = "none";
+    setAccentVar();
+    color = getAccent();
+    usernameInput.value = getUser();
+    syncUserUI();
+    renderCourse(state.currentCourse);
+    showScreen("home");
+    log("Everything reset.");
+    beep(360, 0.05, "sine", 0.02);
+  }
+
+  menuBtn.addEventListener("click", toggleSidebar);
+
+  window.addEventListener("click", (e) => {
+    if(!sidebar.contains(e.target) && e.target !== menuBtn){
+      sidebar.classList.remove("active");
+    }
+  });
+
+  window.addEventListener("resize", resizeCanvas);
+
+  window.addEventListener("keydown", (e) => {
+    if(e.key === "g" || e.key === "G") toggleGlitch();
+    if(e.key === "r" || e.key === "R") toggleRain();
+    if(e.key === "s" || e.key === "S") toggleSound();
+    if(e.key === "f" || e.key === "F"){
+      if(!document.fullscreenElement){
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+    if(e.key === "h" || e.key === "H") showScreen("menu");
+    if(e.key === "Escape") sidebar.classList.remove("active");
+    if(e.key === "Enter" && state.activeScreen === "login"){
+      loginUser();
+    }
+  });
+
+  setAccentVar();
+  resizeCanvas();
+  syncUserUI();
+  renderCourse(1);
+  updateClock();
+  setInterval(updateClock, 1000);
+  requestAnimationFrame(loop);
+</script>
 </body>
 </html>
