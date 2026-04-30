@@ -117,9 +117,6 @@
     font-weight:700;
     text-align:left;
   }
-  .side-btn:hover{
-    filter:brightness(1.08);
-  }
 
   .app{
     position:relative;
@@ -150,7 +147,7 @@
   }
 
   .shell.compact{
-    width:min(860px,100%);
+    width:min(760px,100%);
   }
 
   .topbar{
@@ -279,6 +276,18 @@
     font-size:0.82rem;
   }
 
+  .course-wrap{
+    width:min(1100px,100%);
+    max-height:calc(100vh - 48px);
+    overflow-y:auto;
+    background:var(--panel);
+    border:1px solid rgba(0,255,102,0.16);
+    border-radius:24px;
+    box-shadow:0 0 40px rgba(0,255,102,0.08);
+    backdrop-filter: blur(10px);
+    padding:24px;
+  }
+
   .course-head{
     display:flex;
     justify-content:space-between;
@@ -286,12 +295,6 @@
     gap:16px;
     flex-wrap:wrap;
     margin-bottom:18px;
-  }
-
-  .back-row{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
   }
 
   .course-title{
@@ -308,6 +311,12 @@
   .course-title p{
     color:var(--muted);
     line-height:1.55;
+  }
+
+  .back-row{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
   }
 
   .quiz-wrap{
@@ -436,6 +445,10 @@
     display:none !important;
   }
 
+  .scroll-pad{
+    padding-bottom: 10px;
+  }
+
   @media (max-width: 900px){
     .course-grid{
       grid-template-columns:1fr;
@@ -443,7 +456,7 @@
   }
 
   @media (max-width: 640px){
-    .shell{
+    .shell, .course-wrap{
       padding:18px;
     }
     .btn{
@@ -492,7 +505,7 @@
           <div class="brand">
             <h1 id="homeTitle">How to escape the matrix</h1>
             <p id="homeText">
-              A neon training terminal with built-in courses, a separate course menu, and quizzes that only reveal the answers after you submit everything. No cheating by accident. The machine insists on drama.
+              A clean neon start screen. Two buttons. No clutter. No junk drawer of controls sitting on the title like a raccoon in a keyboard.
             </p>
           </div>
           <div class="chip-row">
@@ -510,12 +523,12 @@
     </section>
 
     <section id="menu" class="screen">
-      <div class="shell">
+      <div class="shell compact">
         <div class="topbar">
           <div class="brand">
             <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Course Menu</h1>
             <p>
-              Pick a course. Each one opens on its own screen, and the quiz waits until you have answered every question before it shows the results.
+              Pick a course. Each one opens on its own screen, and the quiz reveals answers only after you submit every question.
             </p>
           </div>
           <div class="back-row">
@@ -546,7 +559,7 @@
     </section>
 
     <section id="courseScreen" class="screen">
-      <div class="shell">
+      <div class="course-wrap scroll-pad">
         <div class="course-head">
           <div class="course-title">
             <h2 id="courseTitle">Course</h2>
@@ -593,8 +606,6 @@
     const reviewBtn = document.getElementById("reviewBtn");
     const footerNote = document.getElementById("footerNote");
 
-    const courseScreen = document.getElementById("courseScreen");
-
     const state = {
       activeScreen: "home",
       currentCourse: 1,
@@ -639,30 +650,42 @@
             options: ["Truth and awakening", "Sleep and comfort", "Forgetfulness"],
             correct: 0,
             explanation: "The red pill represents choosing truth, even if it is uncomfortable."
+          },
+          {
+            q: "What does the blue pill represent?",
+            options: ["Staying in the illusion", "Instant freedom", "A new identity"],
+            correct: 0,
+            explanation: "The blue pill represents choosing to stay in the comfortable illusion."
           }
         ]
       },
       2: {
         title: "Course 2: Signals and Choices",
-        intro: "These questions focus on the idea of staying inside the system or trying to escape it.",
+        intro: "These questions focus on staying inside the system or trying to escape it.",
         questions: [
-          {
-            q: "What does the blue pill represent?",
-            options: ["Staying in the illusion", "Instant freedom", "A new identity"],
-            correct: 0,
-            explanation: "The blue pill represents remaining in the comfortable illusion."
-          },
           {
             q: "Why do people in the Matrix use codes and signals?",
             options: ["To communicate and control systems", "To make coffee", "To hide the sun"],
             correct: 0,
-            explanation: "In a Matrix-style system, signals and code are used to communicate and control the environment."
+            explanation: "Signals and code are used to communicate and control the environment."
           },
           {
             q: "What is the best first step when facing a locked system?",
             options: ["Learn how it works", "Close your eyes", "Give up immediately"],
             correct: 0,
             explanation: "The smartest first step is to understand the system before trying to change it."
+          },
+          {
+            q: "Which action fits the Matrix escape theme best?",
+            options: ["Question what is real", "Ignore every clue", "Trust random noise"],
+            correct: 0,
+            explanation: "The whole idea is to question what is real and what is constructed."
+          },
+          {
+            q: "What should you do before opening a course result?",
+            options: ["Answer every question first", "Click the finish button instantly", "Reload the page"],
+            correct: 0,
+            explanation: "The quiz is built so you answer everything before seeing the results."
           }
         ]
       }
@@ -809,8 +832,8 @@
 
       quizContainer.querySelectorAll('input[type="radio"]').forEach(input => {
         input.addEventListener("change", (e) => {
-          const [name, qIndexStr] = [e.target.name, e.target.name.slice(1)];
-          currentQuizState.answers[Number(qIndexStr)] = Number(e.target.value);
+          const qIndex = Number(e.target.name.slice(1));
+          currentQuizState.answers[qIndex] = Number(e.target.value);
         });
       });
 
@@ -938,10 +961,10 @@
         "The grid is talking"
       ];
       const subs = [
-        "A neon training terminal with built-in courses and no external forms.",
-        "Answer everything first. Then the answers arrive like a dramatic thunderclap.",
-        "Course menu on its own screen. Clean, readable, and slightly radioactive.",
-        "The machine approves this layout, reluctantly."
+        "A clean neon start screen. No clutter, no chaos, just the two main doors.",
+        "Answer everything first. Then the answers arrive.",
+        "Course menu on its own screen. Easy on the eyes, tough on the machine.",
+        "The layout finally stopped crowding the title like a digital soup."
       ];
       homeTitle.textContent = titles[Math.floor(Math.random() * titles.length)];
       document.getElementById("homeText").textContent = subs[Math.floor(Math.random() * subs.length)];
