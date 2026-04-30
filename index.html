@@ -20,798 +20,182 @@
 
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{
-    width:100%;
-    height:100%;
-    overflow:hidden;
-    background:var(--bg);
-    font-family:Arial, Helvetica, sans-serif;
-    color:var(--text);
+    width:100%;height:100%;overflow:hidden;background:var(--bg);
+    font-family:Arial, Helvetica, sans-serif;color:var(--text);
   }
 
-  canvas{
-    position:fixed;
-    inset:0;
-    z-index:0;
-  }
+  canvas{position:fixed;inset:0;z-index:0}
 
   .scanlines{
-    position:fixed;
-    inset:0;
-    z-index:1;
-    pointer-events:none;
-    background:repeating-linear-gradient(
-      to bottom,
-      rgba(255,255,255,0.03) 0px,
-      rgba(255,255,255,0.03) 1px,
-      transparent 2px,
-      transparent 5px
-    );
-    opacity:0.22;
-    mix-blend-mode:screen;
+    position:fixed;inset:0;z-index:1;pointer-events:none;
+    background:repeating-linear-gradient(to bottom, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 2px, transparent 5px);
+    opacity:0.22;mix-blend-mode:screen;
   }
-
   .vignette{
-    position:fixed;
-    inset:0;
-    z-index:2;
-    pointer-events:none;
+    position:fixed;inset:0;z-index:2;pointer-events:none;
     background:radial-gradient(circle at center, transparent 0%, rgba(0,0,0,0.18) 58%, rgba(0,0,0,0.84) 100%);
   }
 
   .menu-btn{
-    position:fixed;
-    top:18px;
-    left:18px;
-    z-index:50;
-    border:0;
-    background:var(--accent);
-    color:#021108;
-    padding:10px 14px;
-    border-radius:12px;
-    font-size:20px;
-    font-weight:900;
-    cursor:pointer;
+    position:fixed;top:18px;left:18px;z-index:50;border:0;background:var(--accent);color:#021108;
+    padding:10px 14px;border-radius:12px;font-size:20px;font-weight:900;cursor:pointer;
     box-shadow:0 10px 25px rgba(0,0,0,0.35), 0 0 20px var(--shadow);
   }
 
   .sidebar{
-    position:fixed;
-    top:0;
-    left:-310px;
-    width:310px;
-    height:100%;
-    z-index:60;
-    background:rgba(5,10,7,0.98);
-    border-right:1px solid rgba(0,255,102,0.22);
-    box-shadow:0 0 30px rgba(0,255,102,0.12);
-    padding:18px;
-    transition:left .28s ease;
-    overflow-y:auto;
+    position:fixed;top:0;left:-320px;width:320px;height:100%;z-index:60;
+    background:rgba(5,10,7,0.98);border-right:1px solid rgba(0,255,102,0.22);
+    box-shadow:0 0 30px rgba(0,255,102,0.12);padding:18px;transition:left .28s ease;overflow-y:auto;
   }
   .sidebar.active{left:0}
-
-  .sidebar h3{
-    color:var(--accent);
-    letter-spacing:1.5px;
-    text-transform:uppercase;
-    margin-bottom:10px;
-    font-size:1rem;
-  }
-
-  .side-group{
-    margin-top:14px;
-    padding-top:14px;
-    border-top:1px solid rgba(0,255,102,0.14);
-  }
-
+  .sidebar h3{color:var(--accent);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px;font-size:1rem}
+  .side-group{margin-top:14px;padding-top:14px;border-top:1px solid rgba(0,255,102,0.14)}
   .side-btn{
-    display:block;
-    width:100%;
-    margin:8px 0;
-    padding:12px 14px;
-    border:1px solid rgba(0,255,102,0.22);
-    border-radius:12px;
-    background:#102015;
-    color:var(--accent);
-    cursor:pointer;
-    font-weight:700;
-    text-align:left;
+    display:block;width:100%;margin:8px 0;padding:12px 14px;border:1px solid rgba(0,255,102,0.22);
+    border-radius:12px;background:#102015;color:var(--accent);cursor:pointer;font-weight:700;text-align:left;
   }
 
-  .app{
-    position:relative;
-    z-index:10;
-    width:100%;
-    height:100vh;
-  }
-
-  .screen{
-    position:absolute;
-    inset:0;
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:24px;
-    text-align:center;
-  }
+  .app{position:relative;z-index:10;width:100%;height:100vh}
+  .screen{position:absolute;inset:0;display:none;align-items:center;justify-content:center;padding:24px;text-align:center}
   .screen.active{display:flex}
 
-  .shell{
-    width:min(1100px,100%);
-    background:var(--panel);
-    border:1px solid rgba(0,255,102,0.16);
-    border-radius:24px;
-    box-shadow:0 0 40px rgba(0,255,102,0.08);
-    backdrop-filter:blur(10px);
-    padding:24px;
+  .shell,.scroll-shell{
+    width:min(1100px,100%);background:var(--panel);border:1px solid rgba(0,255,102,0.16);
+    border-radius:24px;box-shadow:0 0 40px rgba(0,255,102,0.08);backdrop-filter:blur(10px);padding:24px;
   }
+  .scroll-shell{max-height:calc(100vh - 40px);overflow-y:auto}
+  .compact{width:min(760px,100%)}
+  .home-shell{width:min(680px,100%)}
 
-  .scroll-shell{
-    width:min(1100px,100%);
-    max-height:calc(100vh - 40px);
-    overflow-y:auto;
-    background:var(--panel);
-    border:1px solid rgba(0,255,102,0.16);
-    border-radius:24px;
-    box-shadow:0 0 40px rgba(0,255,102,0.08);
-    backdrop-filter:blur(10px);
-    padding:24px;
-  }
-
-  .compact{
-    width:min(760px,100%);
-  }
-
-  .home-shell{
-    width:min(680px,100%);
-  }
-
-  .topbar{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:14px;
-    flex-wrap:wrap;
-    margin-bottom:18px;
-  }
-
-  .brand{
-    text-align:left;
-  }
-
+  .topbar{display:flex;justify-content:space-between;align-items:flex-start;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+  .brand{text-align:left}
   .brand h1{
-    font-size:clamp(2.1rem,5vw,4.8rem);
-    line-height:0.98;
-    color:var(--accent);
-    text-shadow:0 0 14px rgba(0,255,102,0.75), 0 0 34px rgba(0,255,102,0.28);
-    letter-spacing:1px;
+    font-size:clamp(2.1rem,5vw,4.8rem);line-height:0.98;color:var(--accent);
+    text-shadow:0 0 14px rgba(0,255,102,0.75), 0 0 34px rgba(0,255,102,0.28);letter-spacing:1px;
   }
-
-  .brand p{
-    margin-top:10px;
-    color:var(--muted);
-    line-height:1.55;
-    max-width:720px;
-  }
-
-  .chip-row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    justify-content:flex-end;
-  }
-
-  .chip{
-    padding:9px 12px;
-    border-radius:999px;
-    background:rgba(0,255,102,0.10);
-    border:1px solid rgba(0,255,102,0.16);
-    color:var(--text);
-    font-size:0.86rem;
-    white-space:nowrap;
-  }
+  .brand p{margin-top:10px;color:var(--muted);line-height:1.55;max-width:720px}
+  .chip-row{display:flex;flex-wrap:wrap;gap:10px;justify-content:flex-end}
+  .chip{padding:9px 12px;border-radius:999px;background:rgba(0,255,102,0.10);border:1px solid rgba(0,255,102,0.16);color:var(--text);font-size:0.86rem;white-space:nowrap}
 
   .btn{
-    border:0;
-    border-radius:16px;
-    padding:14px 18px;
-    font-weight:800;
-    cursor:pointer;
-    text-decoration:none;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
-    min-height:52px;
-    min-width:180px;
-    background:var(--accent);
-    color:#031109;
-    box-shadow:0 12px 26px rgba(0,0,0,0.34), 0 0 18px var(--shadow);
+    border:0;border-radius:16px;padding:14px 18px;font-weight:800;cursor:pointer;text-decoration:none;
+    display:inline-flex;align-items:center;justify-content:center;min-height:52px;min-width:180px;
+    background:var(--accent);color:#031109;box-shadow:0 12px 26px rgba(0,0,0,0.34), 0 0 18px var(--shadow);
     transition:transform .16s ease, filter .16s ease, box-shadow .16s ease;
   }
-  .btn:hover{
-    transform:translateY(-2px);
-    filter:brightness(1.05);
-  }
-  .btn.secondary{
-    background:var(--accent2);
-    color:#041018;
-    box-shadow:0 12px 26px rgba(0,0,0,0.34), 0 0 18px rgba(0,212,255,0.25);
-  }
-  .btn.dark{
-    background:#102015;
-    color:var(--accent);
-    border:1px solid rgba(0,255,102,0.22);
-    box-shadow:0 12px 26px rgba(0,0,0,0.30), 0 0 16px rgba(0,255,102,0.10);
-  }
-  .btn.warn{
-    background:var(--danger);
-    color:#fff;
-    box-shadow:0 12px 26px rgba(0,0,0,0.30), 0 0 18px rgba(255,77,77,0.22);
-  }
+  .btn:hover{transform:translateY(-2px);filter:brightness(1.05)}
+  .btn.secondary{background:var(--accent2);color:#041018;box-shadow:0 12px 26px rgba(0,0,0,0.34), 0 0 18px rgba(0,212,255,0.25)}
+  .btn.dark{background:#102015;color:var(--accent);border:1px solid rgba(0,255,102,0.22);box-shadow:0 12px 26px rgba(0,0,0,0.30), 0 0 16px rgba(0,255,102,0.10)}
+  .btn.warn{background:var(--danger);color:#fff;box-shadow:0 12px 26px rgba(0,0,0,0.30), 0 0 18px rgba(255,77,77,0.22)}
 
-  .grid{
-    display:grid;
-    gap:16px;
-  }
-
-  .course-grid{
-    grid-template-columns:repeat(2, minmax(0,1fr));
-    margin-top:22px;
-  }
-
-  .feature-grid{
-    grid-template-columns:repeat(2, minmax(0,1fr));
-    margin-top:16px;
-  }
-
+  .grid{display:grid;gap:16px}
+  .course-grid{grid-template-columns:repeat(2, minmax(0,1fr));margin-top:22px}
+  .feature-grid{grid-template-columns:repeat(2, minmax(0,1fr));margin-top:16px}
   .card{
-    background:var(--panel2);
-    border:1px solid rgba(0,255,102,0.15);
-    border-radius:20px;
-    padding:18px;
-    text-align:left;
+    background:var(--panel2);border:1px solid rgba(0,255,102,0.15);border-radius:20px;padding:18px;text-align:left;
     box-shadow:0 0 28px rgba(0,255,102,0.06);
   }
+  .card h2{color:var(--accent);margin-bottom:10px;font-size:1.25rem;letter-spacing:0.6px}
+  .card p{color:var(--muted);line-height:1.55;margin-bottom:14px}
+  .tag{display:inline-block;margin-bottom:12px;padding:7px 11px;border-radius:999px;background:rgba(0,255,102,0.10);border:1px solid rgba(0,255,102,0.14);color:var(--text);font-size:0.82rem}
 
-  .card h2{
-    color:var(--accent);
-    margin-bottom:10px;
-    font-size:1.25rem;
-    letter-spacing:0.6px;
-  }
+  .course-head{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+  .course-title{text-align:left;max-width:760px}
+  .course-title h2{color:var(--accent);font-size:clamp(1.8rem,4vw,3.3rem);line-height:1.02;margin-bottom:8px;text-shadow:0 0 14px rgba(0,255,102,0.55)}
+  .course-title p{color:var(--muted);line-height:1.55}
+  .back-row{display:flex;gap:10px;flex-wrap:wrap}
 
-  .card p{
-    color:var(--muted);
-    line-height:1.55;
-    margin-bottom:14px;
-  }
+  .quiz-wrap{margin-top:14px;display:grid;gap:14px;text-align:left}
+  .quiz-note{color:var(--muted);background:rgba(0,255,102,0.08);border:1px solid rgba(0,255,102,0.12);padding:12px 14px;border-radius:14px;line-height:1.5}
+  .progress{width:100%;height:10px;border-radius:999px;background:rgba(255,255,255,0.06);overflow:hidden;border:1px solid rgba(0,255,102,0.12)}
+  .progress-fill{height:100%;width:0%;border-radius:999px;background:linear-gradient(90deg, var(--accent), var(--accent2));box-shadow:0 0 18px rgba(0,255,102,0.24);transition:width .18s ease}
 
-  .tag{
-    display:inline-block;
-    margin-bottom:12px;
-    padding:7px 11px;
-    border-radius:999px;
-    background:rgba(0,255,102,0.10);
-    border:1px solid rgba(0,255,102,0.14);
-    color:var(--text);
-    font-size:0.82rem;
-  }
-
-  .course-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
-    gap:16px;
-    flex-wrap:wrap;
-    margin-bottom:18px;
-  }
-
-  .course-title{
-    text-align:left;
-    max-width:760px;
-  }
-  .course-title h2{
-    color:var(--accent);
-    font-size:clamp(1.8rem,4vw,3.3rem);
-    line-height:1.02;
-    margin-bottom:8px;
-    text-shadow:0 0 14px rgba(0,255,102,0.55);
-  }
-  .course-title p{
-    color:var(--muted);
-    line-height:1.55;
-  }
-
-  .back-row{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-
-  .quiz-wrap{
-    margin-top:14px;
-    display:grid;
-    gap:14px;
-    text-align:left;
-  }
-
-  .quiz-note{
-    color:var(--muted);
-    background:rgba(0,255,102,0.08);
-    border:1px solid rgba(0,255,102,0.12);
-    padding:12px 14px;
-    border-radius:14px;
-    line-height:1.5;
-  }
-
-  .progress{
-    width:100%;
-    height:10px;
-    border-radius:999px;
-    background:rgba(255,255,255,0.06);
-    overflow:hidden;
-    border:1px solid rgba(0,255,102,0.12);
-  }
-
-  .progress-fill{
-    height:100%;
-    width:0%;
-    border-radius:999px;
-    background:linear-gradient(90deg, var(--accent), var(--accent2));
-    box-shadow:0 0 18px rgba(0,255,102,0.24);
-    transition:width .18s ease;
-  }
-
-  .question{
-    border-radius:18px;
-    border:1px solid rgba(0,255,102,0.14);
-    background:rgba(0,0,0,0.24);
-    padding:16px;
-  }
-
-  .question.correct{
-    border-color:rgba(53,224,111,0.55);
-    box-shadow:0 0 0 1px rgba(53,224,111,0.08) inset;
-  }
-
-  .question.wrong{
-    border-color:rgba(255,77,77,0.58);
-    box-shadow:0 0 0 1px rgba(255,77,77,0.10) inset;
-  }
-
-  .qtitle{
-    font-size:1rem;
-    font-weight:800;
-    color:var(--text);
-    margin-bottom:12px;
-    line-height:1.45;
-  }
-
-  .options{
-    display:grid;
-    gap:10px;
-  }
-
-  .opt{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding:11px 12px;
-    border-radius:14px;
-    border:1px solid rgba(0,255,102,0.12);
-    background:rgba(255,255,255,0.03);
-    cursor:pointer;
-    color:var(--text);
-    transition:background .14s ease, transform .14s ease, border-color .14s ease;
-  }
-  .opt:hover{
-    transform:translateY(-1px);
-    border-color:rgba(0,255,102,0.22);
-    background:rgba(0,255,102,0.06);
-  }
-  .opt input{
-    accent-color:var(--accent);
-  }
-
-  .opt.correct{
-    background:rgba(53,224,111,0.16);
-    border-color:rgba(53,224,111,0.60);
-  }
-
-  .opt.wrong{
-    background:rgba(255,77,77,0.14);
-    border-color:rgba(255,77,77,0.56);
-  }
-
-  .feedback{
-    margin-top:12px;
-    padding:12px 13px;
-    border-radius:14px;
-    display:none;
-    line-height:1.5;
-  }
+  .question{border-radius:18px;border:1px solid rgba(0,255,102,0.14);background:rgba(0,0,0,0.24);padding:16px}
+  .question.correct{border-color:rgba(53,224,111,0.55);box-shadow:0 0 0 1px rgba(53,224,111,0.08) inset}
+  .question.wrong{border-color:rgba(255,77,77,0.58);box-shadow:0 0 0 1px rgba(255,77,77,0.10) inset}
+  .qtitle{font-size:1rem;font-weight:800;color:var(--text);margin-bottom:12px;line-height:1.45}
+  .options{display:grid;gap:10px}
+  .opt{display:flex;align-items:center;gap:10px;padding:11px 12px;border-radius:14px;border:1px solid rgba(0,255,102,0.12);background:rgba(255,255,255,0.03);cursor:pointer;color:var(--text);transition:background .14s ease, transform .14s ease, border-color .14s ease}
+  .opt:hover{transform:translateY(-1px);border-color:rgba(0,255,102,0.22);background:rgba(0,255,102,0.06)}
+  .opt input{accent-color:var(--accent)}
+  .opt.correct{background:rgba(53,224,111,0.16);border-color:rgba(53,224,111,0.60)}
+  .opt.wrong{background:rgba(255,77,77,0.14);border-color:rgba(255,77,77,0.56)}
+  .feedback{margin-top:12px;padding:12px 13px;border-radius:14px;display:none;line-height:1.5}
   .feedback.show{display:block}
-  .feedback.ok{
-    background:rgba(53,224,111,0.12);
-    border:1px solid rgba(53,224,111,0.45);
-    color:#d6ffe2;
-  }
-  .feedback.bad{
-    background:rgba(255,77,77,0.12);
-    border:1px solid rgba(255,77,77,0.45);
-    color:#ffe0e0;
-  }
+  .feedback.ok{background:rgba(53,224,111,0.12);border:1px solid rgba(53,224,111,0.45);color:#d6ffe2}
+  .feedback.bad{background:rgba(255,77,77,0.12);border:1px solid rgba(255,77,77,0.45);color:#ffe0e0}
+  .result-bar{margin-top:16px;padding:14px 16px;border-radius:16px;background:rgba(0,255,102,0.08);border:1px solid rgba(0,255,102,0.14);color:var(--text);text-align:left;line-height:1.5}
+  .actions{display:flex;gap:12px;flex-wrap:wrap;justify-content:flex-start;margin-top:16px}
+  .helper{color:var(--muted);line-height:1.55;font-size:0.94rem}
+  .footer-note{margin-top:16px;color:rgba(231,255,240,0.60);font-size:0.88rem;text-align:left}
 
-  .result-bar{
-    margin-top:16px;
-    padding:14px 16px;
-    border-radius:16px;
-    background:rgba(0,255,102,0.08);
-    border:1px solid rgba(0,255,102,0.14);
-    color:var(--text);
-    text-align:left;
-    line-height:1.5;
-  }
+  .login-grid{display:grid;gap:14px;width:min(520px,100%);margin:0 auto;text-align:left}
+  .input{width:100%;padding:14px 16px;border-radius:14px;border:1px solid rgba(0,255,102,0.18);background:rgba(0,0,0,0.26);color:var(--text);outline:none;font-size:1rem}
+  .input:focus{border-color:rgba(0,255,102,0.38);box-shadow:0 0 0 3px rgba(0,255,102,0.10)}
+  textarea.input{min-height:140px;resize:vertical;line-height:1.5}
 
-  .actions{
-    display:flex;
-    gap:12px;
-    flex-wrap:wrap;
-    justify-content:flex-start;
-    margin-top:16px;
-  }
+  .stats-grid{display:grid;grid-template-columns:repeat(3, minmax(0,1fr));gap:12px;margin-top:18px}
+  .stat{border-radius:18px;padding:14px;background:rgba(0,0,0,0.25);border:1px solid rgba(0,255,102,0.14);text-align:left}
+  .stat .label{color:var(--muted);font-size:0.8rem;text-transform:uppercase;letter-spacing:0.8px}
+  .stat .value{margin-top:6px;font-size:1.15rem;font-weight:900;color:var(--text)}
+  .history{display:grid;gap:10px;margin-top:16px}
+  .history-item{padding:12px 14px;border-radius:14px;background:rgba(0,0,0,0.24);border:1px solid rgba(0,255,102,0.12);color:var(--muted);text-align:left;line-height:1.45}
 
-  .helper{
-    color:var(--muted);
-    line-height:1.55;
-    font-size:0.94rem;
-  }
+  .achievement-grid{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:12px;margin-top:16px}
+  .badge{border-radius:18px;padding:14px;text-align:left;border:1px solid rgba(0,255,102,0.14);background:rgba(0,0,0,0.24)}
+  .badge.done{border-color:rgba(53,224,111,0.55);background:rgba(53,224,111,0.08)}
+  .badge.locked{opacity:0.74}
+  .badge h4{color:var(--text);margin-bottom:6px;font-size:1rem}
+  .badge p{color:var(--muted);line-height:1.45;font-size:0.92rem}
 
-  .footer-note{
-    margin-top:16px;
-    color:rgba(231,255,240,0.60);
-    font-size:0.88rem;
-    text-align:left;
-  }
+  .setting-row{display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;padding:14px 0;border-bottom:1px solid rgba(0,255,102,0.12)}
+  .setting-row:last-child{border-bottom:0}
+  .setting-copy{max-width:560px;text-align:left}
+  .setting-copy h4{color:var(--text);margin-bottom:4px}
+  .setting-copy p{color:var(--muted);line-height:1.45;font-size:0.92rem}
+  .range-wrap{display:flex;align-items:center;gap:10px;min-width:min(360px,100%);flex:1;justify-content:flex-end}
+  input[type="range"]{width:min(250px,100%);accent-color:var(--accent)}
+  .mini-status{margin-top:12px;color:var(--muted);font-size:0.92rem;line-height:1.5}
+  .shortcuts{display:grid;gap:10px;margin-top:16px}
+  .shortcut{padding:12px 14px;border-radius:14px;background:rgba(0,0,0,0.24);border:1px solid rgba(0,255,102,0.12);text-align:left;color:var(--muted);line-height:1.45}
+  .hidden{display:none !important}
 
-  .login-grid{
-    display:grid;
-    gap:14px;
-    width:min(520px,100%);
-    margin:0 auto;
-    text-align:left;
-  }
+  .toast{position:fixed;left:50%;bottom:18px;transform:translateX(-50%) translateY(16px);background:rgba(5,10,7,0.96);color:var(--text);border:1px solid rgba(0,255,102,0.22);box-shadow:0 10px 28px rgba(0,0,0,0.38), 0 0 18px rgba(0,255,102,0.10);padding:12px 16px;border-radius:14px;z-index:90;opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease;max-width:min(90vw,560px);text-align:center}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 
-  .input{
-    width:100%;
-    padding:14px 16px;
-    border-radius:14px;
-    border:1px solid rgba(0,255,102,0.18);
-    background:rgba(0,0,0,0.26);
-    color:var(--text);
-    outline:none;
-    font-size:1rem;
-  }
-  .input:focus{
-    border-color:rgba(0,255,102,0.38);
-    box-shadow:0 0 0 3px rgba(0,255,102,0.10);
-  }
+  .quick-grid{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:10px}
+  .quick-grid .btn{min-width:0;width:100%}
+  .game-grid{display:grid;grid-template-columns:repeat(2, minmax(0,1fr));gap:16px;margin-top:16px}
+  .signal-field{position:relative;height:260px;border-radius:18px;border:1px solid rgba(0,255,102,0.16);background:linear-gradient(180deg, rgba(0,255,102,0.04), rgba(0,0,0,0.26));overflow:hidden}
+  .signal-target{position:absolute;width:64px;height:64px;border-radius:50%;border:0;background:var(--accent);color:#021108;font-weight:900;box-shadow:0 0 18px rgba(0,255,102,0.35);cursor:pointer}
+  .sequence-display{min-height:54px;padding:14px;border-radius:16px;border:1px solid rgba(0,255,102,0.14);background:rgba(0,0,0,0.24);color:var(--text);font-weight:800;letter-spacing:1.2px}
+  .color-pad-row{display:grid;grid-template-columns:repeat(4, minmax(0,1fr));gap:10px;margin-top:12px}
+  .color-pad{min-width:0;width:100%;padding:14px 10px;border-radius:14px;border:1px solid rgba(255,255,255,0.10);color:#fff;font-weight:900;cursor:pointer}
+  .pad-red{background:#ff4d4d}.pad-green{background:#00b85c}.pad-blue{background:#0ea5e9}.pad-yellow{background:#eab308;color:#111827}
+  .pad-flash{filter:brightness(1.6);box-shadow:0 0 18px rgba(255,255,255,0.24)}
+  .egg-list{display:grid;gap:10px;margin-top:16px}
+  .egg-item{padding:14px;border-radius:16px;background:rgba(0,0,0,0.24);border:1px solid rgba(0,255,102,0.12);text-align:left}
+  .egg-item.done{border-color:rgba(53,224,111,0.50);background:rgba(53,224,111,0.08)}
+  .egg-item h4{margin-bottom:6px;color:var(--text)}
+  .egg-item p{color:var(--muted);line-height:1.45;font-size:0.92rem}
 
-  textarea.input{
-    min-height:140px;
-    resize:vertical;
-    line-height:1.5;
-  }
-
-  .stats-grid{
-    display:grid;
-    grid-template-columns:repeat(3, minmax(0,1fr));
-    gap:12px;
-    margin-top:18px;
-  }
-
-  .stat{
-    border-radius:18px;
-    padding:14px;
-    background:rgba(0,0,0,0.25);
-    border:1px solid rgba(0,255,102,0.14);
-    text-align:left;
-  }
-
-  .stat .label{
-    color:var(--muted);
-    font-size:0.8rem;
-    text-transform:uppercase;
-    letter-spacing:0.8px;
-  }
-
-  .stat .value{
-    margin-top:6px;
-    font-size:1.15rem;
-    font-weight:900;
-    color:var(--text);
-  }
-
-  .history{
-    display:grid;
-    gap:10px;
-    margin-top:16px;
-  }
-
-  .history-item{
-    padding:12px 14px;
-    border-radius:14px;
-    background:rgba(0,0,0,0.24);
-    border:1px solid rgba(0,255,102,0.12);
-    color:var(--muted);
-    text-align:left;
-    line-height:1.45;
-  }
-
-  .achievement-grid{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0,1fr));
-    gap:12px;
-    margin-top:16px;
-  }
-
-  .badge{
-    border-radius:18px;
-    padding:14px;
-    text-align:left;
-    border:1px solid rgba(0,255,102,0.14);
-    background:rgba(0,0,0,0.24);
-  }
-
-  .badge.done{
-    border-color:rgba(53,224,111,0.55);
-    background:rgba(53,224,111,0.08);
-  }
-
-  .badge.locked{
-    opacity:0.74;
-  }
-
-  .badge h4{
-    color:var(--text);
-    margin-bottom:6px;
-    font-size:1rem;
-  }
-
-  .badge p{
-    color:var(--muted);
-    line-height:1.45;
-    font-size:0.92rem;
-  }
-
-  .setting-row{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:14px;
-    flex-wrap:wrap;
-    padding:14px 0;
-    border-bottom:1px solid rgba(0,255,102,0.12);
-  }
-
-  .setting-row:last-child{
-    border-bottom:0;
-  }
-
-  .setting-copy{
-    max-width:560px;
-    text-align:left;
-  }
-
-  .setting-copy h4{
-    color:var(--text);
-    margin-bottom:4px;
-  }
-
-  .setting-copy p{
-    color:var(--muted);
-    line-height:1.45;
-    font-size:0.92rem;
-  }
-
-  .range-wrap{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    min-width:min(360px,100%);
-    flex:1;
-    justify-content:flex-end;
-  }
-
-  input[type="range"]{
-    width:min(250px,100%);
-    accent-color:var(--accent);
-  }
-
-  .mini-status{
-    margin-top:12px;
-    color:var(--muted);
-    font-size:0.92rem;
-    line-height:1.5;
-  }
-
-  .shortcuts{
-    display:grid;
-    gap:10px;
-    margin-top:16px;
-  }
-
-  .shortcut{
-    padding:12px 14px;
-    border-radius:14px;
-    background:rgba(0,0,0,0.24);
-    border:1px solid rgba(0,255,102,0.12);
-    text-align:left;
-    color:var(--muted);
-    line-height:1.45;
-  }
-
-  .hidden{display:none !important;}
-
-  .toast{
-    position:fixed;
-    left:50%;
-    bottom:18px;
-    transform:translateX(-50%) translateY(16px);
-    background:rgba(5,10,7,0.96);
-    color:var(--text);
-    border:1px solid rgba(0,255,102,0.22);
-    box-shadow:0 10px 28px rgba(0,0,0,0.38), 0 0 18px rgba(0,255,102,0.10);
-    padding:12px 16px;
-    border-radius:14px;
-    z-index:90;
-    opacity:0;
-    pointer-events:none;
-    transition:opacity .2s ease, transform .2s ease;
-    max-width:min(90vw,560px);
-    text-align:center;
-  }
-
-  .toast.show{
-    opacity:1;
-    transform:translateX(-50%) translateY(0);
-  }
-
-  .quick-grid{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0,1fr));
-    gap:10px;
-  }
-  .quick-grid .btn{
-    min-width:0;
-    width:100%;
-  }
-
-  .game-grid{
-    display:grid;
-    grid-template-columns:repeat(2, minmax(0,1fr));
-    gap:16px;
-    margin-top:16px;
-  }
-
-  .signal-field{
-    position:relative;
-    height:260px;
-    border-radius:18px;
-    border:1px solid rgba(0,255,102,0.16);
-    background:linear-gradient(180deg, rgba(0,255,102,0.04), rgba(0,0,0,0.26));
-    overflow:hidden;
-  }
-
-  .signal-target{
-    position:absolute;
-    width:64px;
-    height:64px;
-    border-radius:50%;
-    border:0;
-    background:var(--accent);
-    color:#021108;
-    font-weight:900;
-    box-shadow:0 0 18px rgba(0,255,102,0.35);
-    cursor:pointer;
-  }
-
-  .sequence-display{
-    min-height:54px;
-    padding:14px;
-    border-radius:16px;
-    border:1px solid rgba(0,255,102,0.14);
-    background:rgba(0,0,0,0.24);
-    color:var(--text);
-    font-weight:800;
-    letter-spacing:1.2px;
-  }
-
-  .color-pad-row{
-    display:grid;
-    grid-template-columns:repeat(4, minmax(0,1fr));
-    gap:10px;
-    margin-top:12px;
-  }
-
-  .color-pad{
-    min-width:0;
-    width:100%;
-    padding:14px 10px;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,0.10);
-    color:#fff;
-    font-weight:900;
-    cursor:pointer;
-  }
-
-  .pad-red{background:#ff4d4d}
-  .pad-green{background:#00b85c}
-  .pad-blue{background:#0ea5e9}
-  .pad-yellow{background:#eab308; color:#111827}
-
-  .pad-flash{
-    filter:brightness(1.6);
-    box-shadow:0 0 18px rgba(255,255,255,0.24);
-  }
-
-  .egg-list{
-    display:grid;
-    gap:10px;
-    margin-top:16px;
-  }
-
-  .egg-item{
-    padding:14px;
-    border-radius:16px;
-    background:rgba(0,0,0,0.24);
-    border:1px solid rgba(0,255,102,0.12);
-    text-align:left;
-  }
-
-  .egg-item.done{
-    border-color:rgba(53,224,111,0.50);
-    background:rgba(53,224,111,0.08);
-  }
-
-  .egg-item h4{
-    margin-bottom:6px;
-    color:var(--text);
-  }
-
-  .egg-item p{
-    color:var(--muted);
-    line-height:1.45;
-    font-size:0.92rem;
-  }
+  .puzzle-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:16px}
+  .puzzle-board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .tile{padding:22px 10px;border-radius:16px;border:1px solid rgba(0,255,102,0.16);background:rgba(0,0,0,0.22);cursor:pointer;font-weight:900}
+  .tile.on{background:rgba(0,255,102,0.18);border-color:rgba(0,255,102,0.55)}
+  .maze-board{display:grid;grid-template-columns:repeat(5, 1fr);gap:8px}
+  .maze-cell{padding:16px 0;border-radius:14px;border:1px solid rgba(0,255,102,0.12);background:rgba(0,0,0,0.24);cursor:pointer;font-weight:900}
+  .maze-cell.wall{background:rgba(255,77,77,0.18)}
+  .maze-cell.path{background:rgba(0,255,102,0.15)}
+  .maze-cell.end{background:rgba(0,212,255,0.18)}
 
   @media (max-width: 900px){
-    .course-grid,.feature-grid,.stats-grid,.achievement-grid,.game-grid{
-      grid-template-columns:1fr 1fr;
-    }
+    .course-grid,.feature-grid,.stats-grid,.achievement-grid,.game-grid,.puzzle-grid{grid-template-columns:1fr 1fr}
   }
-
   @media (max-width: 640px){
-    .shell,.scroll-shell{
-      padding:18px;
-    }
-    .btn{
-      min-width:100%;
-    }
-    .chip-row{
-      justify-content:flex-start;
-    }
-    .brand{
-      text-align:left;
-    }
-    .course-grid,.feature-grid,.stats-grid,.achievement-grid,.game-grid,.quick-grid,.color-pad-row{
-      grid-template-columns:1fr;
-    }
-    .range-wrap{
-      justify-content:flex-start;
-      width:100%;
-      min-width:0;
-    }
+    .shell,.scroll-shell{padding:18px}.btn{min-width:100%}.chip-row{justify-content:flex-start}.brand{text-align:left}
+    .course-grid,.feature-grid,.stats-grid,.achievement-grid,.game-grid,.quick-grid,.color-pad-row,.puzzle-grid{grid-template-columns:1fr}
+    .range-wrap{justify-content:flex-start;width:100%;min-width:0}
   }
 </style>
 </head>
@@ -837,6 +221,8 @@
     <button class="side-btn" onclick="showScreen('help')">Help</button>
     <button class="side-btn" onclick="openCourse(1)">Course 1</button>
     <button class="side-btn" onclick="openCourse(2)">Course 2</button>
+    <button class="side-btn" onclick="openCourse(3)">Course 3</button>
+    <button class="side-btn" onclick="openCourse(4)">Course 4</button>
 
     <div class="side-group">
       <h3>Matrix Controls</h3>
@@ -847,6 +233,8 @@
       <button class="side-btn" onclick="toggleGlitch()">Glitch Mode</button>
       <button class="side-btn" onclick="toggleSound()">Sound On/Off</button>
       <button class="side-btn" onclick="burstMatrix()">Matrix Burst</button>
+      <button class="side-btn" onclick="randomTitle()">Random Title</button>
+      <button class="side-btn" onclick="scanEggs()">Scan Eggs</button>
       <button class="side-btn" onclick="resetAll()">Reset Everything</button>
       <button class="side-btn" onclick="logoutUser()">Logout</button>
     </div>
@@ -861,8 +249,7 @@
             <p id="homeSub">A clean neon doorway. Everything else waits behind it.</p>
           </div>
         </div>
-
-        <div class="grid" style="gap:18px; margin-top:16px;">
+        <div class="grid" style="gap:18px;margin-top:16px;">
           <button class="btn" id="enterBtn" onclick="enterFlow()">Enter</button>
         </div>
       </div>
@@ -873,29 +260,20 @@
         <div class="topbar">
           <div class="brand">
             <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Login</h1>
-            <p>
-              A tiny local login. No backend. No cloud goblin. Just your browser remembering your name.
-            </p>
+            <p>A tiny local login. No backend. No cloud goblin. Just your browser remembering your name.</p>
           </div>
-          <div class="back-row">
-            <button class="btn dark" onclick="showScreen('home')">Back Home</button>
-          </div>
+          <div class="back-row"><button class="btn dark" onclick="showScreen('home')">Back Home</button></div>
         </div>
-
         <div class="login-grid">
           <div>
             <label class="helper" for="usernameInput">Username</label>
             <input id="usernameInput" class="input" type="text" placeholder="Enter a name" maxlength="32" />
           </div>
-
           <div class="grid" style="gap:12px;">
             <button class="btn" onclick="loginUser()">Continue</button>
             <button class="btn secondary" onclick="showScreen('menu')">Skip to menu</button>
           </div>
-
-          <div class="helper">
-            Your name is stored locally in this browser so the site can greet you and keep a local attempt summary.
-          </div>
+          <div class="helper">Your name is stored locally in this browser so the site can greet you and keep a local attempt summary.</div>
         </div>
       </div>
     </section>
@@ -907,27 +285,14 @@
             <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Course Menu</h1>
             <p id="menuSummary">No attempts yet.</p>
           </div>
-          <div class="back-row">
-            <button class="btn dark" onclick="showScreen('home')">Back Home</button>
-          </div>
+          <div class="back-row"><button class="btn dark" onclick="showScreen('home')">Back Home</button></div>
         </div>
-
         <div class="grid course-grid">
-          <div class="card">
-            <div class="tag">Course 1</div>
-            <h2>Matrix Basics</h2>
-            <p>A starter course. Clean, simple, and easy to swap out later when your final questions are ready.</p>
-            <button class="btn" onclick="openCourse(1)">Open Course 1</button>
-          </div>
-
-          <div class="card">
-            <div class="tag">Course 2</div>
-            <h2>Scam Spotting</h2>
-            <p>This version flips the drama into awareness mode, so it teaches how to spot warning signs instead of how to run them.</p>
-            <button class="btn secondary" onclick="openCourse(2)">Open Course 2</button>
-          </div>
+          <div class="card"><div class="tag">Course 1</div><h2>Matrix Basics</h2><p>A starter course. Clean, simple, and easy to swap out later when your final questions are ready.</p><button class="btn" onclick="openCourse(1)">Open Course 1</button></div>
+          <div class="card"><div class="tag">Course 2</div><h2>Scam Spotting</h2><p>This version flips the drama into awareness mode, so it teaches how to spot warning signs instead of how to run them.</p><button class="btn secondary" onclick="openCourse(2)">Open Course 2</button></div>
+          <div class="card"><div class="tag">Course 3</div><h2>Signal Theory</h2><p>Patterns, noise, memory, and quick thinking. A cleaner brain drill.</p><button class="btn" onclick="openCourse(3)">Open Course 3</button></div>
+          <div class="card"><div class="tag">Course 4</div><h2>Reality Engineering</h2><p>Build the world you see. Controls, systems, and how rules shape outcomes.</p><button class="btn secondary" onclick="openCourse(4)">Open Course 4</button></div>
         </div>
-
         <div class="grid feature-grid">
           <div class="card">
             <div class="tag">Quick Access</div>
@@ -940,7 +305,6 @@
               <button class="btn dark" onclick="showScreen('eggs')">Easter Eggs</button>
             </div>
           </div>
-
           <div class="card">
             <div class="tag">Profile</div>
             <p id="menuProfile">Guest mode. Login to keep a local profile.</p>
@@ -953,32 +317,14 @@
     <section id="courseScreen" class="screen">
       <div class="scroll-shell" id="courseWrap">
         <div class="course-head">
-          <div class="course-title">
-            <h2 id="courseTitle">Course</h2>
-            <p id="courseIntro"></p>
-          </div>
-          <div class="back-row">
-            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
-            <button class="btn warn" onclick="resetCourse()">Retake Quiz</button>
-          </div>
+          <div class="course-title"><h2 id="courseTitle">Course</h2><p id="courseIntro"></p></div>
+          <div class="back-row"><button class="btn dark" onclick="showScreen('menu')">Back to Menu</button><button class="btn warn" onclick="resetCourse()">Retake Quiz</button></div>
         </div>
-
         <div class="quiz-wrap">
-          <div class="quiz-note">
-            Answer all questions first, then press <b>Submit answers</b>. After that, the quiz will show the correct answers, your score, and a short explanation for each question.
-          </div>
-
-          <div class="progress" aria-label="Quiz progress">
-            <div class="progress-fill" id="progressFill"></div>
-          </div>
-
+          <div class="quiz-note">Answer all questions first, then press <b>Submit answers</b>. After that, the quiz will show the correct answers, your score, and a short explanation for each question.</div>
+          <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
           <div id="quizContainer" class="grid" style="gap:14px;"></div>
-
-          <div class="actions">
-            <button class="btn" id="submitQuizBtn" onclick="submitQuiz()">Submit answers</button>
-            <button class="btn secondary hidden" id="reviewBtn" onclick="scrollToResults()">Review results</button>
-          </div>
-
+          <div class="actions"><button class="btn" id="submitQuizBtn" onclick="submitQuiz()">Submit answers</button><button class="btn secondary hidden" id="reviewBtn" onclick="scrollToResults()">Review results</button></div>
           <div id="resultBar" class="result-bar hidden"></div>
           <div id="courseMsg" class="footer-note"></div>
         </div>
@@ -988,16 +334,9 @@
     <section id="stats" class="screen">
       <div class="scroll-shell">
         <div class="topbar">
-          <div class="brand">
-            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Stats</h1>
-            <p>Local-only memory of your attempts. It stays in this browser and turns into a little performance fossil bed.</p>
-          </div>
-          <div class="back-row">
-            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
-            <button class="btn warn" onclick="clearAttempts()">Clear Attempts</button>
-          </div>
+          <div class="brand"><h1 style="font-size:clamp(2rem,4vw,3.4rem)">Stats</h1><p>Local-only memory of your attempts. It stays in this browser and turns into a little performance fossil bed.</p></div>
+          <div class="back-row"><button class="btn dark" onclick="showScreen('menu')">Back to Menu</button><button class="btn warn" onclick="clearAttempts()">Clear Attempts</button></div>
         </div>
-
         <div class="stats-grid">
           <div class="stat"><div class="label">User</div><div class="value" id="statUser">Guest</div></div>
           <div class="stat"><div class="label">Attempts</div><div class="value" id="statAttempts">0</div></div>
@@ -1009,46 +348,26 @@
           <div class="stat"><div class="label">Sequence Best</div><div class="value" id="statSequence">0</div></div>
           <div class="stat"><div class="label">Eggs Found</div><div class="value" id="statEggs">0</div></div>
         </div>
-
-        <div class="card" style="margin-top:16px; text-align:left;">
-          <div class="tag">Recent attempts</div>
-          <div id="historyList" class="history"></div>
-        </div>
+        <div class="card" style="margin-top:16px;text-align:left;"><div class="tag">Recent attempts</div><div id="historyList" class="history"></div></div>
       </div>
     </section>
 
     <section id="games" class="screen">
       <div class="scroll-shell">
         <div class="topbar">
-          <div class="brand">
-            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Mini Games</h1>
-            <p>Two little side quests. One is twitchy, one is pattern memory. Both are local and save their stats.</p>
-          </div>
-          <div class="back-row">
-            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
-          </div>
+          <div class="brand"><h1 style="font-size:clamp(2rem,4vw,3.4rem)">Mini Games</h1><p>Three little side quests. One is twitchy, one is pattern memory, one is a maze snap challenge.</p></div>
+          <div class="back-row"><button class="btn dark" onclick="showScreen('menu')">Back to Menu</button></div>
         </div>
-
         <div class="game-grid">
           <div class="card">
-            <div class="tag">Signal Tap</div>
-            <h2>Catch the pulse</h2>
-            <p>Click the glowing target as many times as you can before the timer runs out.</p>
+            <div class="tag">Signal Tap</div><h2>Catch the pulse</h2><p>Click the glowing target as many times as you can before the timer runs out.</p>
             <div class="mini-status" id="signalHud">Best: 0 | Plays: 0 | Time: 20</div>
-            <div class="signal-field" id="signalField">
-              <button class="signal-target" id="signalTarget" onclick="hitSignal()">GO</button>
-            </div>
-            <div class="actions">
-              <button class="btn" onclick="startSignalGame()">Start Signal Tap</button>
-              <button class="btn dark" onclick="resetSignalGame()">Reset</button>
-            </div>
+            <div class="signal-field" id="signalField"><button class="signal-target" id="signalTarget" onclick="hitSignal()">GO</button></div>
+            <div class="actions"><button class="btn" onclick="startSignalGame()">Start Signal Tap</button><button class="btn dark" onclick="resetSignalGame()">Reset</button></div>
             <div class="mini-status" id="signalMsg">Ready.</div>
           </div>
-
           <div class="card">
-            <div class="tag">Sequence Lock</div>
-            <h2>Repeat the pattern</h2>
-            <p>Watch the sequence, then repeat it in order. Each clear round gets longer.</p>
+            <div class="tag">Sequence Lock</div><h2>Repeat the pattern</h2><p>Watch the sequence, then repeat it in order. Each clear round gets longer.</p>
             <div class="mini-status" id="sequenceHud">Best: 0 | Level: 1</div>
             <div class="sequence-display" id="sequenceDisplay">Press Start Sequence.</div>
             <div class="color-pad-row">
@@ -1057,11 +376,22 @@
               <button class="color-pad pad-blue" onclick="pickSequence(2)">Blue</button>
               <button class="color-pad pad-yellow" onclick="pickSequence(3)">Yellow</button>
             </div>
-            <div class="actions">
-              <button class="btn secondary" onclick="startSequenceGame()">Start Sequence</button>
-              <button class="btn dark" onclick="resetSequenceGame()">Reset</button>
-            </div>
+            <div class="actions"><button class="btn secondary" onclick="startSequenceGame()">Start Sequence</button><button class="btn dark" onclick="resetSequenceGame()">Reset</button></div>
             <div class="mini-status" id="sequenceMsg">Ready.</div>
+          </div>
+          <div class="card">
+            <div class="tag">Tile Flip</div><h2>3x3 memory board</h2><p>Flip tiles and try to match the hidden glow. Best score and wins are tracked locally.</p>
+            <div class="mini-status" id="tileHud">Matches: 0 | Turns: 0</div>
+            <div class="puzzle-board" id="tileBoard"></div>
+            <div class="actions"><button class="btn" onclick="startTileGame()">Start Tiles</button><button class="btn dark" onclick="resetTileGame()">Reset</button></div>
+            <div class="mini-status" id="tileMsg">Ready.</div>
+          </div>
+          <div class="card">
+            <div class="tag">Maze Snap</div><h2>Find the exit</h2><p>Click through the maze from start to end without stepping on a wall. Wrong clicks reset the run.</p>
+            <div class="mini-status" id="mazeHud">Steps: 0 | Best: 0</div>
+            <div class="maze-board" id="mazeBoard"></div>
+            <div class="actions"><button class="btn secondary" onclick="startMazeGame()">Start Maze</button><button class="btn dark" onclick="resetMazeGame()">Reset</button></div>
+            <div class="mini-status" id="mazeMsg">Ready.</div>
           </div>
         </div>
       </div>
@@ -1070,117 +400,32 @@
     <section id="save" class="screen">
       <div class="scroll-shell compact">
         <div class="topbar">
-          <div class="brand">
-            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Save Code</h1>
-            <p>Export your local profile as one long code, or paste a code here to restore it on this browser.</p>
-          </div>
-          <div class="back-row">
-            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
-          </div>
+          <div class="brand"><h1 style="font-size:clamp(2rem,4vw,3.4rem)">Save Code</h1><p>Export your local profile as one long code, or paste a code here to restore it on this browser.</p></div>
+          <div class="back-row"><button class="btn dark" onclick="showScreen('menu')">Back to Menu</button></div>
         </div>
-
         <div class="card">
           <div class="tag">Portable backup</div>
           <textarea id="saveCodeBox" class="input" placeholder="Generate a code or paste one here, then load it."></textarea>
-
-          <div class="actions">
-            <button class="btn secondary" onclick="generateSaveCode()">Generate Code</button>
-            <button class="btn" onclick="copySaveCode()">Copy Code</button>
-            <button class="btn dark" onclick="loadSaveCode()">Load Code</button>
-            <button class="btn warn" onclick="clearLocalData()">Clear All Local Data</button>
-          </div>
-
+          <div class="actions"><button class="btn secondary" onclick="generateSaveCode()">Generate Code</button><button class="btn" onclick="copySaveCode()">Copy Code</button><button class="btn dark" onclick="loadSaveCode()">Load Code</button><button class="btn warn" onclick="clearLocalData()">Clear All Local Data</button></div>
           <div id="saveStatus" class="mini-status">The code includes your username, attempts, notes, settings, minigame stats, and eggs.</div>
         </div>
       </div>
     </section>
-
-    <section id="settings" class="screen">
+        <section id="settings" class="screen">
       <div class="scroll-shell compact">
         <div class="topbar">
-          <div class="brand">
-            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Settings</h1>
-            <p>Tweak the neon engine. These settings are saved locally and also travel inside the save code.</p>
-          </div>
-          <div class="back-row">
-            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
-          </div>
+          <div class="brand"><h1 style="font-size:clamp(2rem,4vw,3.4rem)">Settings</h1><p>Tweak the neon engine. These settings are saved locally and also travel inside the save code.</p></div>
+          <div class="back-row"><button class="btn dark" onclick="showScreen('menu')">Back to Menu</button></div>
         </div>
-
         <div class="card">
-          <div class="setting-row">
-            <div class="setting-copy">
-              <h4>Accent color</h4>
-              <p>Cycle the glow color that powers the matrix and the buttons.</p>
-            </div>
-            <button class="btn dark" onclick="cycleAccent()">Change Accent</button>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-copy">
-              <h4>Matrix speed</h4>
-              <p>Lower numbers make the rain more active.</p>
-            </div>
-            <div class="range-wrap">
-              <input id="speedRange" type="range" min="12" max="90" step="1" />
-              <span class="chip" id="speedValue">35 ms</span>
-            </div>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-copy">
-              <h4>Trail fade</h4>
-              <p>Controls how long the characters linger before fading away.</p>
-            </div>
-            <div class="range-wrap">
-              <input id="trailRange" type="range" min="0.01" max="0.2" step="0.01" />
-              <span class="chip" id="trailValue">0.08</span>
-            </div>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-copy">
-              <h4>Font size</h4>
-              <p>Change the matrix character size for a tighter or chunkier rain effect.</p>
-            </div>
-            <div class="range-wrap">
-              <input id="fontRange" type="range" min="12" max="24" step="1" />
-              <span class="chip" id="fontValue">18 px</span>
-            </div>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-copy">
-              <h4>Sound</h4>
-              <p>Small browser beeps for button presses and quiz actions.</p>
-            </div>
-            <button class="btn dark" onclick="toggleSound()">Toggle Sound</button>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-copy">
-              <h4>Glitch mode</h4>
-              <p>Adds a tiny distortion filter across the page.</p>
-            </div>
-            <button class="btn dark" onclick="toggleGlitch()">Toggle Glitch</button>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-copy">
-              <h4>Rain control</h4>
-              <p>Pause or resume the matrix rain anytime.</p>
-            </div>
-            <button class="btn dark" onclick="toggleRain()">Toggle Rain</button>
-          </div>
-
-          <div class="setting-row">
-            <div class="setting-copy">
-              <h4>Burst effect</h4>
-              <p>Turns the rain into a quick visual spike for a dramatic flash.</p>
-            </div>
-            <button class="btn secondary" onclick="burstMatrix()">Matrix Burst</button>
-          </div>
-
+          <div class="setting-row"><div class="setting-copy"><h4>Accent color</h4><p>Cycle the glow color that powers the matrix and the buttons.</p></div><button class="btn dark" onclick="cycleAccent()">Change Accent</button></div>
+          <div class="setting-row"><div class="setting-copy"><h4>Matrix speed</h4><p>Lower numbers make the rain more active.</p></div><div class="range-wrap"><input id="speedRange" type="range" min="12" max="90" step="1" /><span class="chip" id="speedValue">35 ms</span></div></div>
+          <div class="setting-row"><div class="setting-copy"><h4>Trail fade</h4><p>Controls how long the characters linger before fading away.</p></div><div class="range-wrap"><input id="trailRange" type="range" min="0.01" max="0.2" step="0.01" /><span class="chip" id="trailValue">0.08</span></div></div>
+          <div class="setting-row"><div class="setting-copy"><h4>Font size</h4><p>Change the matrix character size for a tighter or chunkier rain effect.</p></div><div class="range-wrap"><input id="fontRange" type="range" min="12" max="24" step="1" /><span class="chip" id="fontValue">18 px</span></div></div>
+          <div class="setting-row"><div class="setting-copy"><h4>Sound</h4><p>Small browser beeps for button presses and quiz actions.</p></div><button class="btn dark" onclick="toggleSound()">Toggle Sound</button></div>
+          <div class="setting-row"><div class="setting-copy"><h4>Glitch mode</h4><p>Adds a tiny distortion filter across the page.</p></div><button class="btn dark" onclick="toggleGlitch()">Toggle Glitch</button></div>
+          <div class="setting-row"><div class="setting-copy"><h4>Rain control</h4><p>Pause or resume the matrix rain anytime.</p></div><button class="btn dark" onclick="toggleRain()">Toggle Rain</button></div>
+          <div class="setting-row"><div class="setting-copy"><h4>Burst effect</h4><p>Turns the rain into a quick visual spike for a dramatic flash.</p></div><button class="btn secondary" onclick="burstMatrix()">Matrix Burst</button></div>
           <div id="settingsStatus" class="mini-status">Settings are stored locally in this browser.</div>
         </div>
       </div>
@@ -1188,79 +433,28 @@
 
     <section id="achievements" class="screen">
       <div class="scroll-shell">
-        <div class="topbar">
-          <div class="brand">
-            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Achievements</h1>
-            <p>Tiny badges for the road. They are calculated from your local profile and attempts.</p>
-          </div>
-          <div class="back-row">
-            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
-          </div>
-        </div>
-
+        <div class="topbar"><div class="brand"><h1 style="font-size:clamp(2rem,4vw,3.4rem)">Achievements</h1><p>Tiny badges for the road. They are calculated from your local profile and attempts.</p></div><div class="back-row"><button class="btn dark" onclick="showScreen('menu')">Back to Menu</button></div></div>
         <div id="achievementGrid" class="achievement-grid"></div>
       </div>
     </section>
 
     <section id="eggs" class="screen">
       <div class="scroll-shell compact">
-        <div class="topbar">
-          <div class="brand">
-            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Easter Eggs</h1>
-            <p>Hidden bits, secret sparks, little doorways in the wallpaper.</p>
-          </div>
-          <div class="back-row">
-            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
-            <button class="btn secondary" onclick="scanEggs()">Run Egg Scan</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="tag">Discovered</div>
-          <div id="eggList" class="egg-list"></div>
-          <div class="mini-status" id="eggStatus">Try odd things. The grid likes curiosity.</div>
-        </div>
+        <div class="topbar"><div class="brand"><h1 style="font-size:clamp(2rem,4vw,3.4rem)">Easter Eggs</h1><p>Hidden bits, secret sparks, little doorways in the wallpaper.</p></div><div class="back-row"><button class="btn dark" onclick="showScreen('menu')">Back to Menu</button><button class="btn secondary" onclick="scanEggs()">Run Egg Scan</button></div></div>
+        <div class="card"><div class="tag">Discovered</div><div id="eggList" class="egg-list"></div><div class="mini-status" id="eggStatus">Try odd things. The grid likes curiosity.</div></div>
       </div>
     </section>
 
     <section id="notes" class="screen">
       <div class="scroll-shell compact">
-        <div class="topbar">
-          <div class="brand">
-            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Notes</h1>
-            <p>A local scratchpad for ideas, answers, and little scraps of matrix wisdom.</p>
-          </div>
-          <div class="back-row">
-            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
-          </div>
-        </div>
-
-        <div class="card">
-          <div class="tag">Private scratchpad</div>
-          <textarea id="notesBox" class="input" placeholder="Write notes here..."></textarea>
-
-          <div class="actions">
-            <button class="btn" onclick="saveNotes()">Save Notes</button>
-            <button class="btn secondary" onclick="clearNotes()">Clear Notes</button>
-          </div>
-
-          <div id="notesStatus" class="mini-status">Notes are stored locally in this browser.</div>
-        </div>
+        <div class="topbar"><div class="brand"><h1 style="font-size:clamp(2rem,4vw,3.4rem)">Notes</h1><p>A local scratchpad for ideas, answers, and little scraps of matrix wisdom.</p></div><div class="back-row"><button class="btn dark" onclick="showScreen('menu')">Back to Menu</button></div></div>
+        <div class="card"><div class="tag">Private scratchpad</div><textarea id="notesBox" class="input" placeholder="Write notes here..."></textarea><div class="actions"><button class="btn" onclick="saveNotes()">Save Notes</button><button class="btn secondary" onclick="clearNotes()">Clear Notes</button></div><div id="notesStatus" class="mini-status">Notes are stored locally in this browser.</div></div>
       </div>
     </section>
 
     <section id="help" class="screen">
       <div class="scroll-shell compact">
-        <div class="topbar">
-          <div class="brand">
-            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Help</h1>
-            <p>Quick guide to the controls, shortcuts, and moving parts.</p>
-          </div>
-          <div class="back-row">
-            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
-          </div>
-        </div>
-
+        <div class="topbar"><div class="brand"><h1 style="font-size:clamp(2rem,4vw,3.4rem)">Help</h1><p>Quick guide to the controls, shortcuts, and moving parts.</p></div><div class="back-row"><button class="btn dark" onclick="showScreen('menu')">Back to Menu</button></div></div>
         <div class="shortcuts">
           <div class="shortcut"><b>Enter</b> on the home screen opens the login flow if needed, or the menu if you are already logged in.</div>
           <div class="shortcut"><b>G</b> toggles glitch mode.</div>
@@ -1278,190 +472,150 @@
   <div class="toast" id="toast"></div>
 
 <script>
-  const canvas = document.getElementById("matrix");
-  const ctx = canvas.getContext("2d");
+  const canvas = document.getElementById('matrix');
+  const ctx = canvas.getContext('2d');
+  const sidebar = document.getElementById('sidebar');
+  const menuBtn = document.getElementById('menuBtn');
+  const homeTitle = document.getElementById('homeTitle');
+  const homeSub = document.getElementById('homeSub');
+  const enterBtn = document.getElementById('enterBtn');
+  const menuSummary = document.getElementById('menuSummary');
+  const menuProfile = document.getElementById('menuProfile');
+  const usernameInput = document.getElementById('usernameInput');
+  const courseWrap = document.getElementById('courseWrap');
+  const courseTitle = document.getElementById('courseTitle');
+  const courseIntro = document.getElementById('courseIntro');
+  const quizContainer = document.getElementById('quizContainer');
+  const resultBar = document.getElementById('resultBar');
+  const progressFill = document.getElementById('progressFill');
+  const submitQuizBtn = document.getElementById('submitQuizBtn');
+  const reviewBtn = document.getElementById('reviewBtn');
+  const courseMsg = document.getElementById('courseMsg');
+  const statUser = document.getElementById('statUser');
+  const statAttempts = document.getElementById('statAttempts');
+  const statAvg = document.getElementById('statAvg');
+  const statBest = document.getElementById('statBest');
+  const statXp = document.getElementById('statXp');
+  const statPerfect = document.getElementById('statPerfect');
+  const statSignal = document.getElementById('statSignal');
+  const statSequence = document.getElementById('statSequence');
+  const statEggs = document.getElementById('statEggs');
+  const historyList = document.getElementById('historyList');
+  const saveCodeBox = document.getElementById('saveCodeBox');
+  const saveStatus = document.getElementById('saveStatus');
+  const settingsStatus = document.getElementById('settingsStatus');
+  const notesBox = document.getElementById('notesBox');
+  const notesStatus = document.getElementById('notesStatus');
+  const achievementGrid = document.getElementById('achievementGrid');
+  const eggList = document.getElementById('eggList');
+  const eggStatus = document.getElementById('eggStatus');
+  const speedRange = document.getElementById('speedRange');
+  const trailRange = document.getElementById('trailRange');
+  const fontRange = document.getElementById('fontRange');
+  const speedValue = document.getElementById('speedValue');
+  const trailValue = document.getElementById('trailValue');
+  const fontValue = document.getElementById('fontValue');
+  const toast = document.getElementById('toast');
 
-  const sidebar = document.getElementById("sidebar");
-  const menuBtn = document.getElementById("menuBtn");
-  const homeTitle = document.getElementById("homeTitle");
-  const homeSub = document.getElementById("homeSub");
-  const enterBtn = document.getElementById("enterBtn");
-  const menuSummary = document.getElementById("menuSummary");
-  const menuProfile = document.getElementById("menuProfile");
-  const usernameInput = document.getElementById("usernameInput");
-  const courseWrap = document.getElementById("courseWrap");
-  const courseTitle = document.getElementById("courseTitle");
-  const courseIntro = document.getElementById("courseIntro");
-  const quizContainer = document.getElementById("quizContainer");
-  const resultBar = document.getElementById("resultBar");
-  const progressFill = document.getElementById("progressFill");
-  const submitQuizBtn = document.getElementById("submitQuizBtn");
-  const reviewBtn = document.getElementById("reviewBtn");
-  const courseMsg = document.getElementById("courseMsg");
-  const statUser = document.getElementById("statUser");
-  const statAttempts = document.getElementById("statAttempts");
-  const statAvg = document.getElementById("statAvg");
-  const statBest = document.getElementById("statBest");
-  const statXp = document.getElementById("statXp");
-  const statPerfect = document.getElementById("statPerfect");
-  const statSignal = document.getElementById("statSignal");
-  const statSequence = document.getElementById("statSequence");
-  const statEggs = document.getElementById("statEggs");
-  const historyList = document.getElementById("historyList");
-  const saveCodeBox = document.getElementById("saveCodeBox");
-  const saveStatus = document.getElementById("saveStatus");
-  const settingsStatus = document.getElementById("settingsStatus");
-  const notesBox = document.getElementById("notesBox");
-  const notesStatus = document.getElementById("notesStatus");
-  const achievementGrid = document.getElementById("achievementGrid");
-  const eggList = document.getElementById("eggList");
-  const eggStatus = document.getElementById("eggStatus");
-  const speedRange = document.getElementById("speedRange");
-  const trailRange = document.getElementById("trailRange");
-  const fontRange = document.getElementById("fontRange");
-  const speedValue = document.getElementById("speedValue");
-  const trailValue = document.getElementById("trailValue");
-  const fontValue = document.getElementById("fontValue");
-  const toast = document.getElementById("toast");
+  const signalField = document.getElementById('signalField');
+  const signalTarget = document.getElementById('signalTarget');
+  const signalHud = document.getElementById('signalHud');
+  const signalMsg = document.getElementById('signalMsg');
+  const sequenceHud = document.getElementById('sequenceHud');
+  const sequenceDisplay = document.getElementById('sequenceDisplay');
+  const sequenceMsg = document.getElementById('sequenceMsg');
+  const tileBoard = document.getElementById('tileBoard');
+  const tileHud = document.getElementById('tileHud');
+  const tileMsg = document.getElementById('tileMsg');
+  const mazeBoard = document.getElementById('mazeBoard');
+  const mazeHud = document.getElementById('mazeHud');
+  const mazeMsg = document.getElementById('mazeMsg');
 
-  const signalField = document.getElementById("signalField");
-  const signalTarget = document.getElementById("signalTarget");
-  const signalHud = document.getElementById("signalHud");
-  const signalMsg = document.getElementById("signalMsg");
-  const sequenceHud = document.getElementById("sequenceHud");
-  const sequenceDisplay = document.getElementById("sequenceDisplay");
-  const sequenceMsg = document.getElementById("sequenceMsg");
-
-  const LS_USER = "mtrx_user_v4";
-  const LS_ATTEMPTS = "mtrx_attempts_v4";
-  const LS_SETTINGS = "mtrx_settings_v4";
-  const LS_NOTES = "mtrx_notes_v4";
-  const LS_CODEFLAG = "mtrx_codeflag_v4";
-  const LS_GAMES = "mtrx_games_v4";
-  const LS_EGGS = "mtrx_eggs_v4";
-
-  const state = {
-    activeScreen: "home",
-    currentCourse: 1,
-    running: true,
-    glitch: false,
-    sound: false,
-    accentIndex: 0,
-    fontSize: 18,
-    speedMs: 35,
-    trailAlpha: 0.08,
-    letters: "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()*&^%".split(""),
-    colors: [
-      { name: "Green", value: "#00ff66", shadow: "rgba(0,255,102,0.28)" },
-      { name: "Cyan", value: "#00d4ff", shadow: "rgba(0,212,255,0.24)" },
-      { name: "Pink", value: "#ff4dff", shadow: "rgba(255,77,255,0.22)" },
-      { name: "Amber", value: "#ffcc33", shadow: "rgba(255,204,51,0.22)" }
+  const LS_USER = 'mtrx_user_v5';
+  const LS_ATTEMPTS = 'mtrx_attempts_v5';
+  const LS_SETTINGS = 'mtrx_settings_v5';
+  const LS_NOTES = 'mtrx_notes_v5';
+  const LS_CODEFLAG = 'mtrx_codeflag_v5';
+  const LS_GAMES = 'mtrx_games_v5';
+  const LS_EGGS = 'mtrx_eggs_v5';
+    const state = {
+    activeScreen:'home', currentCourse:1, running:true, glitch:false, sound:false,
+    accentIndex:0, fontSize:18, speedMs:35, trailAlpha:0.08,
+    letters:'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@#$%^&*()*&^%'.split(''),
+    colors:[
+      {name:'Green', value:'#00ff66', shadow:'rgba(0,255,102,0.28)'},
+      {name:'Cyan', value:'#00d4ff', shadow:'rgba(0,212,255,0.24)'},
+      {name:'Pink', value:'#ff4dff', shadow:'rgba(255,77,255,0.22)'},
+      {name:'Amber', value:'#ffcc33', shadow:'rgba(255,204,51,0.22)'}
     ],
-    audioCtx: null,
-    lastDraw: 0,
-    burstUntil: 0
+    audioCtx:null, lastDraw:0, burstUntil:0
   };
 
   const courses = {
-    1: {
-      title: "Course 1: Matrix Basics",
-      intro: "A starter set. Clean, simple, and easy to swap out later when your final questions are ready.",
-      questions: [
-        {
-          q: "What does the red pill represent in the Matrix story?",
-          options: ["Truth and awakening", "Comfort and sleep", "Random chance"],
-          correct: 0,
-          explanation: "The red pill is the choice to see the truth, even when it is uncomfortable."
-        },
-        {
-          q: "What does the blue pill represent?",
-          options: ["Staying inside the illusion", "Instant power", "A robot upgrade"],
-          correct: 0,
-          explanation: "The blue pill represents staying in the comfortable false reality."
-        },
-        {
-          q: "Who is Neo?",
-          options: ["The chosen one", "A machine city", "The architect's assistant"],
-          correct: 0,
-          explanation: "Neo is the central character who is believed to be the chosen one."
-        },
-        {
-          q: "What is the Matrix?",
-          options: ["A simulated reality", "A sports arena", "A computer game menu"],
-          correct: 0,
-          explanation: "In the film, the Matrix is a simulated world used to control human minds."
-        },
-        {
-          q: "Which choice usually means the truth will be uncomfortable?",
-          options: ["Taking the red pill", "Taking a nap", "Ignoring the prompt"],
-          correct: 0,
-          explanation: "The red pill symbolizes choosing reality over comfort."
-        }
+    1:{
+      title:'Course 1: Matrix Basics',
+      intro:'A starter set. Clean, simple, and easy to swap out later when your final questions are ready.',
+      questions:[
+        {q:'What does the red pill represent in the Matrix story?', options:['Truth and awakening','Comfort and sleep','Random chance'], correct:0, explanation:'The red pill is the choice to see the truth, even when it is uncomfortable.'},
+        {q:'What does the blue pill represent?', options:['Staying inside the illusion','Instant power','A robot upgrade'], correct:0, explanation:'The blue pill represents staying in the comfortable false reality.'},
+        {q:'Who is Neo?', options:['The chosen one','A machine city','The architect\'s assistant'], correct:0, explanation:'Neo is the central character who is believed to be the chosen one.'},
+        {q:'What is the Matrix?', options:['A simulated reality','A sports arena','A computer game menu'], correct:0, explanation:'In the film, the Matrix is a simulated world used to control human minds.'},
+        {q:'Which choice usually means the truth will be uncomfortable?', options:['Taking the red pill','Taking a nap','Ignoring the prompt'], correct:0, explanation:'The red pill symbolizes choosing reality over comfort.'},
+        {q:'What does "wake up" usually mean in the Matrix vibe?', options:['Questioning what is real','Taking a photo','Loading the dishwasher'], correct:0, explanation:'To wake up is to stop accepting the illusion automatically.'}
       ]
     },
-    2: {
-      title: "Course 2: Scam Spotting",
-      intro: "The same dramatic energy, flipped into awareness mode. It teaches how to spot scam warning signs instead of how to run them.",
-      questions: [
-        {
-          q: "A stranger demands payment by wire transfer or gift cards. What is that usually a sign of?",
-          options: ["A major red flag", "A normal business habit", "A secure refund process"],
-          correct: 0,
-          explanation: "Untraceable payment demands are common warning signs in scams."
-        },
-        {
-          q: "An email claims to be from the IRS and pushes you to pay immediately. What is the safest reaction?",
-          options: ["Verify independently through official channels", "Reply with your bank login", "Trust it because it sounds official"],
-          correct: 0,
-          explanation: "Unexpected urgency plus payment demands should be checked through official sources."
-        },
-        {
-          q: "A fake-looking store has polished reviews and clean design. What is the smartest next step?",
-          options: ["Check independent reviews and contact details", "Buy immediately", "Ignore the domain and hope for the best"],
-          correct: 0,
-          explanation: "Professional appearance alone is not enough. External verification matters."
-        },
-        {
-          q: "A tech support popup says your computer will be locked in 24 hours. What should you do?",
-          options: ["Close it and verify through official support", "Call the number right away", "Send them a gift card"],
-          correct: 0,
-          explanation: "Urgent lockout claims are classic scare tactics. Verify using trusted support channels."
-        },
-        {
-          q: "What information should never be shared in a suspicious message?",
-          options: ["Bank login credentials", "A public nickname", "Your favorite color"],
-          correct: 0,
-          explanation: "Bank credentials are highly sensitive and should never be given to an unverified sender."
-        },
-        {
-          q: "Romance scams often rely on what environment?",
-          options: ["Private messaging and emotional pressure", "Open library checkout desks", "Weather apps"],
-          correct: 0,
-          explanation: "Scammers often move targets into private chats and use emotional pressure."
-        },
-        {
-          q: "Someone avoids video chat and always has an excuse. Why is that a warning sign?",
-          options: ["It may be a verification problem", "It proves they are trustworthy", "It means the connection is perfect"],
-          correct: 0,
-          explanation: "Avoiding video chat can be a red flag when someone refuses basic identity checks."
-        },
-        {
-          q: "Which emotion do scammers often try to trigger?",
-          options: ["Fear and urgency", "Calm focus", "Boredom"],
-          correct: 0,
-          explanation: "Fear, urgency, and panic are commonly used to rush people into bad decisions."
-        }
+    2:{
+      title:'Course 2: Scam Spotting',
+      intro:'The same dramatic energy, flipped into awareness mode. It teaches how to spot scam warning signs instead of how to run them.',
+      questions:[
+        {q:'A stranger demands payment by wire transfer or gift cards. What is that usually a sign of?', options:['A major red flag','A normal business habit','A secure refund process'], correct:0, explanation:'Untraceable payment demands are common warning signs in scams.'},
+        {q:'An email claims to be from the IRS and pushes you to pay immediately. What is the safest reaction?', options:['Verify independently through official channels','Reply with your bank login','Trust it because it sounds official'], correct:0, explanation:'Unexpected urgency plus payment demands should be checked through official sources.'},
+        {q:'A fake-looking store has polished reviews and clean design. What is the smartest next step?', options:['Check independent reviews and contact details','Buy immediately','Ignore the domain and hope for the best'], correct:0, explanation:'Professional appearance alone is not enough. External verification matters.'},
+        {q:'A tech support popup says your computer will be locked in 24 hours. What should you do?', options:['Close it and verify through official support','Call the number right away','Send them a gift card'], correct:0, explanation:'Urgent lockout claims are classic scare tactics. Verify using trusted support channels.'},
+        {q:'What information should never be shared in a suspicious message?', options:['Bank login credentials','A public nickname','Your favorite color'], correct:0, explanation:'Bank credentials are highly sensitive and should never be given to an unverified sender.'},
+        {q:'Romance scams often rely on what environment?', options:['Private messaging and emotional pressure','Open library checkout desks','Weather apps'], correct:0, explanation:'Scammers often move targets into private chats and use emotional pressure.'},
+        {q:'Someone avoids video chat and always has an excuse. Why is that a warning sign?', options:['It may be a verification problem','It proves they are trustworthy','It means the connection is perfect'], correct:0, explanation:'Avoiding video chat can be a red flag when someone refuses basic identity checks.'},
+        {q:'Which emotion do scammers often try to trigger?', options:['Fear and urgency','Calm focus','Boredom'], correct:0, explanation:'Fear, urgency, and panic are commonly used to rush people into bad decisions.'},
+        {q:'If a deal seems too good to be true, what should you do?', options:['Slow down and verify it','Buy instantly','Share it with everyone'], correct:0, explanation:'A suspiciously great deal deserves a careful verification check.'}
+      ]
+    },
+    3:{
+      title:'Course 3: Signal Theory',
+      intro:'Pattern spotting, noisy signals, and quick reactions. Your eyes do the algebra, your brain does the dancing.',
+      questions:[
+        {q:'What is the point of a signal?', options:['To carry information','To make noise only','To confuse everyone'], correct:0, explanation:'Signals communicate something meaningful across a system.'},
+        {q:'What does noise do to a signal?', options:['Makes it harder to read','Always improves it','Deletes the meaning entirely'], correct:0, explanation:'Noise can distort or hide information in a signal.'},
+        {q:'Which is a better response to unclear data?', options:['Look for patterns and context','Assume anything','Ignore it forever'], correct:0, explanation:'Careful pattern checking is better than guessing.'},
+        {q:'What does a repeating pattern usually suggest?', options:['Structure','Random magic','A broken planet'], correct:0, explanation:'Repeated sequences often hint at structure or a rule.'},
+        {q:'What helps most when decoding signals?', options:['Patience','Panic','Throwing the laptop'], correct:0, explanation:'Patience improves recognition of patterns and rules.'},
+        {q:'What is the best first move in a new system?', options:['Observe before acting','Spam every button','Close your eyes'], correct:0, explanation:'Observation reduces mistakes and reveals the rules.'}
+      ]
+    },
+    4:{
+      title:'Course 4: Reality Engineering',
+      intro:'Rules, systems, feedback loops. The boring words that secretly control the universe and your to-do list.',
+      questions:[
+        {q:'What is a system?', options:['A set of connected parts','A single lonely button','A rumor'], correct:0, explanation:'A system is a group of parts that work together.'},
+        {q:'What is feedback?', options:['Information about results','A magic spell','A new keyboard'], correct:0, explanation:'Feedback tells you what happened so you can adjust.'},
+        {q:'What does good design usually do?', options:['Makes outcomes easier to understand','Makes everything mysterious on purpose','Hides all controls'], correct:0, explanation:'Good design clarifies choices and reduces confusion.'},
+        {q:'What does iteration mean?', options:['Improving by repeating','Doing nothing once','Randomly deleting files'], correct:0, explanation:'Iteration means trying, learning, and improving again.'},
+        {q:'What is one sign of a strong structure?', options:['It behaves predictably','It changes mood hourly','It disappears when asked'], correct:0, explanation:'A strong structure tends to act consistently.'},
+        {q:'What should you do when a process fails?', options:['Inspect the cause and adjust','Blame the moon immediately','Quit forever'], correct:0, explanation:'Failure is most useful when it is studied.'}
       ]
     }
   };
 
   const eggDefs = [
-    { id: "title_surge", title: "Title Surge", desc: "Click the home title several times and it wakes up." },
-    { id: "konami_bloom", title: "Retro Bloom", desc: "A classic key sequence bends the grid a little." },
-    { id: "void_note", title: "Void Whisper", desc: "Write the hidden word in Notes and the machine notices." },
-    { id: "signal_sprinter", title: "Signal Sprinter", desc: "Hit a strong score in Signal Tap." },
-    { id: "sequence_hacker", title: "Sequence Hacker", desc: "Clear a longer round in Sequence Lock." },
-    { id: "save_archivist", title: "Archivist", desc: "Generate or load a save code." }
+    { id:'title_surge', title:'Title Surge', desc:'Click the home title several times and it wakes up.' },
+    { id:'konami_bloom', title:'Retro Bloom', desc:'A classic key sequence bends the grid a little.' },
+    { id:'void_note', title:'Void Whisper', desc:'Write the hidden word in Notes and the machine notices.' },
+    { id:'signal_sprinter', title:'Signal Sprinter', desc:'Hit a strong score in Signal Tap.' },
+    { id:'sequence_hacker', title:'Sequence Hacker', desc:'Clear a longer round in Sequence Lock.' },
+    { id:'save_archivist', title:'Archivist', desc:'Generate or load a save code.' },
+    { id:'tile_master', title:'Tile Master', desc:'Get a solid score in Tile Flip.' },
+    { id:'maze_runner', title:'Maze Runner', desc:'Escape the maze without tripping.' },
+    { id:'double_vision', title:'Double Vision', desc:'Change accent and trigger a burst.' },
+    { id:'scholar', title:'Scholar Mode', desc:'Reach 80% average or better.' }
   ];
 
   const achievementDefs = () => {
@@ -1470,1254 +624,233 @@
     const stats = computeStats();
     const user = getUser();
     const eggs = getEggs();
-
+    const games = getGames();
     return [
-      { title: "First Login", desc: "Set a username and enter the grid.", done: !!user, progress: user ? "Unlocked" : "Locked" },
-      { title: "First Quiz", desc: "Finish one quiz on any course.", done: attempts.length > 0, progress: attempts.length ? "Unlocked" : "Locked" },
-      { title: "Perfect Run", desc: "Score 100% on any attempt.", done: attempts.some(a => a.score === a.total), progress: attempts.some(a => a.score === a.total) ? "Unlocked" : "Locked" },
-      { title: "Explorer", desc: "Complete 3 attempts.", done: attempts.length >= 3, progress: `${Math.min(attempts.length, 3)}/3 attempts` },
-      { title: "Archivist", desc: "Generate or load a save code.", done: localStorage.getItem(LS_CODEFLAG) === "1", progress: localStorage.getItem(LS_CODEFLAG) === "1" ? "Unlocked" : "Locked" },
-      { title: "Note Taker", desc: "Write something in Notes.", done: notes.length > 0, progress: notes.length ? "Unlocked" : "Locked" },
-      { title: "Matrix Scholar", desc: "Reach an average score of 80% or better.", done: stats.avg >= 80 && attempts.length > 0, progress: attempts.length ? `${stats.avg}% average` : "Locked" },
-      { title: "Collector", desc: "Build up 5 attempts.", done: attempts.length >= 5, progress: `${Math.min(attempts.length, 5)}/5 attempts` },
-      { title: "Signal Sprinter", desc: "Score 10 or more in Signal Tap.", done: getGames().signalBest >= 10, progress: `${getGames().signalBest}/10` },
-      { title: "Sequence Hacker", desc: "Reach level 4 in Sequence Lock.", done: getGames().sequenceBest >= 4, progress: `${getGames().sequenceBest}/4` },
-      { title: "Egg Hunter", desc: "Discover 3 easter eggs.", done: eggs.length >= 3, progress: `${eggs.length}/3 eggs` },
-      { title: "Glitch Poet", desc: "Turn on glitch mode and change the title.", done: state.glitch && homeTitle.textContent !== "How to escape the matrix", progress: state.glitch ? "Unlocked-ish" : "Locked" }
+      { title:'First Login', desc:'Set a username and enter the grid.', done:!!user, progress:user ? 'Unlocked' : 'Locked' },
+      { title:'First Quiz', desc:'Finish one quiz on any course.', done:attempts.length > 0, progress: attempts.length ? 'Unlocked' : 'Locked' },
+      { title:'Perfect Run', desc:'Score 100% on any attempt.', done:attempts.some(a => a.score === a.total), progress: attempts.some(a => a.score === a.total) ? 'Unlocked' : 'Locked' },
+      { title:'Explorer', desc:'Complete 3 attempts.', done:attempts.length >= 3, progress:`${Math.min(attempts.length, 3)}/3 attempts` },
+      { title:'Archivist', desc:'Generate or load a save code.', done:localStorage.getItem(LS_CODEFLAG) === '1', progress: localStorage.getItem(LS_CODEFLAG) === '1' ? 'Unlocked' : 'Locked' },
+      { title:'Note Taker', desc:'Write something in Notes.', done:notes.length > 0, progress: notes.length ? 'Unlocked' : 'Locked' },
+      { title:'Matrix Scholar', desc:'Reach an average score of 80% or better.', done:stats.avg >= 80 && attempts.length > 0, progress: attempts.length ? `${stats.avg}% average` : 'Locked' },
+      { title:'Collector', desc:'Build up 5 attempts.', done:attempts.length >= 5, progress:`${Math.min(attempts.length, 5)}/5 attempts` },
+      { title:'Signal Sprinter', desc:'Score 10 or more in Signal Tap.', done:games.signalBest >= 10, progress:`${games.signalBest}/10` },
+      { title:'Sequence Hacker', desc:'Reach level 4 in Sequence Lock.', done:games.sequenceBest >= 4, progress:`${games.sequenceBest}/4` },
+      { title:'Tile Master', desc:'Make 3 or more tile matches.', done:games.tileBest >= 3, progress:`${games.tileBest}/3` },
+      { title:'Maze Runner', desc:'Reach the maze exit once.', done:games.mazeBest >= 1, progress:`${games.mazeBest}/1` },
+      { title:'Egg Hunter', desc:'Discover 5 easter eggs.', done:eggs.length >= 5, progress:`${eggs.length}/5 eggs` },
+      { title:'Glitch Poet', desc:'Turn on glitch mode and change the title.', done:state.glitch && homeTitle.textContent !== 'How to escape the matrix', progress: state.glitch ? 'Unlocked-ish' : 'Locked' },
+      { title:'Fast Brain', desc:'Finish a quiz with full score.', done:attempts.some(a => a.score === a.total), progress: attempts.some(a => a.score === a.total) ? 'Unlocked' : 'Locked' },
+      { title:'Deep Diver', desc:'Open every main screen at least once.', done:getScreenVisits().length >= 10, progress:`${getScreenVisits().length}/10 screens` },
+      { title:'Night Shift', desc:'Use the save code system.', done:localStorage.getItem(LS_CODEFLAG) === '1', progress: localStorage.getItem(LS_CODEFLAG) === '1' ? 'Unlocked' : 'Locked' },
+      { title:'Builder', desc:'Try 4 different courses.', done:new Set(attempts.map(a => a.courseId)).size >= 4, progress:`${new Set(attempts.map(a => a.courseId)).size}/4 courses` }
     ];
   };
 
-  let currentQuizState = {
-    answers: [],
-    submitted: false
-  };
-
+  let currentQuizState = { answers:[], submitted:false };
   let drops = [];
   let color = getAccent();
   let notesTimer = null;
   let titleClicks = 0;
   let keyBuffer = [];
+  let currentTileState = null;
+  let currentMazeState = null;
+  const screenVisits = new Set(['home']);
 
   const game = {
-    signal: {
-      running: false,
-      timeLeft: 20,
-      score: 0,
-      timer: null,
-      best: 0
-    },
-    sequence: {
-      running: false,
-      showing: false,
-      level: 1,
-      best: 0,
-      sequence: [],
-      inputIndex: 0,
-      timer: null
-    }
+    signal:{ running:false, timeLeft:20, score:0, timer:null },
+    sequence:{ running:false, showing:false, level:1, sequence:[], inputIndex:0, timer:null },
+    tile:{ running:false, score:0, flips:0, board:[], revealed:[], matched:[], best:0 },
+    maze:{ running:false, steps:0, best:0, path:[0,1,2,7,12,17,18,19], current:0 }
   };
 
-  function showToast(message){
-    toast.textContent = message;
-    toast.classList.add("show");
-    clearTimeout(showToast.timer);
-    showToast.timer = setTimeout(() => toast.classList.remove("show"), 2200);
-  }
+  function showToast(message){ toast.textContent = message; toast.classList.add('show'); clearTimeout(showToast.timer); showToast.timer = setTimeout(() => toast.classList.remove('show'), 2200); }
 
-  function getUser(){
-    return localStorage.getItem(LS_USER) || "";
-  }
+  function getUser(){ return localStorage.getItem(LS_USER) || ''; }
+  function getAttempts(){ try{return JSON.parse(localStorage.getItem(LS_ATTEMPTS) || '[]');}catch{return [];} }
+  function setAttempts(arr){ localStorage.setItem(LS_ATTEMPTS, JSON.stringify(arr)); }
+  function getNotes(){ return localStorage.getItem(LS_NOTES) || ''; }
+  function setNotes(text){ localStorage.setItem(LS_NOTES, text); }
+  function getSettings(){ try{return JSON.parse(localStorage.getItem(LS_SETTINGS) || '{}');}catch{return {};} }
+  function saveSettings(){ localStorage.setItem(LS_SETTINGS, JSON.stringify({ accentIndex:state.accentIndex, fontSize:state.fontSize, speedMs:state.speedMs, trailAlpha:state.trailAlpha, running:state.running, glitch:state.glitch, sound:state.sound })); }
+  function getGames(){ try{ const raw = JSON.parse(localStorage.getItem(LS_GAMES) || '{}'); return { signalBest: raw.signalBest || 0, signalPlays: raw.signalPlays || 0, sequenceBest: raw.sequenceBest || 0, sequenceWins: raw.sequenceWins || 0, tileBest: raw.tileBest || 0, tileWins: raw.tileWins || 0, mazeBest: raw.mazeBest || 0, mazeWins: raw.mazeWins || 0 }; }catch{return { signalBest:0, signalPlays:0, sequenceBest:0, sequenceWins:0, tileBest:0, tileWins:0, mazeBest:0, mazeWins:0 };} }
+  function saveGames(data){ localStorage.setItem(LS_GAMES, JSON.stringify(data)); }
+  function getEggs(){ try{return JSON.parse(localStorage.getItem(LS_EGGS) || '[]');}catch{return [];} }
+  function setEggs(arr){ localStorage.setItem(LS_EGGS, JSON.stringify(arr)); }
+  function getScreenVisits(){ try{return JSON.parse(localStorage.getItem('mtrx_visits_v5') || '["home"]');}catch{return ['home'];} }
+  function setScreenVisit(name){ const vis = new Set(getScreenVisits()); vis.add(name); localStorage.setItem('mtrx_visits_v5', JSON.stringify([...vis])); }
 
-  function getAttempts(){
-    try{
-      return JSON.parse(localStorage.getItem(LS_ATTEMPTS) || "[]");
-    }catch{
-      return [];
-    }
-  }
-
-  function setAttempts(arr){
-    localStorage.setItem(LS_ATTEMPTS, JSON.stringify(arr));
-  }
-
-  function getNotes(){
-    return localStorage.getItem(LS_NOTES) || "";
-  }
-
-  function setNotes(text){
-    localStorage.setItem(LS_NOTES, text);
-  }
-
-  function getSettings(){
-    try{
-      return JSON.parse(localStorage.getItem(LS_SETTINGS) || "{}");
-    }catch{
-      return {};
-    }
-  }
-
-  function saveSettings(){
-    const data = {
-      accentIndex: state.accentIndex,
-      fontSize: state.fontSize,
-      speedMs: state.speedMs,
-      trailAlpha: state.trailAlpha,
-      running: state.running,
-      glitch: state.glitch,
-      sound: state.sound
-    };
-    localStorage.setItem(LS_SETTINGS, JSON.stringify(data));
-  }
-
-  function getGames(){
-    try{
-      const raw = JSON.parse(localStorage.getItem(LS_GAMES) || "{}");
-      return {
-        signalBest: raw.signalBest || 0,
-        signalPlays: raw.signalPlays || 0,
-        sequenceBest: raw.sequenceBest || 0,
-        sequenceWins: raw.sequenceWins || 0
-      };
-    }catch{
-      return { signalBest: 0, signalPlays: 0, sequenceBest: 0, sequenceWins: 0 };
-    }
-  }
-
-  function saveGames(data){
-    localStorage.setItem(LS_GAMES, JSON.stringify(data));
-  }
-
-  function getEggs(){
-    try{
-      return JSON.parse(localStorage.getItem(LS_EGGS) || "[]");
-    }catch{
-      return [];
-    }
-  }
-
-  function setEggs(arr){
-    localStorage.setItem(LS_EGGS, JSON.stringify(arr));
-  }
-
-  function unlockEgg(id){
-    const eggs = getEggs();
-    if(!eggs.includes(id)){
-      eggs.push(id);
-      setEggs(eggs);
-      showToast(`Easter egg unlocked: ${eggLabel(id)}`);
-      renderEggs();
-      renderAchievements();
-    }
-  }
-
-  function eggLabel(id){
-    const found = eggDefs.find(e => e.id === id);
-    return found ? found.title : id;
-  }
+  function unlockEgg(id){ const eggs = getEggs(); if(!eggs.includes(id)){ eggs.push(id); setEggs(eggs); showToast(`Easter egg unlocked: ${eggLabel(id)}`); renderEggs(); renderAchievements(); } }
+  function eggLabel(id){ const found = eggDefs.find(e=>e.id===id); return found ? found.title : id; }
 
   function scanEggs(){
-    if(titleClicks >= 5) unlockEgg("title_surge");
-    if(keyBuffer.join("").includes("ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba")) unlockEgg("konami_bloom");
-    if(getNotes().toLowerCase().includes("void")) unlockEgg("void_note");
-    if(getGames().signalBest >= 10) unlockEgg("signal_sprinter");
-    if(getGames().sequenceBest >= 4) unlockEgg("sequence_hacker");
-    if(localStorage.getItem(LS_CODEFLAG) === "1") unlockEgg("save_archivist");
-    if(getAttempts().length > 0 && getAttempts().some(a => a.score === a.total)) unlockEgg("perfect_run");
-    showToast("Egg scan complete.");
-    renderEggs();
-    renderAchievements();
+    if(titleClicks >= 5) unlockEgg('title_surge');
+    if(keyBuffer.join('').includes('ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba')) unlockEgg('konami_bloom');
+    if(getNotes().toLowerCase().includes('void')) unlockEgg('void_note');
+    if(getGames().signalBest >= 10) unlockEgg('signal_sprinter');
+    if(getGames().sequenceBest >= 4) unlockEgg('sequence_hacker');
+    if(localStorage.getItem(LS_CODEFLAG) === '1') unlockEgg('save_archivist');
+    if(getGames().tileBest >= 3) unlockEgg('tile_master');
+    if(getGames().mazeBest >= 1) unlockEgg('maze_runner');
+    if(state.glitch && state.accentIndex !== 0) unlockEgg('double_vision');
+    if(getAttempts().some(a=>Math.round((a.score/a.total)*100) >= 80)) unlockEgg('scholar');
+    showToast('Egg scan complete.'); renderEggs(); renderAchievements();
   }
 
-  function setUser(name){
-    localStorage.setItem(LS_USER, name);
-    syncProfileUI();
-  }
+  function setUser(name){ localStorage.setItem(LS_USER, name); syncProfileUI(); }
+  function clearUser(){ localStorage.removeItem(LS_USER); syncProfileUI(); }
+  function syncProfileUI(){ const user = getUser(); enterBtn.textContent = user ? `Continue as ${user}` : 'Enter'; homeSub.textContent = user ? `A clean neon doorway. The machine remembers ${user}.` : 'A clean neon doorway. Everything else waits behind it.'; menuProfile.textContent = user ? `Logged in as ${user}. All progress in this build stays local to this browser.` : 'Guest mode. Login to keep a local profile.'; menuSummary.textContent = buildSummaryText(); }
+  function buildSummaryText(){ const attempts = getAttempts(); if(!attempts.length) return 'No attempts yet.'; const last = attempts[0]; const avg = Math.round(attempts.reduce((a,b)=>a + (b.score / b.total), 0) / attempts.length * 100); const best = Math.max(...attempts.map(a=>Math.round((a.score / a.total) * 100))); return `Last run: ${last.courseTitle} • ${last.score}/${last.total} • Average across attempts: ${avg}% • Best: ${best}%`; }
+  function computeStats(){ const attempts = getAttempts(); const user = getUser() || 'Guest'; const totalAttempts = attempts.length; const avg = totalAttempts ? Math.round(attempts.reduce((a,b)=>a + (b.score / b.total), 0) / totalAttempts * 100) : 0; const best = totalAttempts ? Math.max(...attempts.map(a=>Math.round((a.score / a.total) * 100))) : 0; const perfect = attempts.filter(a=>a.score === a.total).length; const xp = attempts.reduce((sum,a)=>{ const pct = Math.round((a.score/a.total)*100); return sum + (a.score * 10) + (pct === 100 ? 25 : 0); }, 0); return { user, totalAttempts, avg, best, perfect, xp, attempts }; }
+  function getAccent(){ return state.colors[state.accentIndex].value; }
+  function setAccentVar(){ const c = state.colors[state.accentIndex]; document.documentElement.style.setProperty('--accent', c.value); document.documentElement.style.setProperty('--shadow', c.shadow); }
+  function resizeCanvas(){ canvas.width = window.innerWidth; canvas.height = window.innerHeight; rebuildDrops(); }
+  function rebuildDrops(){ const cols = Math.floor(canvas.width / state.fontSize); drops = Array.from({ length: cols }, () => Math.floor(Math.random() * 12)); }
+  function applyGlitchState(){ document.body.style.filter = state.glitch ? `hue-rotate(${Math.random() * 360}deg) contrast(1.1)` : 'none'; }
+  function drawMatrix(){ ctx.fillStyle = `rgba(0,0,0,${state.trailAlpha})`; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.fillStyle = color; ctx.font = `${state.fontSize}px monospace`; for(let i=0;i<drops.length;i++){ const char = state.letters[Math.floor(Math.random()*state.letters.length)]; const x = i * state.fontSize; const y = drops[i] * state.fontSize; ctx.fillText(char, x, y); const burst = performance.now() < state.burstUntil; if((y > canvas.height && Math.random() > (burst ? 0.92 : 0.975)) || (burst && Math.random() > 0.88)){ drops[i] = 0; } drops[i]++; } }
+  function loop(ts){ if(state.running && ts - state.lastDraw >= state.speedMs){ drawMatrix(); state.lastDraw = ts; } requestAnimationFrame(loop); }
+  function beep(freq=520,duration=0.08,type='sine',gain=0.04){ if(!state.sound) return; if(!state.audioCtx){ state.audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } const audioCtx = state.audioCtx; const osc = audioCtx.createOscillator(); const gainNode = audioCtx.createGain(); osc.type = type; osc.frequency.value = freq; gainNode.gain.value = gain; osc.connect(gainNode); gainNode.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime + duration); }
 
-  function clearUser(){
-    localStorage.removeItem(LS_USER);
-    syncProfileUI();
-  }
-
-  function syncProfileUI(){
-    const user = getUser();
-    enterBtn.textContent = user ? `Continue as ${user}` : "Enter";
-    homeSub.textContent = user
-      ? `A clean neon doorway. The machine remembers ${user}.`
-      : "A clean neon doorway. Everything else waits behind it.";
-    menuProfile.textContent = user
-      ? `Logged in as ${user}. All progress in this build stays local to this browser.`
-      : "Guest mode. Login to keep a local profile.";
-    menuSummary.textContent = buildSummaryText();
-  }
-
-  function buildSummaryText(){
-    const attempts = getAttempts();
-    if(!attempts.length) return "No attempts yet.";
-
-    const last = attempts[0];
-    const avg = Math.round(attempts.reduce((a,b) => a + (b.score / b.total), 0) / attempts.length * 100);
-    const best = Math.max(...attempts.map(a => Math.round((a.score / a.total) * 100)));
-    return `Last run: ${last.courseTitle} • ${last.score}/${last.total} • Average across attempts: ${avg}% • Best: ${best}%`;
-  }
-
-  function computeStats(){
-    const attempts = getAttempts();
-    const user = getUser() || "Guest";
-    const totalAttempts = attempts.length;
-    const avg = totalAttempts ? Math.round(attempts.reduce((a,b) => a + (b.score / b.total), 0) / totalAttempts * 100) : 0;
-    const best = totalAttempts ? Math.max(...attempts.map(a => Math.round((a.score / a.total) * 100))) : 0;
-    const perfect = attempts.filter(a => a.score === a.total).length;
-    const xp = attempts.reduce((sum, a) => {
-      const pct = Math.round((a.score / a.total) * 100);
-      return sum + (a.score * 10) + (pct === 100 ? 25 : 0);
-    }, 0);
-
-    return { user, totalAttempts, avg, best, perfect, xp, attempts };
-  }
-
-  function getAccent(){
-    return state.colors[state.accentIndex].value;
-  }
-
-  function setAccentVar(){
-    const c = state.colors[state.accentIndex];
-    document.documentElement.style.setProperty("--accent", c.value);
-    document.documentElement.style.setProperty("--shadow", c.shadow);
-  }
-
-  function resizeCanvas(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    rebuildDrops();
-  }
-
-  function rebuildDrops(){
-    const cols = Math.floor(canvas.width / state.fontSize);
-    drops = Array.from({ length: cols }, () => Math.floor(Math.random() * 12));
-  }
-
-  function applyGlitchState(){
-    document.body.style.filter = state.glitch ? `hue-rotate(${Math.random() * 360}deg) contrast(1.1)` : "none";
-  }
-
-  function drawMatrix(){
-    ctx.fillStyle = `rgba(0,0,0,${state.trailAlpha})`;
-    ctx.fillRect(0,0,canvas.width,canvas.height);
-
-    ctx.fillStyle = color;
-    ctx.font = `${state.fontSize}px monospace`;
-
-    for(let i = 0; i < drops.length; i++){
-      const char = state.letters[Math.floor(Math.random() * state.letters.length)];
-      const x = i * state.fontSize;
-      const y = drops[i] * state.fontSize;
-      ctx.fillText(char, x, y);
-
-      const burst = performance.now() < state.burstUntil;
-      if((y > canvas.height && Math.random() > (burst ? 0.92 : 0.975)) || (burst && Math.random() > 0.88)){
-        drops[i] = 0;
-      }
-      drops[i]++;
-    }
-  }
-
-  function loop(ts){
-    if(state.running && ts - state.lastDraw >= state.speedMs){
-      drawMatrix();
-      state.lastDraw = ts;
-    }
-    requestAnimationFrame(loop);
-  }
-
-  function beep(freq = 520, duration = 0.08, type = "sine", gain = 0.04){
-    if(!state.sound) return;
-    if(!state.audioCtx){
-      state.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    }
-    const audioCtx = state.audioCtx;
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.type = type;
-    osc.frequency.value = freq;
-    gainNode.gain.value = gain;
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    osc.start();
-    osc.stop(audioCtx.currentTime + duration);
-  }
-
-  function showScreen(id){
-    document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
-    const screen = document.getElementById(id);
-    if(screen) screen.classList.add("active");
-    state.activeScreen = id;
-    sidebar.classList.remove("active");
-
-    if(id === "stats") renderStats();
-    if(id === "save") renderSave();
-    if(id === "settings") renderSettings();
-    if(id === "achievements") renderAchievements();
-    if(id === "notes") renderNotes();
-    if(id === "games") renderGames();
-    if(id === "eggs") renderEggs();
-    if(id === "menu") syncProfileUI();
-    if(id === "help") showToast("Shortcut panel open.");
-    if(id === "courseScreen") courseWrap.scrollTop = 0;
-  }
-
-  function enterFlow(){
-    if(getUser()){
-      showScreen("menu");
-    }else{
-      showScreen("login");
-      usernameInput.focus();
-    }
-  }
-
-  function loginUser(){
-    const name = usernameInput.value.trim();
-    if(!name){
-      showToast("Please enter a username first.");
-      return;
-    }
-    setUser(name);
-    showScreen("menu");
-    showToast(`Welcome, ${name}.`);
-    beep(720, 0.06, "triangle", 0.03);
-  }
-
-  function logoutUser(){
-    clearUser();
-    usernameInput.value = "";
-    showScreen("home");
-    showToast("Logged out.");
-  }
-
-  function openCourse(id){
-    state.currentCourse = id;
-    renderCourse(id);
-    showScreen("courseScreen");
-    beep(640, 0.06, "triangle", 0.03);
-  }
+  function showScreen(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); const screen = document.getElementById(id); if(screen) screen.classList.add('active'); state.activeScreen = id; sidebar.classList.remove('active'); setScreenVisit(id); if(id === 'stats') renderStats(); if(id === 'save') renderSave(); if(id === 'settings') renderSettings(); if(id === 'achievements') renderAchievements(); if(id === 'notes') renderNotes(); if(id === 'games') renderGames(); if(id === 'eggs') renderEggs(); if(id === 'menu') syncProfileUI(); if(id === 'help') showToast('Shortcut panel open.'); if(id === 'courseScreen') courseWrap.scrollTop = 0; }
+  function enterFlow(){ if(getUser()) showScreen('menu'); else { showScreen('login'); usernameInput.focus(); } }
+  function loginUser(){ const name = usernameInput.value.trim(); if(!name){ showToast('Please enter a username first.'); return; } setUser(name); showScreen('menu'); showToast(`Welcome, ${name}.`); beep(720,0.06,'triangle',0.03); }
+  function logoutUser(){ clearUser(); usernameInput.value=''; showScreen('home'); showToast('Logged out.'); }
+  function openCourse(id){ state.currentCourse = id; renderCourse(id); showScreen('courseScreen'); beep(640,0.06,'triangle',0.03); }
 
   function renderCourse(id){
-    const course = courses[id];
-    courseTitle.textContent = course.title;
-    courseIntro.textContent = course.intro;
-
-    currentQuizState = {
-      answers: Array(course.questions.length).fill(null),
-      submitted: false
-    };
-
-    resultBar.classList.add("hidden");
-    reviewBtn.classList.add("hidden");
-    submitQuizBtn.classList.remove("hidden");
-    submitQuizBtn.disabled = false;
-    submitQuizBtn.textContent = "Submit answers";
-    progressFill.style.width = "0%";
-    courseMsg.textContent = "Answer everything first, then submit to reveal the answers.";
-
-    quizContainer.innerHTML = "";
-    course.questions.forEach((q, qIndex) => {
-      const qEl = document.createElement("div");
-      qEl.className = "question";
-      qEl.id = `q-${qIndex}`;
-
-      qEl.innerHTML = `
-        <div class="qtitle">${qIndex + 1}. ${q.q}</div>
-        <div class="options">
-          ${q.options.map((opt, optIndex) => `
-            <label class="opt">
-              <input type="radio" name="q${qIndex}" value="${optIndex}" />
-              <span>${opt}</span>
-            </label>
-          `).join("")}
-        </div>
-        <div class="feedback" id="fb-${qIndex}"></div>
-      `;
-
+    const course = courses[id]; courseTitle.textContent = course.title; courseIntro.textContent = course.intro;
+    currentQuizState = { answers:Array(course.questions.length).fill(null), submitted:false };
+    resultBar.classList.add('hidden'); reviewBtn.classList.add('hidden'); submitQuizBtn.classList.remove('hidden'); submitQuizBtn.disabled = false; submitQuizBtn.textContent = 'Submit answers'; progressFill.style.width = '0%'; courseMsg.textContent = 'Answer everything first, then submit to reveal the answers.';
+    quizContainer.innerHTML = '';
+    course.questions.forEach((q,qIndex)=>{
+      const qEl = document.createElement('div'); qEl.className = 'question'; qEl.id = `q-${qIndex}`;
+      qEl.innerHTML = `<div class="qtitle">${qIndex + 1}. ${q.q}</div><div class="options">${q.options.map((opt,optIndex)=>`<label class="opt"><input type="radio" name="q${qIndex}" value="${optIndex}" /><span>${opt}</span></label>`).join('')}</div><div class="feedback" id="fb-${qIndex}"></div>`;
       quizContainer.appendChild(qEl);
     });
-
-    quizContainer.querySelectorAll('input[type="radio"]').forEach(input => {
-      input.addEventListener("change", (e) => {
-        const qIndex = Number(e.target.name.slice(1));
-        currentQuizState.answers[qIndex] = Number(e.target.value);
-        updateProgress();
-      });
+    quizContainer.querySelectorAll('input[type="radio"]').forEach(input=>{
+      input.addEventListener('change', (e)=>{ const qIndex = Number(e.target.name.slice(1)); currentQuizState.answers[qIndex] = Number(e.target.value); updateProgress(); });
     });
-
     updateProgress();
   }
+  function updateProgress(){ const total = currentQuizState.answers.length || 1; const answered = currentQuizState.answers.filter(v=>v !== null).length; progressFill.style.width = `${(answered/total)*100}%`; }
+  function submitQuiz(){ const user = getUser() || 'Guest'; const course = courses[state.currentCourse]; const total = course.questions.length; if(currentQuizState.answers.some(a=>a===null)){ resultBar.classList.remove('hidden'); resultBar.innerHTML = `Please answer all ${total} questions first. Then press submit again.`; resultBar.style.borderColor = 'rgba(255,77,77,0.45)'; resultBar.style.background = 'rgba(255,77,77,0.10)'; beep(240,0.07,'square',0.03); return; } let score = 0; course.questions.forEach((q,qIndex)=>{ const qEl = document.getElementById(`q-${qIndex}`); const feedbackEl = document.getElementById(`fb-${qIndex}`); const selected = currentQuizState.answers[qIndex]; const correct = q.correct; qEl.classList.remove('correct','wrong'); qEl.classList.add(selected === correct ? 'correct' : 'wrong'); const options = qEl.querySelectorAll('.opt'); options.forEach((optEl,optIndex)=>{ const input = optEl.querySelector('input'); input.disabled = true; optEl.classList.remove('correct','wrong'); if(optIndex === correct) optEl.classList.add('correct'); if(optIndex === selected && selected !== correct) optEl.classList.add('wrong'); }); const pickedText = q.options[selected]; const correctText = q.options[correct]; if(selected === correct) score++; feedbackEl.classList.add('show'); feedbackEl.className = `feedback show ${selected === correct ? 'ok' : 'bad'}`; feedbackEl.innerHTML = selected === correct ? `Correct. ${q.explanation}` : `Your answer: <b>${pickedText}</b><br>Correct answer: <b>${correctText}</b><br>${q.explanation}`; }); const attempt = { user, courseId:state.currentCourse, courseTitle:course.title, score, total, answers:[...currentQuizState.answers], timestamp:new Date().toISOString() }; const attempts = getAttempts(); attempts.unshift(attempt); setAttempts(attempts.slice(0, 100)); resultBar.classList.remove('hidden'); resultBar.style.borderColor = 'rgba(53,224,111,0.40)'; resultBar.style.background = 'rgba(53,224,111,0.10)'; resultBar.innerHTML = `<b>Score:</b> ${score}/${total}<br>Answers revealed. Attempt saved locally in this browser.`; currentQuizState.submitted = true; submitQuizBtn.disabled = true; submitQuizBtn.textContent = 'Submitted'; reviewBtn.classList.remove('hidden'); courseMsg.textContent = 'Your result has been stored locally. Open Stats for the summary.'; syncProfileUI(); renderStats(); renderAchievements(); scanEggs(); showToast(`Saved: ${score}/${total}`); beep(880,0.08,'triangle',0.04); setTimeout(()=>beep(1100,0.07,'sine',0.03),120); }
+  function scrollToResults(){ resultBar.scrollIntoView({ behavior:'smooth', block:'start' }); }
+  function resetCourse(){ renderCourse(state.currentCourse); beep(520,0.06,'sine',0.03); showToast('Quiz reset.'); }
 
-  function updateProgress(){
-    const total = currentQuizState.answers.length || 1;
-    const answered = currentQuizState.answers.filter(v => v !== null).length;
-    progressFill.style.width = `${(answered / total) * 100}%`;
+  function renderStats(){ const stats = computeStats(); statUser.textContent = stats.user; statAttempts.textContent = String(stats.totalAttempts); statAvg.textContent = `${stats.avg}%`; statBest.textContent = `${stats.best}%`; statXp.textContent = String(stats.xp); statPerfect.textContent = String(stats.perfect); const games = getGames(); statSignal.textContent = String(games.signalBest); statSequence.textContent = String(games.sequenceBest); statEggs.textContent = String(getEggs().length); if(!stats.attempts.length){ historyList.innerHTML = `<div class="history-item">No attempts yet. Run a quiz and the summary will wake up.</div>`; return; } historyList.innerHTML = stats.attempts.slice(0, 10).map(a=>{ const when = new Date(a.timestamp).toLocaleString(); const pct = Math.round((a.score / a.total) * 100); return `<div class="history-item"><b>${a.courseTitle}</b><br>${a.score}/${a.total} • ${pct}%<br>${when}</div>`; }).join(''); }
+  function renderAchievements(){ const items = achievementDefs(); achievementGrid.innerHTML = items.map(item => `<div class="badge ${item.done ? 'done' : 'locked'}"><h4>${item.done ? '✓ ' : '◻ '} ${item.title}</h4><p>${item.desc}</p><p style="margin-top:8px;color:${item.done ? 'var(--ok)' : 'var(--muted)'};">${item.progress}</p></div>`).join(''); }
+  function renderEggs(){ const unlocked = getEggs(); eggList.innerHTML = eggDefs.map(egg => `<div class="egg-item ${unlocked.includes(egg.id) ? 'done' : ''}"><h4>${unlocked.includes(egg.id) ? '✓ ' : '◻ '} ${egg.title}</h4><p>${egg.desc}</p></div>`).join(''); eggStatus.textContent = `Found ${unlocked.length}/${eggDefs.length}.`; }
+  function renderNotes(){ notesBox.value = getNotes(); notesStatus.textContent = 'Notes are stored locally in this browser.'; }
+  function saveNotes(){ setNotes(notesBox.value); notesStatus.textContent = 'Notes saved locally.'; renderAchievements(); scanEggs(); showToast('Notes saved.'); }
+  function clearNotes(){ notesBox.value = ''; setNotes(''); notesStatus.textContent = 'Notes cleared.'; renderAchievements(); showToast('Notes cleared.'); }
+  function renderSave(){ if(!saveCodeBox.value.trim()) saveCodeBox.value = encodeSaveData(buildSaveData()); saveStatus.textContent = 'Generate or paste a code. The code includes your username, attempts, notes, settings, minigame stats, and eggs.'; }
+  function renderSettings(){ speedRange.value = String(state.speedMs); trailRange.value = String(state.trailAlpha); fontRange.value = String(state.fontSize); updateSettingsLabels(); settingsStatus.textContent = `Accent: ${state.colors[state.accentIndex].name} • Sound: ${state.sound ? 'On' : 'Off'} • Glitch: ${state.glitch ? 'On' : 'Off'} • Rain: ${state.running ? 'On' : 'Off'}`; }
+  function updateSettingsLabels(){ speedValue.textContent = `${state.speedMs} ms`; trailValue.textContent = state.trailAlpha.toFixed(2); fontValue.textContent = `${state.fontSize} px`; }
+
+  function cycleAccent(){ state.accentIndex = (state.accentIndex + 1) % state.colors.length; setAccentVar(); color = getAccent(); saveSettings(); if(document.getElementById('settings').classList.contains('active')) renderSettings(); showToast(`Accent: ${state.colors[state.accentIndex].name}`); beep(560 + state.accentIndex * 110, 0.06, 'triangle', 0.03); }
+  function toggleRain(){ state.running = !state.running; saveSettings(); if(document.getElementById('settings').classList.contains('active')) renderSettings(); showToast(state.running ? 'Rain resumed.' : 'Rain paused.'); beep(state.running ? 620 : 260, 0.06, 'triangle', 0.03); }
+  function fasterRain(){ state.speedMs = Math.max(12, state.speedMs - 6); saveSettings(); updateSettingsLabels(); showToast(`Rain speed: ${state.speedMs} ms`); beep(760, 0.05, 'sine', 0.03); }
+  function slowerRain(){ state.speedMs = Math.min(90, state.speedMs + 6); saveSettings(); updateSettingsLabels(); showToast(`Rain speed: ${state.speedMs} ms`); beep(320, 0.05, 'sine', 0.03); }
+  function toggleGlitch(){ state.glitch = !state.glitch; applyGlitchState(); saveSettings(); if(document.getElementById('settings').classList.contains('active')) renderSettings(); showToast(state.glitch ? 'Glitch enabled.' : 'Glitch disabled.'); beep(state.glitch ? 920 : 280, 0.06, 'sawtooth', 0.025); if(state.glitch) unlockEgg('double_vision'); }
+  function toggleSound(){ state.sound = !state.sound; saveSettings(); if(document.getElementById('settings').classList.contains('active')) renderSettings(); showToast(state.sound ? 'Sound enabled.' : 'Sound muted.'); beep(720, 0.06, 'square', 0.03); }
+  function burstMatrix(){ state.burstUntil = performance.now() + 1800; state.trailAlpha = 0.045; saveSettings(); if(document.getElementById('settings').classList.contains('active')) renderSettings(); showToast('Matrix burst!'); beep(1000, 0.08, 'square', 0.04); unlockEgg('double_vision'); setTimeout(()=>{ const saved = getSettings(); state.trailAlpha = typeof saved.trailAlpha === 'number' ? saved.trailAlpha : 0.08; saveSettings(); if(document.getElementById('settings').classList.contains('active')) renderSettings(); }, 1800); }
+  function randomTitle(){ const titles=['How to escape the matrix','Exit protocol engaged','Choose your pill','Signal breach detected','Reality loading...','The grid is talking','Reality compiler warning']; const subs=['A clean neon start screen. No clutter, no chaos.','Answer everything first. Then the answers arrive.','Course menu on its own screen. Easy on the eyes.','The layout stopped crowding the title like a digital soup.','The matrix likes a little flair.']; homeTitle.textContent = titles[Math.floor(Math.random()*titles.length)]; homeSub.textContent = subs[Math.floor(Math.random()*subs.length)]; showToast('Title randomized.'); beep(610,0.06,'triangle',0.03); }
+
+  function buildSaveData(){ return { v:5, user:getUser(), attempts:getAttempts(), notes:getNotes(), games:getGames(), eggs:getEggs(), visits:getScreenVisits(), settings:{ accentIndex:state.accentIndex, fontSize:state.fontSize, speedMs:state.speedMs, trailAlpha:state.trailAlpha, running:state.running, glitch:state.glitch, sound:state.sound }, exportedAt:new Date().toISOString() }; }
+  function encodeSaveData(data){ const json = JSON.stringify(data); const bytes = new TextEncoder().encode(json); let binary=''; bytes.forEach(byte=>{ binary += String.fromCharCode(byte); }); const b64 = btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/g,''); return `MTRX5.${b64}`; }
+  function decodeSaveData(code){ const cleaned = code.trim().replace(/\s+/g,''); if(!cleaned.startsWith('MTRX5.')) throw new Error('Bad save code prefix'); let b64 = cleaned.slice(6).replace(/-/g,'+').replace(/_/g,'/'); while(b64.length % 4 !== 0) b64 += '='; const binary = atob(b64); const bytes = Uint8Array.from(binary, c=>c.charCodeAt(0)); const json = new TextDecoder().decode(bytes); return JSON.parse(json); }
+  function generateSaveCode(){ const code = encodeSaveData(buildSaveData()); saveCodeBox.value = code; localStorage.setItem(LS_CODEFLAG, '1'); saveStatus.textContent = 'Save code generated.'; showToast('Save code generated.'); beep(760, 0.06, 'triangle', 0.03); renderAchievements(); }
+  function copySaveCode(){ if(!saveCodeBox.value.trim()) generateSaveCode(); navigator.clipboard.writeText(saveCodeBox.value).then(()=>{ saveStatus.textContent = 'Save code copied.'; showToast('Code copied.'); }).catch(()=>{ saveStatus.textContent = 'Copy failed. You can still select and copy it manually.'; showToast('Copy failed.'); }); }
+  function loadSaveCode(){ const code = saveCodeBox.value.trim(); if(!code){ saveStatus.textContent = 'Paste a save code first.'; showToast('Paste a code first.'); return; } try{ const data = decodeSaveData(code); if(!data || data.v !== 5) throw new Error('Unsupported version'); if(typeof data.user === 'string'){ if(data.user){ setUser(data.user); usernameInput.value = data.user; } else { clearUser(); } } if(Array.isArray(data.attempts)){ setAttempts(data.attempts.slice(0, 100)); } if(typeof data.notes === 'string'){ setNotes(data.notes); notesBox.value = data.notes; } if(data.games){ const games = { signalBest:Number(data.games.signalBest || 0), signalPlays:Number(data.games.signalPlays || 0), sequenceBest:Number(data.games.sequenceBest || 0), sequenceWins:Number(data.games.sequenceWins || 0), tileBest:Number(data.games.tileBest || 0), tileWins:Number(data.games.tileWins || 0), mazeBest:Number(data.games.mazeBest || 0), mazeWins:Number(data.games.mazeWins || 0) }; saveGames(games); } if(Array.isArray(data.eggs)){ setEggs(data.eggs); } if(Array.isArray(data.visits)){ localStorage.setItem('mtrx_visits_v5', JSON.stringify(data.visits)); } if(data.settings){ if(typeof data.settings.accentIndex === 'number') state.accentIndex = Math.max(0, Math.min(state.colors.length - 1, data.settings.accentIndex)); if(typeof data.settings.fontSize === 'number') state.fontSize = Math.max(12, Math.min(24, data.settings.fontSize)); if(typeof data.settings.speedMs === 'number') state.speedMs = Math.max(12, Math.min(90, data.settings.speedMs)); if(typeof data.settings.trailAlpha === 'number') state.trailAlpha = Math.max(0.01, Math.min(0.2, data.settings.trailAlpha)); if(typeof data.settings.running === 'boolean') state.running = data.settings.running; if(typeof data.settings.glitch === 'boolean') state.glitch = data.settings.glitch; if(typeof data.settings.sound === 'boolean') state.sound = data.settings.sound; } setAccentVar(); color = getAccent(); rebuildDrops(); applyGlitchState(); saveSettings(); localStorage.setItem(LS_CODEFLAG, '1'); syncProfileUI(); renderStats(); renderAchievements(); renderEggs(); renderSettings(); renderNotes(); renderSave(); renderGames(); saveStatus.textContent = 'Save code loaded successfully.'; showToast('Save restored.'); beep(880,0.08,'triangle',0.04); }catch(err){ saveStatus.textContent = 'Invalid save code.'; showToast('Invalid code.'); beep(240,0.07,'square',0.03); } }
+  function clearLocalData(){ if(!confirm('Clear all local data from this browser?')) return; localStorage.removeItem(LS_USER); localStorage.removeItem(LS_ATTEMPTS); localStorage.removeItem(LS_SETTINGS); localStorage.removeItem(LS_NOTES); localStorage.removeItem(LS_CODEFLAG); localStorage.removeItem(LS_GAMES); localStorage.removeItem(LS_EGGS); localStorage.removeItem('mtrx_visits_v5'); state.accentIndex=0; state.fontSize=18; state.speedMs=35; state.trailAlpha=0.08; state.running=true; state.glitch=false; state.sound=false; document.body.style.filter='none'; setAccentVar(); color = getAccent(); rebuildDrops(); usernameInput.value=''; notesBox.value=''; saveCodeBox.value=''; titleClicks=0; keyBuffer=[]; syncProfileUI(); renderStats(); renderAchievements(); renderEggs(); renderSettings(); renderNotes(); renderSave(); renderGames(); showToast('Local data cleared.'); }
+  function clearAttempts(){ if(!confirm('Clear quiz attempts only?')) return; localStorage.removeItem(LS_ATTEMPTS); renderStats(); renderAchievements(); syncProfileUI(); showToast('Attempts cleared.'); }
+  function saveNotesDebounced(){ clearTimeout(notesTimer); notesTimer = setTimeout(saveNotes, 220); }
+  function resetAll(){ clearLocalData(); showScreen('home'); showToast('Everything reset.'); beep(360,0.05,'sine',0.02); }
+  function initSettingsFromStorage(){ const saved = getSettings(); if(typeof saved.accentIndex === 'number') state.accentIndex = Math.max(0, Math.min(state.colors.length - 1, saved.accentIndex)); if(typeof saved.fontSize === 'number') state.fontSize = Math.max(12, Math.min(24, saved.fontSize)); if(typeof saved.speedMs === 'number') state.speedMs = Math.max(12, Math.min(90, saved.speedMs)); if(typeof saved.trailAlpha === 'number') state.trailAlpha = Math.max(0.01, Math.min(0.2, saved.trailAlpha)); if(typeof saved.running === 'boolean') state.running = saved.running; if(typeof saved.glitch === 'boolean') state.glitch = saved.glitch; if(typeof saved.sound === 'boolean') state.sound = saved.sound; setAccentVar(); color = getAccent(); applyGlitchState(); saveSettings(); }
+  function updateSettingsLabels(){ speedValue.textContent = `${state.speedMs} ms`; trailValue.textContent = state.trailAlpha.toFixed(2); fontValue.textContent = `${state.fontSize} px`; }
+
+  function renderGames(){ const games = getGames(); signalHud.textContent = `Best: ${games.signalBest} | Plays: ${games.signalPlays} | Time: ${game.signal.timeLeft}`; sequenceHud.textContent = `Best: ${games.sequenceBest} | Level: ${game.sequence.level}`; tileHud.textContent = `Matches: ${game.tile.score} | Turns: ${game.tile.flips}`; mazeHud.textContent = `Steps: ${game.maze.steps} | Best: ${games.mazeBest}`; }
+
+  function startSignalGame(){ clearInterval(game.signal.timer); game.signal.running = true; game.signal.timeLeft = 20; game.signal.score = 0; game.signal.timer = setInterval(()=>{ game.signal.timeLeft--; updateSignalHud(); if(game.signal.timeLeft <= 0) endSignalGame(); }, 1000); moveSignalTarget(); signalMsg.textContent = 'Go!'; updateSignalHud(); showToast('Signal Tap started.'); }
+  function endSignalGame(){ clearInterval(game.signal.timer); game.signal.running = false; const games = getGames(); games.signalPlays += 1; if(game.signal.score > games.signalBest) games.signalBest = game.signal.score; saveGames(games); updateSignalHud(); signalMsg.textContent = `Time! Score: ${game.signal.score}`; renderStats(); renderAchievements(); scanEggs(); showToast(`Signal Tap done: ${game.signal.score}`); }
+  function resetSignalGame(){ clearInterval(game.signal.timer); game.signal.running = false; game.signal.timeLeft = 20; game.signal.score = 0; moveSignalTarget(); signalMsg.textContent = 'Ready.'; updateSignalHud(); showToast('Signal Tap reset.'); }
+  function updateSignalHud(){ const games = getGames(); signalHud.textContent = `Best: ${games.signalBest} | Plays: ${games.signalPlays} | Time: ${game.signal.timeLeft}`; signalTarget.textContent = game.signal.running ? 'HIT' : 'GO'; signalTarget.style.display = 'block'; }
+  function moveSignalTarget(){ const field = signalField.getBoundingClientRect(); const size = 64; const maxX = Math.max(0, field.width - size - 12); const maxY = Math.max(0, field.height - size - 12); const x = Math.floor(Math.random() * (maxX + 1)) + 6; const y = Math.floor(Math.random() * (maxY + 1)) + 6; signalTarget.style.left = `${x}px`; signalTarget.style.top = `${y}px`; }
+  function hitSignal(){ if(!game.signal.running) return; game.signal.score += 1; signalMsg.textContent = `Score: ${game.signal.score}`; moveSignalTarget(); updateSignalHud(); beep(720 + game.signal.score * 10, 0.04, 'triangle', 0.02); if(game.signal.score >= 10){ unlockEgg('signal_sprinter'); renderAchievements(); } }
+
+  function startSequenceGame(){ clearTimeout(game.sequence.timer); game.sequence.running = true; game.sequence.showing = true; game.sequence.inputIndex = 0; game.sequence.sequence = buildSequence(game.sequence.level); sequenceMsg.textContent = 'Watch the pattern.'; showSequence(game.sequence.sequence); }
+  function resetSequenceGame(){ clearTimeout(game.sequence.timer); game.sequence.running = false; game.sequence.showing = false; game.sequence.level = 1; game.sequence.inputIndex = 0; game.sequence.sequence = []; sequenceDisplay.textContent = 'Press Start Sequence.'; sequenceMsg.textContent = 'Ready.'; updateSequenceHud(); showToast('Sequence Lock reset.'); }
+  function updateSequenceHud(){ const games = getGames(); sequenceHud.textContent = `Best: ${games.sequenceBest} | Level: ${game.sequence.level}`; }
+  function buildSequence(level){ const length = Math.min(3 + level, 10); return Array.from({length}, () => Math.floor(Math.random() * 4)); }
+  function sleep(ms){ return new Promise(res => setTimeout(res, ms)); }
+  async function showSequence(seq){ sequenceDisplay.textContent = 'Watch...'; const labels = ['Red', 'Green', 'Blue', 'Yellow']; const pads = document.querySelectorAll('.color-pad'); for(const idx of seq){ sequenceDisplay.textContent = labels[idx]; pads[idx].classList.add('pad-flash'); beep(350 + idx * 130, 0.07, 'sine', 0.02); await sleep(480); pads[idx].classList.remove('pad-flash'); sequenceDisplay.textContent = 'Watch...'; await sleep(170); } game.sequence.showing = false; sequenceMsg.textContent = 'Your turn.'; sequenceDisplay.textContent = 'Repeat the pattern now.'; updateSequenceHud(); }
+  function pickSequence(index){ if(!game.sequence.running || game.sequence.showing) return; const expected = game.sequence.sequence[game.sequence.inputIndex]; if(index === expected){ game.sequence.inputIndex += 1; sequenceMsg.textContent = `Good. ${game.sequence.inputIndex}/${game.sequence.sequence.length}`; beep(620 + index * 70, 0.05, 'triangle', 0.02); if(game.sequence.inputIndex >= game.sequence.sequence.length){ completeSequenceRound(); } } else { failSequenceRound(); } }
+  function completeSequenceRound(){ const games = getGames(); game.sequence.level += 1; games.sequenceWins += 1; if(game.sequence.level > games.sequenceBest) games.sequenceBest = game.sequence.level; saveGames(games); renderStats(); renderAchievements(); scanEggs(); sequenceMsg.textContent = `Round clear. Level ${game.sequence.level}`; sequenceDisplay.textContent = 'Next round loading...'; updateSequenceHud(); showToast(`Sequence clear: level ${game.sequence.level}`); game.sequence.timer = setTimeout(()=>{ game.sequence.showing = true; game.sequence.sequence = buildSequence(game.sequence.level); game.sequence.inputIndex = 0; showSequence(game.sequence.sequence); }, 900); }
+  function failSequenceRound(){ const games = getGames(); if(game.sequence.level > games.sequenceBest) games.sequenceBest = game.sequence.level; saveGames(games); renderStats(); renderAchievements(); sequenceMsg.textContent = 'Wrong note. Reset and try again.'; sequenceDisplay.textContent = 'Sequence broken.'; game.sequence.running = false; game.sequence.showing = false; showToast('Sequence failed.'); updateSequenceHud(); }
+
+  function startTileGame(){
+    game.tile.running = true; game.tile.score = 0; game.tile.flips = 0; game.tile.revealed = []; game.tile.matched = [];
+    const pairs = [0,0,1,1,2,2,3,3,4];
+    game.tile.board = shuffle([...pairs]);
+    renderTileBoard();
+    tileMsg.textContent = 'Find pairs.';
+    updateTileHud();
+    showToast('Tile Flip started.');
   }
+  function resetTileGame(){ game.tile.running = false; game.tile.score = 0; game.tile.flips = 0; game.tile.board = []; game.tile.revealed = []; game.tile.matched = []; tileBoard.innerHTML = ''; tileMsg.textContent = 'Ready.'; updateTileHud(); showToast('Tile game reset.'); }
+  function updateTileHud(){ tileHud.textContent = `Matches: ${game.tile.score} | Turns: ${game.tile.flips}`; }
+  function renderTileBoard(){ tileBoard.innerHTML = ''; game.tile.board.forEach((val, idx) => { const btn = document.createElement('button'); btn.className = 'tile'; btn.textContent = '?'; btn.onclick = () => flipTile(idx, btn); tileBoard.appendChild(btn); }); }
+  function flipTile(idx, btn){ if(!game.tile.running) return; if(game.tile.matched.includes(idx) || game.tile.revealed.includes(idx)) return; game.tile.flips += 1; game.tile.revealed.push(idx); btn.textContent = String(game.tile.board[idx] + 1); btn.classList.add('on'); updateTileHud(); if(game.tile.revealed.length === 2){ const [a, b] = game.tile.revealed; const board = game.tile.board; if(board[a] === board[b]){ game.tile.score += 1; game.tile.matched.push(a, b); tileMsg.textContent = 'Match!'; beep(820,0.05,'triangle',0.02); } else { tileMsg.textContent = 'No match.'; setTimeout(()=>{ [...tileBoard.children].forEach((el,i)=>{ if(game.tile.revealed.includes(i) && !game.tile.matched.includes(i)) { el.textContent = '?'; el.classList.remove('on'); } }); }, 500); } game.tile.revealed = []; updateTileHud(); const games = getGames(); if(game.tile.score > games.tileBest) games.tileBest = game.tile.score; saveGames(games); renderStats(); renderAchievements(); if(game.tile.score >= 3) unlockEgg('tile_master'); if(game.tile.score >= 5){ tileMsg.textContent = 'Board cleared-ish.'; game.tile.running = false; } } }
 
-  function submitQuiz(){
-    const user = getUser() || "Guest";
-    const course = courses[state.currentCourse];
-    const total = course.questions.length;
-
-    const unanswered = currentQuizState.answers.some(a => a === null);
-    if(unanswered){
-      resultBar.classList.remove("hidden");
-      resultBar.innerHTML = `Please answer all ${total} questions first. Then press submit again.`;
-      resultBar.style.borderColor = "rgba(255,77,77,0.45)";
-      resultBar.style.background = "rgba(255,77,77,0.10)";
-      beep(240, 0.07, "square", 0.03);
-      return;
-    }
-
-    let score = 0;
-
-    course.questions.forEach((q, qIndex) => {
-      const qEl = document.getElementById(`q-${qIndex}`);
-      const feedbackEl = document.getElementById(`fb-${qIndex}`);
-      const selected = currentQuizState.answers[qIndex];
-      const correct = q.correct;
-
-      qEl.classList.remove("correct", "wrong");
-      qEl.classList.add(selected === correct ? "correct" : "wrong");
-
-      const options = qEl.querySelectorAll(".opt");
-      options.forEach((optEl, optIndex) => {
-        const input = optEl.querySelector("input");
-        input.disabled = true;
-        optEl.classList.remove("correct", "wrong");
-
-        if(optIndex === correct){
-          optEl.classList.add("correct");
-        }
-        if(optIndex === selected && selected !== correct){
-          optEl.classList.add("wrong");
-        }
-      });
-
-      const pickedText = q.options[selected];
-      const correctText = q.options[correct];
-
-      if(selected === correct) score++;
-
-      feedbackEl.classList.add("show");
-      feedbackEl.className = `feedback show ${selected === correct ? "ok" : "bad"}`;
-      feedbackEl.innerHTML = selected === correct
-        ? `Correct. ${q.explanation}`
-        : `Your answer: <b>${pickedText}</b><br>Correct answer: <b>${correctText}</b><br>${q.explanation}`;
-    });
-
-    const attempt = {
-      user,
-      courseId: state.currentCourse,
-      courseTitle: course.title,
-      score,
-      total,
-      answers: [...currentQuizState.answers],
-      timestamp: new Date().toISOString()
-    };
-
-    const attempts = getAttempts();
-    attempts.unshift(attempt);
-    setAttempts(attempts.slice(0, 100));
-
-    resultBar.classList.remove("hidden");
-    resultBar.style.borderColor = "rgba(53,224,111,0.40)";
-    resultBar.style.background = "rgba(53,224,111,0.10)";
-    resultBar.innerHTML = `<b>Score:</b> ${score}/${total}<br>Answers revealed. Attempt saved locally in this browser.`;
-
-    currentQuizState.submitted = true;
-    submitQuizBtn.disabled = true;
-    submitQuizBtn.textContent = "Submitted";
-    reviewBtn.classList.remove("hidden");
-    courseMsg.textContent = "Your result has been stored locally. Open Stats for the summary.";
-    syncProfileUI();
-    renderStats();
-    renderAchievements();
-    scanEggs();
-    showToast(`Saved: ${score}/${total}`);
-    beep(880, 0.08, "triangle", 0.04);
-    setTimeout(() => beep(1100, 0.07, "sine", 0.03), 120);
+  function startMazeGame(){
+    game.maze.running = true; game.maze.steps = 0; game.maze.current = 0; game.maze.path = [0,1,2,7,12,17,18,19];
+    renderMazeBoard();
+    mazeMsg.textContent = 'Start at the green tile.';
+    updateMazeHud();
+    showToast('Maze Snap started.');
   }
-
-  function scrollToResults(){
-    resultBar.scrollIntoView({ behavior: "smooth", block: "start" });
-  }
-
-  function resetCourse(){
-    renderCourse(state.currentCourse);
-    beep(520, 0.06, "sine", 0.03);
-    showToast("Quiz reset.");
-  }
-
-  function renderStats(){
-    const stats = computeStats();
-    statUser.textContent = stats.user;
-    statAttempts.textContent = String(stats.totalAttempts);
-    statAvg.textContent = `${stats.avg}%`;
-    statBest.textContent = `${stats.best}%`;
-    statXp.textContent = String(stats.xp);
-    statPerfect.textContent = String(stats.perfect);
-
-    const games = getGames();
-    statSignal.textContent = String(games.signalBest);
-    statSequence.textContent = String(games.sequenceBest);
-    statEggs.textContent = String(getEggs().length);
-
-    if(!stats.attempts.length){
-      historyList.innerHTML = `<div class="history-item">No attempts yet. Run a quiz and the summary will wake up.</div>`;
-      return;
-    }
-
-    historyList.innerHTML = stats.attempts.slice(0, 10).map(a => {
-      const when = new Date(a.timestamp).toLocaleString();
-      const pct = Math.round((a.score / a.total) * 100);
-      return `
-        <div class="history-item">
-          <b>${a.courseTitle}</b><br>
-          ${a.score}/${a.total} • ${pct}%<br>
-          ${when}
-        </div>
-      `;
-    }).join("");
-  }
-
-  function renderAchievements(){
-    const items = achievementDefs();
-    achievementGrid.innerHTML = items.map(item => `
-      <div class="badge ${item.done ? "done" : "locked"}">
-        <h4>${item.done ? "✓ " : "◻ "} ${item.title}</h4>
-        <p>${item.desc}</p>
-        <p style="margin-top:8px; color:${item.done ? "var(--ok)" : "var(--muted)"};">${item.progress}</p>
-      </div>
-    `).join("");
-  }
-
-  function renderEggs(){
-    const unlocked = getEggs();
-    eggList.innerHTML = eggDefs.map(egg => `
-      <div class="egg-item ${unlocked.includes(egg.id) ? "done" : ""}">
-        <h4>${unlocked.includes(egg.id) ? "✓ " : "◻ "} ${egg.title}</h4>
-        <p>${egg.desc}</p>
-      </div>
-    `).join("");
-    eggStatus.textContent = `Found ${unlocked.length}/${eggDefs.length}.`;
-  }
-
-  function renderNotes(){
-    notesBox.value = getNotes();
-    notesStatus.textContent = "Notes are stored locally in this browser.";
-  }
-
-  function saveNotes(){
-    setNotes(notesBox.value);
-    notesStatus.textContent = "Notes saved locally.";
-    renderAchievements();
-    scanEggs();
-    showToast("Notes saved.");
-  }
-
-  function clearNotes(){
-    notesBox.value = "";
-    setNotes("");
-    notesStatus.textContent = "Notes cleared.";
-    renderAchievements();
-    showToast("Notes cleared.");
-  }
-
-  function renderSave(){
-    if(!saveCodeBox.value.trim()){
-      saveCodeBox.value = encodeSaveData(buildSaveData());
-    }
-    saveStatus.textContent = "Generate or paste a code. The code includes your username, attempts, notes, settings, minigame stats, and eggs.";
-  }
-
-  function renderSettings(){
-    speedRange.value = String(state.speedMs);
-    trailRange.value = String(state.trailAlpha);
-    fontRange.value = String(state.fontSize);
-    updateSettingsLabels();
-    settingsStatus.textContent = `Accent: ${state.colors[state.accentIndex].name} • Sound: ${state.sound ? "On" : "Off"} • Glitch: ${state.glitch ? "On" : "Off"} • Rain: ${state.running ? "On" : "Off"}`;
-  }
-
-  function updateSettingsLabels(){
-    speedValue.textContent = `${state.speedMs} ms`;
-    trailValue.textContent = state.trailAlpha.toFixed(2);
-    fontValue.textContent = `${state.fontSize} px`;
-  }
-
-  function persistAndRefreshSettings(){
-    saveSettings();
-    updateSettingsLabels();
-    if(document.getElementById("settings").classList.contains("active")) renderSettings();
-  }
-
-  function cycleAccent(){
-    state.accentIndex = (state.accentIndex + 1) % state.colors.length;
-    setAccentVar();
-    color = getAccent();
-    saveSettings();
-    if(document.getElementById("settings").classList.contains("active")) renderSettings();
-    showToast(`Accent: ${state.colors[state.accentIndex].name}`);
-    beep(560 + state.accentIndex * 110, 0.06, "triangle", 0.03);
-  }
-
-  function toggleRain(){
-    state.running = !state.running;
-    saveSettings();
-    if(document.getElementById("settings").classList.contains("active")) renderSettings();
-    showToast(state.running ? "Rain resumed." : "Rain paused.");
-    beep(state.running ? 620 : 260, 0.06, "triangle", 0.03);
-  }
-
-  function fasterRain(){
-    state.speedMs = Math.max(12, state.speedMs - 6);
-    saveSettings();
-    updateSettingsLabels();
-    showToast(`Rain speed: ${state.speedMs} ms`);
-    beep(760, 0.05, "sine", 0.03);
-  }
-
-  function slowerRain(){
-    state.speedMs = Math.min(90, state.speedMs + 6);
-    saveSettings();
-    updateSettingsLabels();
-    showToast(`Rain speed: ${state.speedMs} ms`);
-    beep(320, 0.05, "sine", 0.03);
-  }
-
-  function toggleGlitch(){
-    state.glitch = !state.glitch;
-    applyGlitchState();
-    saveSettings();
-    if(document.getElementById("settings").classList.contains("active")) renderSettings();
-    showToast(state.glitch ? "Glitch enabled." : "Glitch disabled.");
-    beep(state.glitch ? 920 : 280, 0.06, "sawtooth", 0.025);
-  }
-
-  function toggleSound(){
-    state.sound = !state.sound;
-    saveSettings();
-    if(document.getElementById("settings").classList.contains("active")) renderSettings();
-    showToast(state.sound ? "Sound enabled." : "Sound muted.");
-    beep(720, 0.06, "square", 0.03);
-  }
-
-  function burstMatrix(){
-    state.burstUntil = performance.now() + 1800;
-    state.trailAlpha = 0.045;
-    saveSettings();
-    if(document.getElementById("settings").classList.contains("active")) renderSettings();
-    showToast("Matrix burst!");
-    beep(1000, 0.08, "square", 0.04);
-    setTimeout(() => {
-      const saved = getSettings();
-      state.trailAlpha = typeof saved.trailAlpha === "number" ? saved.trailAlpha : 0.08;
-      saveSettings();
-      if(document.getElementById("settings").classList.contains("active")) renderSettings();
-    }, 1800);
-  }
-
-  function randomTitle(){
-    const titles = [
-      "How to escape the matrix",
-      "Exit protocol engaged",
-      "Choose your pill",
-      "Signal breach detected",
-      "Reality loading...",
-      "The grid is talking"
-    ];
-    const subs = [
-      "A clean neon start screen. No clutter, no chaos.",
-      "Answer everything first. Then the answers arrive.",
-      "Course menu on its own screen. Easy on the eyes.",
-      "The layout stopped crowding the title like a digital soup."
-    ];
-    homeTitle.textContent = titles[Math.floor(Math.random() * titles.length)];
-    homeSub.textContent = subs[Math.floor(Math.random() * subs.length)];
-    showToast("Title randomized.");
-    beep(610, 0.06, "triangle", 0.03);
-  }
-
-  function buildSaveData(){
-    return {
-      v: 4,
-      user: getUser(),
-      attempts: getAttempts(),
-      notes: getNotes(),
-      games: getGames(),
-      eggs: getEggs(),
-      settings: {
-        accentIndex: state.accentIndex,
-        fontSize: state.fontSize,
-        speedMs: state.speedMs,
-        trailAlpha: state.trailAlpha,
-        running: state.running,
-        glitch: state.glitch,
-        sound: state.sound
-      },
-      exportedAt: new Date().toISOString()
-    };
-  }
-
-  function encodeSaveData(data){
-    const json = JSON.stringify(data);
-    const bytes = new TextEncoder().encode(json);
-    let binary = "";
-    bytes.forEach(byte => {
-      binary += String.fromCharCode(byte);
-    });
-    const b64 = btoa(binary)
-      .replace(/\+/g, "-")
-      .replace(/\//g, "_")
-      .replace(/=+$/g, "");
-    return `MTRX4.${b64}`;
-  }
-
-  function decodeSaveData(code){
-    const cleaned = code.trim().replace(/\s+/g, "");
-    if(!cleaned.startsWith("MTRX4.")) throw new Error("Bad save code prefix");
-
-    let b64 = cleaned.slice(6).replace(/-/g, "+").replace(/_/g, "/");
-    while(b64.length % 4 !== 0) b64 += "=";
-
-    const binary = atob(b64);
-    const bytes = Uint8Array.from(binary, c => c.charCodeAt(0));
-    const json = new TextDecoder().decode(bytes);
-    return JSON.parse(json);
-  }
-
-  function generateSaveCode(){
-    const code = encodeSaveData(buildSaveData());
-    saveCodeBox.value = code;
-    localStorage.setItem(LS_CODEFLAG, "1");
-    saveStatus.textContent = "Save code generated.";
-    showToast("Save code generated.");
-    beep(760, 0.06, "triangle", 0.03);
-    renderAchievements();
-  }
-
-  function copySaveCode(){
-    if(!saveCodeBox.value.trim()) generateSaveCode();
-    navigator.clipboard.writeText(saveCodeBox.value).then(() => {
-      saveStatus.textContent = "Save code copied.";
-      showToast("Code copied.");
-    }).catch(() => {
-      saveStatus.textContent = "Copy failed. You can still select and copy it manually.";
-      showToast("Copy failed.");
-    });
-  }
-
-  function loadSaveCode(){
-    const code = saveCodeBox.value.trim();
-    if(!code){
-      saveStatus.textContent = "Paste a save code first.";
-      showToast("Paste a code first.");
-      return;
-    }
-
-    try{
-      const data = decodeSaveData(code);
-      if(!data || data.v !== 4) throw new Error("Unsupported version");
-
-      if(typeof data.user === "string"){
-        if(data.user){
-          setUser(data.user);
-          usernameInput.value = data.user;
-        } else {
-          clearUser();
-        }
-      }
-
-      if(Array.isArray(data.attempts)){
-        setAttempts(data.attempts.slice(0, 100));
-      }
-
-      if(typeof data.notes === "string"){
-        setNotes(data.notes);
-        notesBox.value = data.notes;
-      }
-
-      if(data.games){
-        const games = {
-          signalBest: Number(data.games.signalBest || 0),
-          signalPlays: Number(data.games.signalPlays || 0),
-          sequenceBest: Number(data.games.sequenceBest || 0),
-          sequenceWins: Number(data.games.sequenceWins || 0)
-        };
-        saveGames(games);
-      }
-
-      if(Array.isArray(data.eggs)){
-        setEggs(data.eggs);
-      }
-
-      if(data.settings){
-        if(typeof data.settings.accentIndex === "number"){
-          state.accentIndex = Math.max(0, Math.min(state.colors.length - 1, data.settings.accentIndex));
-        }
-        if(typeof data.settings.fontSize === "number"){
-          state.fontSize = Math.max(12, Math.min(24, data.settings.fontSize));
-        }
-        if(typeof data.settings.speedMs === "number"){
-          state.speedMs = Math.max(12, Math.min(90, data.settings.speedMs));
-        }
-        if(typeof data.settings.trailAlpha === "number"){
-          state.trailAlpha = Math.max(0.01, Math.min(0.2, data.settings.trailAlpha));
-        }
-        if(typeof data.settings.running === "boolean"){
-          state.running = data.settings.running;
-        }
-        if(typeof data.settings.glitch === "boolean"){
-          state.glitch = data.settings.glitch;
-        }
-        if(typeof data.settings.sound === "boolean"){
-          state.sound = data.settings.sound;
-        }
-      }
-
-      setAccentVar();
-      color = getAccent();
-      rebuildDrops();
-      applyGlitchState();
-      saveSettings();
-      localStorage.setItem(LS_CODEFLAG, "1");
-      syncProfileUI();
-      renderStats();
-      renderAchievements();
-      renderEggs();
-      renderSettings();
-      renderNotes();
-      renderSave();
-      saveStatus.textContent = "Save code loaded successfully.";
-      showToast("Save restored.");
-      beep(880, 0.08, "triangle", 0.04);
-    }catch(err){
-      saveStatus.textContent = "Invalid save code.";
-      showToast("Invalid code.");
-      beep(240, 0.07, "square", 0.03);
-    }
-  }
-
-  function clearLocalData(){
-    if(!confirm("Clear all local data from this browser?")) return;
-    localStorage.removeItem(LS_USER);
-    localStorage.removeItem(LS_ATTEMPTS);
-    localStorage.removeItem(LS_SETTINGS);
-    localStorage.removeItem(LS_NOTES);
-    localStorage.removeItem(LS_CODEFLAG);
-    localStorage.removeItem(LS_GAMES);
-    localStorage.removeItem(LS_EGGS);
-
-    state.accentIndex = 0;
-    state.fontSize = 18;
-    state.speedMs = 35;
-    state.trailAlpha = 0.08;
-    state.running = true;
-    state.glitch = false;
-    state.sound = false;
-    document.body.style.filter = "none";
-    setAccentVar();
-    color = getAccent();
-    rebuildDrops();
-    usernameInput.value = "";
-    notesBox.value = "";
-    saveCodeBox.value = "";
-    titleClicks = 0;
-    keyBuffer = [];
-    syncProfileUI();
-    renderStats();
-    renderAchievements();
-    renderEggs();
-    renderSettings();
-    renderNotes();
-    renderSave();
-    showToast("Local data cleared.");
-  }
-
-  function clearAttempts(){
-    if(!confirm("Clear quiz attempts only?")) return;
-    localStorage.removeItem(LS_ATTEMPTS);
-    renderStats();
-    renderAchievements();
-    syncProfileUI();
-    showToast("Attempts cleared.");
-  }
-
-  function saveNotesDebounced(){
-    clearTimeout(notesTimer);
-    notesTimer = setTimeout(saveNotes, 220);
-  }
-
-  function resetAll(){
-    clearLocalData();
-    showScreen("home");
-    showToast("Everything reset.");
-    beep(360, 0.05, "sine", 0.02);
-  }
-
-  function initSettingsFromStorage(){
-    const saved = getSettings();
-    if(typeof saved.accentIndex === "number"){
-      state.accentIndex = Math.max(0, Math.min(state.colors.length - 1, saved.accentIndex));
-    }
-    if(typeof saved.fontSize === "number"){
-      state.fontSize = Math.max(12, Math.min(24, saved.fontSize));
-    }
-    if(typeof saved.speedMs === "number"){
-      state.speedMs = Math.max(12, Math.min(90, saved.speedMs));
-    }
-    if(typeof saved.trailAlpha === "number"){
-      state.trailAlpha = Math.max(0.01, Math.min(0.2, saved.trailAlpha));
-    }
-    if(typeof saved.running === "boolean"){
-      state.running = saved.running;
-    }
-    if(typeof saved.glitch === "boolean"){
-      state.glitch = saved.glitch;
-    }
-    if(typeof saved.sound === "boolean"){
-      state.sound = saved.sound;
-    }
-
-    setAccentVar();
-    color = getAccent();
-    applyGlitchState();
-    saveSettings();
-  }
-
-  function renderGames(){
-    const games = getGames();
-    signalHud.textContent = `Best: ${games.signalBest} | Plays: ${games.signalPlays} | Time: ${game.signal.timeLeft}`;
-    sequenceHud.textContent = `Best: ${games.sequenceBest} | Level: ${game.sequence.level}`;
-  }
-
-  function startSignalGame(){
-    clearInterval(game.signal.timer);
-    game.signal.running = true;
-    game.signal.timeLeft = 20;
-    game.signal.score = 0;
-    game.signal.timer = setInterval(() => {
-      game.signal.timeLeft--;
-      updateSignalHud();
-      if(game.signal.timeLeft <= 0){
-        endSignalGame();
-      }
-    }, 1000);
-    moveSignalTarget();
-    signalMsg.textContent = "Go!";
-    updateSignalHud();
-    showToast("Signal Tap started.");
-  }
-
-  function endSignalGame(){
-    clearInterval(game.signal.timer);
-    game.signal.running = false;
-    const games = getGames();
-    games.signalPlays += 1;
-    if(game.signal.score > games.signalBest) games.signalBest = game.signal.score;
-    saveGames(games);
-    updateSignalHud();
-    signalMsg.textContent = `Time! Score: ${game.signal.score}`;
-    renderStats();
-    renderAchievements();
-    scanEggs();
-    showToast(`Signal Tap done: ${game.signal.score}`);
-  }
-
-  function resetSignalGame(){
-    clearInterval(game.signal.timer);
-    game.signal.running = false;
-    game.signal.timeLeft = 20;
-    game.signal.score = 0;
-    moveSignalTarget();
-    signalMsg.textContent = "Ready.";
-    updateSignalHud();
-    showToast("Signal Tap reset.");
-  }
-
-  function updateSignalHud(){
-    const games = getGames();
-    signalHud.textContent = `Best: ${games.signalBest} | Plays: ${games.signalPlays} | Time: ${game.signal.timeLeft}`;
-    signalTarget.textContent = game.signal.running ? "HIT" : "GO";
-    signalTarget.style.display = "block";
-  }
-
-  function moveSignalTarget(){
-    const field = signalField.getBoundingClientRect();
-    const size = 64;
-    const maxX = Math.max(0, field.width - size - 12);
-    const maxY = Math.max(0, field.height - size - 12);
-    const x = Math.floor(Math.random() * (maxX + 1)) + 6;
-    const y = Math.floor(Math.random() * (maxY + 1)) + 6;
-    signalTarget.style.left = `${x}px`;
-    signalTarget.style.top = `${y}px`;
-  }
-
-  function hitSignal(){
-    if(!game.signal.running) return;
-    game.signal.score += 1;
-    signalMsg.textContent = `Score: ${game.signal.score}`;
-    moveSignalTarget();
-    updateSignalHud();
-    beep(720 + game.signal.score * 10, 0.04, "triangle", 0.02);
-    if(game.signal.score >= 10){
-      unlockEgg("signal_sprinter");
-      renderAchievements();
-    }
-  }
-
-  function startSequenceGame(){
-    clearTimeout(game.sequence.timer);
-    game.sequence.running = true;
-    game.sequence.showing = true;
-    game.sequence.inputIndex = 0;
-    game.sequence.sequence = buildSequence(game.sequence.level);
-    sequenceMsg.textContent = "Watch the pattern.";
-    showSequence(game.sequence.sequence);
-  }
-
-  function resetSequenceGame(){
-    clearTimeout(game.sequence.timer);
-    game.sequence.running = false;
-    game.sequence.showing = false;
-    game.sequence.level = 1;
-    game.sequence.inputIndex = 0;
-    game.sequence.sequence = [];
-    sequenceDisplay.textContent = "Press Start Sequence.";
-    sequenceMsg.textContent = "Ready.";
-    updateSequenceHud();
-    showToast("Sequence Lock reset.");
-  }
-
-  function updateSequenceHud(){
-    const games = getGames();
-    sequenceHud.textContent = `Best: ${games.sequenceBest} | Level: ${game.sequence.level}`;
-  }
-
-  function buildSequence(level){
-    const length = Math.min(3 + level, 8);
-    return Array.from({length}, () => Math.floor(Math.random() * 4));
-  }
-
-  function sleep(ms){
-    return new Promise(res => setTimeout(res, ms));
-  }
-
-  async function showSequence(seq){
-    sequenceDisplay.textContent = "Watch...";
-    const labels = ["Red", "Green", "Blue", "Yellow"];
-    const pads = document.querySelectorAll(".color-pad");
-    for(const idx of seq){
-      sequenceDisplay.textContent = labels[idx];
-      pads[idx].classList.add("pad-flash");
-      beep(350 + idx * 130, 0.07, "sine", 0.02);
-      await sleep(520);
-      pads[idx].classList.remove("pad-flash");
-      sequenceDisplay.textContent = "Watch...";
-      await sleep(180);
-    }
-    game.sequence.showing = false;
-    sequenceMsg.textContent = "Your turn.";
-    sequenceDisplay.textContent = "Repeat the pattern now.";
-    updateSequenceHud();
-  }
-
-  function pickSequence(index){
-    if(!game.sequence.running || game.sequence.showing) return;
-    const expected = game.sequence.sequence[game.sequence.inputIndex];
-    const labels = ["Red", "Green", "Blue", "Yellow"];
-    if(index === expected){
-      game.sequence.inputIndex += 1;
-      sequenceMsg.textContent = `Good. ${game.sequence.inputIndex}/${game.sequence.sequence.length}`;
-      beep(620 + index * 70, 0.05, "triangle", 0.02);
-      if(game.sequence.inputIndex >= game.sequence.sequence.length){
-        completeSequenceRound();
-      }
-    }else{
-      failSequenceRound();
-    }
-  }
-
-  function completeSequenceRound(){
-    const games = getGames();
-    game.sequence.level += 1;
-    games.sequenceWins += 1;
-    if(game.sequence.level > games.sequenceBest) games.sequenceBest = game.sequence.level;
-    saveGames(games);
-    renderStats();
-    renderAchievements();
-    scanEggs();
-    sequenceMsg.textContent = `Round clear. Level ${game.sequence.level}`;
-    sequenceDisplay.textContent = "Next round loading...";
-    updateSequenceHud();
-    showToast(`Sequence clear: level ${game.sequence.level}`);
-    game.sequence.timer = setTimeout(() => {
-      game.sequence.showing = true;
-      game.sequence.sequence = buildSequence(game.sequence.level);
-      game.sequence.inputIndex = 0;
-      showSequence(game.sequence.sequence);
-    }, 900);
-  }
-
-  function failSequenceRound(){
-    const games = getGames();
-    if(game.sequence.level > games.sequenceBest) games.sequenceBest = game.sequence.level;
-    saveGames(games);
-    renderStats();
-    renderAchievements();
-    sequenceMsg.textContent = "Wrong note. Reset and try again.";
-    sequenceDisplay.textContent = "Sequence broken.";
-    game.sequence.running = false;
-    game.sequence.showing = false;
-    showToast("Sequence failed.");
-    updateSequenceHud();
-  }
-
-  function renderSave(){
-    if(!saveCodeBox.value.trim()){
-      saveCodeBox.value = encodeSaveData(buildSaveData());
-    }
-    saveStatus.textContent = "Generate or paste a code. The code includes your username, attempts, notes, settings, minigame stats, and eggs.";
-  }
-
-  function renderEggs(){
-    const unlocked = getEggs();
-    eggList.innerHTML = eggDefs.map(egg => `
-      <div class="egg-item ${unlocked.includes(egg.id) ? "done" : ""}">
-        <h4>${unlocked.includes(egg.id) ? "✓ " : "◻ "} ${egg.title}</h4>
-        <p>${egg.desc}</p>
-      </div>
-    `).join("");
-    eggStatus.textContent = `Found ${unlocked.length}/${eggDefs.length}.`;
-  }
-
-  function updateClock(){
-    const user = getUser();
-    document.getElementById("menuProfile").textContent = user
-      ? `Logged in as ${user}. All progress in this build stays local to this browser.`
-      : "Guest mode. Login to keep a local profile.";
-  }
-
-  menuBtn.addEventListener("click", () => sidebar.classList.toggle("active"));
-
-  window.addEventListener("click", (e) => {
-    if(!sidebar.contains(e.target) && e.target !== menuBtn){
-      sidebar.classList.remove("active");
-    }
-  });
-
-  window.addEventListener("resize", resizeCanvas);
-
-  window.addEventListener("keydown", (e) => {
-    if(e.key === "g" || e.key === "G") toggleGlitch();
-    if(e.key === "r" || e.key === "R") toggleRain();
-    if(e.key === "s" || e.key === "S") toggleSound();
-    if(e.key === "f" || e.key === "F"){
-      if(!document.fullscreenElement){
-        document.documentElement.requestFullscreen().catch(() => {});
-      } else {
-        document.exitFullscreen().catch(() => {});
-      }
-    }
-    if(e.key === "h" || e.key === "H") showScreen("menu");
-    if(e.key === "Escape") sidebar.classList.remove("active");
-    if(e.key === "Enter" && state.activeScreen === "login") loginUser();
+  function resetMazeGame(){ game.maze.running = false; game.maze.steps = 0; game.maze.current = 0; mazeBoard.innerHTML = ''; mazeMsg.textContent = 'Ready.'; updateMazeHud(); showToast('Maze reset.'); }
+  function updateMazeHud(){ const games = getGames(); mazeHud.textContent = `Steps: ${game.maze.steps} | Best: ${games.mazeBest}`; }
+  function renderMazeBoard(){ const walls = new Set([3,4,8,9,13,14,15,20,21,22,23,24]); mazeBoard.innerHTML = ''; for(let i=0;i<25;i++){ const btn = document.createElement('button'); btn.className = 'maze-cell'; if(walls.has(i)) btn.classList.add('wall'); if(i === 0) { btn.classList.add('path'); btn.textContent = 'S'; } else if(i === 19) { btn.classList.add('end'); btn.textContent = 'E'; } else if(walls.has(i)) btn.textContent = 'X'; else btn.textContent = String(i); btn.onclick = () => stepMaze(i, btn, walls); mazeBoard.appendChild(btn); } }
+  function stepMaze(i, btn, walls){ if(!game.maze.running) return; game.maze.steps += 1; if(walls.has(i)){ mazeMsg.textContent = 'Wall hit. Reset!'; game.maze.running = false; showToast('Maze failed.'); updateMazeHud(); return; } if(i === game.maze.path[game.maze.current]){ btn.classList.add('path'); game.maze.current += 1; mazeMsg.textContent = `Correct step ${game.maze.current}/${game.maze.path.length}`; beep(610,0.04,'triangle',0.02); if(game.maze.current >= game.maze.path.length){ mazeMsg.textContent = 'Exit found!'; const games = getGames(); games.mazeWins += 1; if(games.mazeBest < 1) games.mazeBest = 1; saveGames(games); renderStats(); renderAchievements(); unlockEgg('maze_runner'); showToast('Maze cleared!'); game.maze.running = false; } } else { mazeMsg.textContent = 'Wrong path. Reset!'; game.maze.running = false; showToast('Maze failed.'); } updateMazeHud(); }
+
+  function shuffle(arr){ for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; }
+
+  function renderGamesSafe(){ renderGames(); updateSignalHud(); updateSequenceHud(); updateTileHud(); updateMazeHud(); }
+
+  function updateClock(){ const user = getUser(); document.getElementById('menuProfile').textContent = user ? `Logged in as ${user}. All progress in this build stays local to this browser.` : 'Guest mode. Login to keep a local profile.'; }
+
+  menuBtn.addEventListener('click',()=>sidebar.classList.toggle('active'));
+  window.addEventListener('click',(e)=>{ if(!sidebar.contains(e.target) && e.target !== menuBtn) sidebar.classList.remove('active'); });
+  window.addEventListener('resize',resizeCanvas);
+  window.addEventListener('keydown',(e)=>{
+    if(e.key === 'g' || e.key === 'G') toggleGlitch();
+    if(e.key === 'r' || e.key === 'R') toggleRain();
+    if(e.key === 's' || e.key === 'S') toggleSound();
+    if(e.key === 'f' || e.key === 'F'){ if(!document.fullscreenElement) document.documentElement.requestFullscreen().catch(()=>{}); else document.exitFullscreen().catch(()=>{}); }
+    if(e.key === 'h' || e.key === 'H') showScreen('menu');
+    if(e.key === 'Escape') sidebar.classList.remove('active');
+    if(e.key === 'Enter' && state.activeScreen === 'login') loginUser();
 
     keyBuffer.push(e.key);
     if(keyBuffer.length > 32) keyBuffer.shift();
-    if(keyBuffer.join("").includes("ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba")){
-      unlockEgg("konami_bloom");
-      renderEggs();
-      showToast("Retro Bloom unlocked.");
-    }
+    if(keyBuffer.join('').includes('ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba')){ unlockEgg('konami_bloom'); renderEggs(); showToast('Retro Bloom unlocked.'); }
   });
 
-  speedRange.addEventListener("input", (e) => {
-    state.speedMs = Math.max(12, Math.min(90, Number(e.target.value)));
-    saveSettings();
-    updateSettingsLabels();
-  });
-
-  trailRange.addEventListener("input", (e) => {
-    state.trailAlpha = Math.max(0.01, Math.min(0.2, Number(e.target.value)));
-    saveSettings();
-    updateSettingsLabels();
-  });
-
-  fontRange.addEventListener("input", (e) => {
-    state.fontSize = Math.max(12, Math.min(24, Number(e.target.value)));
-    saveSettings();
-    updateSettingsLabels();
-    rebuildDrops();
-  });
-
-  notesBox.addEventListener("input", () => {
-    saveNotesDebounced();
-    if(notesBox.value.toLowerCase().includes("void")){
-      unlockEgg("void_note");
-      renderEggs();
-    }
-  });
-
-  homeTitle.addEventListener("click", () => {
-    titleClicks += 1;
-    if(titleClicks >= 5){
-      unlockEgg("title_surge");
-      showToast("Title Surge unlocked.");
-      renderEggs();
-    }
-  });
+  speedRange.addEventListener('input',(e)=>{ state.speedMs = Math.max(12, Math.min(90, Number(e.target.value))); saveSettings(); updateSettingsLabels(); });
+  trailRange.addEventListener('input',(e)=>{ state.trailAlpha = Math.max(0.01, Math.min(0.2, Number(e.target.value))); saveSettings(); updateSettingsLabels(); });
+  fontRange.addEventListener('input',(e)=>{ state.fontSize = Math.max(12, Math.min(24, Number(e.target.value))); saveSettings(); updateSettingsLabels(); rebuildDrops(); });
+  notesBox.addEventListener('input',()=>{ saveNotesDebounced(); if(notesBox.value.toLowerCase().includes('void')){ unlockEgg('void_note'); renderEggs(); } });
+  homeTitle.addEventListener('click',()=>{ titleClicks += 1; if(titleClicks >= 5){ unlockEgg('title_surge'); showToast('Title Surge unlocked.'); renderEggs(); } });
 
   function init(){
-    initSettingsFromStorage();
-    resizeCanvas();
-    usernameInput.value = getUser();
-    syncProfileUI();
-    renderStats();
-    renderAchievements();
-    renderEggs();
-    renderNotes();
-    renderSave();
-    renderSettings();
-    updateSettingsLabels();
-    renderCourse(1);
-    renderGames();
-    updateClock();
-    setInterval(updateClock, 1000);
-    requestAnimationFrame(loop);
-
-    const saved = getSettings();
-    if(saved.glitch) applyGlitchState();
-  }
-
-  function renderGamesSafe(){
-    renderGames();
-    updateSignalHud();
-    updateSequenceHud();
-  }
-
-  function renderSaveSafe(){
-    renderSave();
-  }
-
-  function renderEggsSafe(){
-    renderEggs();
+    initSettingsFromStorage(); resizeCanvas(); usernameInput.value = getUser(); syncProfileUI(); renderStats(); renderAchievements(); renderEggs(); renderNotes(); renderSave(); renderSettings(); updateSettingsLabels(); renderCourse(1); renderGamesSafe(); updateClock(); setInterval(updateClock, 1000); requestAnimationFrame(loop); if(getUser()) homeSub.textContent = `A clean neon doorway. The machine remembers ${getUser()}.`;
+    setScreenVisit('home');
   }
 
   init();
 
-  function buildSummaryText(){
-    const attempts = getAttempts();
-    if(!attempts.length) return "No attempts yet.";
-
-    const last = attempts[0];
-    const avg = Math.round(attempts.reduce((a,b) => a + (b.score / b.total), 0) / attempts.length * 100);
-    const best = Math.max(...attempts.map(a => Math.round((a.score / a.total) * 100)));
-    return `Last run: ${last.courseTitle} • ${last.score}/${last.total} • Average across attempts: ${avg}% • Best: ${best}%`;
-  }
+  function buildSummaryText(){ const attempts = getAttempts(); if(!attempts.length) return 'No attempts yet.'; const last = attempts[0]; const avg = Math.round(attempts.reduce((a,b)=>a + (b.score / b.total), 0) / attempts.length * 100); const best = Math.max(...attempts.map(a=>Math.round((a.score / a.total) * 100))); return `Last run: ${last.courseTitle} • ${last.score}/${last.total} • Average across attempts: ${avg}% • Best: ${best}%`; }
 </script>
 </body>
 </html>
