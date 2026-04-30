@@ -569,7 +569,7 @@
   }
 
   .badge.locked{
-    opacity:0.7;
+    opacity:0.74;
   }
 
   .badge h4{
@@ -677,8 +677,116 @@
     transform:translateX(-50%) translateY(0);
   }
 
+  .quick-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:10px;
+  }
+  .quick-grid .btn{
+    min-width:0;
+    width:100%;
+  }
+
+  .game-grid{
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0,1fr));
+    gap:16px;
+    margin-top:16px;
+  }
+
+  .signal-field{
+    position:relative;
+    height:260px;
+    border-radius:18px;
+    border:1px solid rgba(0,255,102,0.16);
+    background:linear-gradient(180deg, rgba(0,255,102,0.04), rgba(0,0,0,0.26));
+    overflow:hidden;
+  }
+
+  .signal-target{
+    position:absolute;
+    width:64px;
+    height:64px;
+    border-radius:50%;
+    border:0;
+    background:var(--accent);
+    color:#021108;
+    font-weight:900;
+    box-shadow:0 0 18px rgba(0,255,102,0.35);
+    cursor:pointer;
+  }
+
+  .sequence-display{
+    min-height:54px;
+    padding:14px;
+    border-radius:16px;
+    border:1px solid rgba(0,255,102,0.14);
+    background:rgba(0,0,0,0.24);
+    color:var(--text);
+    font-weight:800;
+    letter-spacing:1.2px;
+  }
+
+  .color-pad-row{
+    display:grid;
+    grid-template-columns:repeat(4, minmax(0,1fr));
+    gap:10px;
+    margin-top:12px;
+  }
+
+  .color-pad{
+    min-width:0;
+    width:100%;
+    padding:14px 10px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,0.10);
+    color:#fff;
+    font-weight:900;
+    cursor:pointer;
+  }
+
+  .pad-red{background:#ff4d4d}
+  .pad-green{background:#00b85c}
+  .pad-blue{background:#0ea5e9}
+  .pad-yellow{background:#eab308; color:#111827}
+
+  .pad-flash{
+    filter:brightness(1.6);
+    box-shadow:0 0 18px rgba(255,255,255,0.24);
+  }
+
+  .egg-list{
+    display:grid;
+    gap:10px;
+    margin-top:16px;
+  }
+
+  .egg-item{
+    padding:14px;
+    border-radius:16px;
+    background:rgba(0,0,0,0.24);
+    border:1px solid rgba(0,255,102,0.12);
+    text-align:left;
+  }
+
+  .egg-item.done{
+    border-color:rgba(53,224,111,0.50);
+    background:rgba(53,224,111,0.08);
+  }
+
+  .egg-item h4{
+    margin-bottom:6px;
+    color:var(--text);
+  }
+
+  .egg-item p{
+    color:var(--muted);
+    line-height:1.45;
+    font-size:0.92rem;
+  }
+
   @media (max-width: 900px){
-    .course-grid,.feature-grid,.stats-grid,.achievement-grid{
+    .course-grid,.feature-grid,.stats-grid,.achievement-grid,.game-grid{
       grid-template-columns:1fr 1fr;
     }
   }
@@ -696,7 +804,7 @@
     .brand{
       text-align:left;
     }
-    .course-grid,.feature-grid,.stats-grid,.achievement-grid{
+    .course-grid,.feature-grid,.stats-grid,.achievement-grid,.game-grid,.quick-grid,.color-pad-row{
       grid-template-columns:1fr;
     }
     .range-wrap{
@@ -720,9 +828,11 @@
     <button class="side-btn" onclick="showScreen('login')">Login</button>
     <button class="side-btn" onclick="showScreen('menu')">Course Menu</button>
     <button class="side-btn" onclick="showScreen('stats')">Stats</button>
+    <button class="side-btn" onclick="showScreen('games')">Mini Games</button>
     <button class="side-btn" onclick="showScreen('save')">Save Code</button>
     <button class="side-btn" onclick="showScreen('settings')">Settings</button>
     <button class="side-btn" onclick="showScreen('achievements')">Achievements</button>
+    <button class="side-btn" onclick="showScreen('eggs')">Easter Eggs</button>
     <button class="side-btn" onclick="showScreen('notes')">Notes</button>
     <button class="side-btn" onclick="showScreen('help')">Help</button>
     <button class="side-btn" onclick="openCourse(1)">Course 1</button>
@@ -795,9 +905,7 @@
         <div class="topbar">
           <div class="brand">
             <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Course Menu</h1>
-            <p id="menuSummary">
-              No attempts yet.
-            </p>
+            <p id="menuSummary">No attempts yet.</p>
           </div>
           <div class="back-row">
             <button class="btn dark" onclick="showScreen('home')">Back Home</button>
@@ -808,18 +916,14 @@
           <div class="card">
             <div class="tag">Course 1</div>
             <h2>Matrix Basics</h2>
-            <p>
-              A starter course. Clean, simple, and easy to swap out later when your final questions are ready.
-            </p>
+            <p>A starter course. Clean, simple, and easy to swap out later when your final questions are ready.</p>
             <button class="btn" onclick="openCourse(1)">Open Course 1</button>
           </div>
 
           <div class="card">
             <div class="tag">Course 2</div>
             <h2>Scam Spotting</h2>
-            <p>
-              This version flips the drama into awareness mode, so it teaches how to spot warning signs instead of how to run the play.
-            </p>
+            <p>This version flips the drama into awareness mode, so it teaches how to spot warning signs instead of how to run them.</p>
             <button class="btn secondary" onclick="openCourse(2)">Open Course 2</button>
           </div>
         </div>
@@ -827,13 +931,13 @@
         <div class="grid feature-grid">
           <div class="card">
             <div class="tag">Quick Access</div>
-            <div class="grid" style="grid-template-columns:1fr 1fr; gap:10px;">
+            <div class="quick-grid">
               <button class="btn dark" onclick="showScreen('stats')">Stats</button>
               <button class="btn dark" onclick="showScreen('save')">Save Code</button>
               <button class="btn dark" onclick="showScreen('settings')">Settings</button>
               <button class="btn dark" onclick="showScreen('achievements')">Achievements</button>
-              <button class="btn dark" onclick="showScreen('notes')">Notes</button>
-              <button class="btn dark" onclick="showScreen('help')">Help</button>
+              <button class="btn dark" onclick="showScreen('games')">Mini Games</button>
+              <button class="btn dark" onclick="showScreen('eggs')">Easter Eggs</button>
             </div>
           </div>
 
@@ -886,9 +990,7 @@
         <div class="topbar">
           <div class="brand">
             <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Stats</h1>
-            <p>
-              Local-only memory of your attempts. It stays in this browser and turns into a little performance fossil bed.
-            </p>
+            <p>Local-only memory of your attempts. It stays in this browser and turns into a little performance fossil bed.</p>
           </div>
           <div class="back-row">
             <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
@@ -897,30 +999,15 @@
         </div>
 
         <div class="stats-grid">
-          <div class="stat">
-            <div class="label">User</div>
-            <div class="value" id="statUser">Guest</div>
-          </div>
-          <div class="stat">
-            <div class="label">Attempts</div>
-            <div class="value" id="statAttempts">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">Average Score</div>
-            <div class="value" id="statAvg">0%</div>
-          </div>
-          <div class="stat">
-            <div class="label">Best Score</div>
-            <div class="value" id="statBest">0%</div>
-          </div>
-          <div class="stat">
-            <div class="label">Total XP</div>
-            <div class="value" id="statXp">0</div>
-          </div>
-          <div class="stat">
-            <div class="label">Perfect Runs</div>
-            <div class="value" id="statPerfect">0</div>
-          </div>
+          <div class="stat"><div class="label">User</div><div class="value" id="statUser">Guest</div></div>
+          <div class="stat"><div class="label">Attempts</div><div class="value" id="statAttempts">0</div></div>
+          <div class="stat"><div class="label">Average Score</div><div class="value" id="statAvg">0%</div></div>
+          <div class="stat"><div class="label">Best Score</div><div class="value" id="statBest">0%</div></div>
+          <div class="stat"><div class="label">Total XP</div><div class="value" id="statXp">0</div></div>
+          <div class="stat"><div class="label">Perfect Runs</div><div class="value" id="statPerfect">0</div></div>
+          <div class="stat"><div class="label">Signal Best</div><div class="value" id="statSignal">0</div></div>
+          <div class="stat"><div class="label">Sequence Best</div><div class="value" id="statSequence">0</div></div>
+          <div class="stat"><div class="label">Eggs Found</div><div class="value" id="statEggs">0</div></div>
         </div>
 
         <div class="card" style="margin-top:16px; text-align:left;">
@@ -930,14 +1017,62 @@
       </div>
     </section>
 
+    <section id="games" class="screen">
+      <div class="scroll-shell">
+        <div class="topbar">
+          <div class="brand">
+            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Mini Games</h1>
+            <p>Two little side quests. One is twitchy, one is pattern memory. Both are local and save their stats.</p>
+          </div>
+          <div class="back-row">
+            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
+          </div>
+        </div>
+
+        <div class="game-grid">
+          <div class="card">
+            <div class="tag">Signal Tap</div>
+            <h2>Catch the pulse</h2>
+            <p>Click the glowing target as many times as you can before the timer runs out.</p>
+            <div class="mini-status" id="signalHud">Best: 0 | Plays: 0 | Time: 20</div>
+            <div class="signal-field" id="signalField">
+              <button class="signal-target" id="signalTarget" onclick="hitSignal()">GO</button>
+            </div>
+            <div class="actions">
+              <button class="btn" onclick="startSignalGame()">Start Signal Tap</button>
+              <button class="btn dark" onclick="resetSignalGame()">Reset</button>
+            </div>
+            <div class="mini-status" id="signalMsg">Ready.</div>
+          </div>
+
+          <div class="card">
+            <div class="tag">Sequence Lock</div>
+            <h2>Repeat the pattern</h2>
+            <p>Watch the sequence, then repeat it in order. Each clear round gets longer.</p>
+            <div class="mini-status" id="sequenceHud">Best: 0 | Level: 1</div>
+            <div class="sequence-display" id="sequenceDisplay">Press Start Sequence.</div>
+            <div class="color-pad-row">
+              <button class="color-pad pad-red" onclick="pickSequence(0)">Red</button>
+              <button class="color-pad pad-green" onclick="pickSequence(1)">Green</button>
+              <button class="color-pad pad-blue" onclick="pickSequence(2)">Blue</button>
+              <button class="color-pad pad-yellow" onclick="pickSequence(3)">Yellow</button>
+            </div>
+            <div class="actions">
+              <button class="btn secondary" onclick="startSequenceGame()">Start Sequence</button>
+              <button class="btn dark" onclick="resetSequenceGame()">Reset</button>
+            </div>
+            <div class="mini-status" id="sequenceMsg">Ready.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="save" class="screen">
       <div class="scroll-shell compact">
         <div class="topbar">
           <div class="brand">
             <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Save Code</h1>
-            <p>
-              Export your local profile as one long code, or paste a code here to restore it on this browser.
-            </p>
+            <p>Export your local profile as one long code, or paste a code here to restore it on this browser.</p>
           </div>
           <div class="back-row">
             <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
@@ -955,9 +1090,7 @@
             <button class="btn warn" onclick="clearLocalData()">Clear All Local Data</button>
           </div>
 
-          <div id="saveStatus" class="mini-status">
-            The code includes your username, attempts, notes, and settings.
-          </div>
+          <div id="saveStatus" class="mini-status">The code includes your username, attempts, notes, settings, minigame stats, and eggs.</div>
         </div>
       </div>
     </section>
@@ -967,9 +1100,7 @@
         <div class="topbar">
           <div class="brand">
             <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Settings</h1>
-            <p>
-              Tweak the neon engine. These settings are saved locally and also travel inside the save code.
-            </p>
+            <p>Tweak the neon engine. These settings are saved locally and also travel inside the save code.</p>
           </div>
           <div class="back-row">
             <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
@@ -1060,9 +1191,7 @@
         <div class="topbar">
           <div class="brand">
             <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Achievements</h1>
-            <p>
-              Tiny badges for the road. They are calculated from your local profile and attempts.
-            </p>
+            <p>Tiny badges for the road. They are calculated from your local profile and attempts.</p>
           </div>
           <div class="back-row">
             <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
@@ -1073,14 +1202,33 @@
       </div>
     </section>
 
+    <section id="eggs" class="screen">
+      <div class="scroll-shell compact">
+        <div class="topbar">
+          <div class="brand">
+            <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Easter Eggs</h1>
+            <p>Hidden bits, secret sparks, little doorways in the wallpaper.</p>
+          </div>
+          <div class="back-row">
+            <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
+            <button class="btn secondary" onclick="scanEggs()">Run Egg Scan</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="tag">Discovered</div>
+          <div id="eggList" class="egg-list"></div>
+          <div class="mini-status" id="eggStatus">Try odd things. The grid likes curiosity.</div>
+        </div>
+      </div>
+    </section>
+
     <section id="notes" class="screen">
       <div class="scroll-shell compact">
         <div class="topbar">
           <div class="brand">
             <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Notes</h1>
-            <p>
-              A local scratchpad for ideas, answers, and little scraps of matrix wisdom.
-            </p>
+            <p>A local scratchpad for ideas, answers, and little scraps of matrix wisdom.</p>
           </div>
           <div class="back-row">
             <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
@@ -1106,9 +1254,7 @@
         <div class="topbar">
           <div class="brand">
             <h1 style="font-size:clamp(2rem,4vw,3.4rem)">Help</h1>
-            <p>
-              Quick guide to the controls, shortcuts, and moving parts.
-            </p>
+            <p>Quick guide to the controls, shortcuts, and moving parts.</p>
           </div>
           <div class="back-row">
             <button class="btn dark" onclick="showScreen('menu')">Back to Menu</button>
@@ -1158,6 +1304,9 @@
   const statBest = document.getElementById("statBest");
   const statXp = document.getElementById("statXp");
   const statPerfect = document.getElementById("statPerfect");
+  const statSignal = document.getElementById("statSignal");
+  const statSequence = document.getElementById("statSequence");
+  const statEggs = document.getElementById("statEggs");
   const historyList = document.getElementById("historyList");
   const saveCodeBox = document.getElementById("saveCodeBox");
   const saveStatus = document.getElementById("saveStatus");
@@ -1165,6 +1314,8 @@
   const notesBox = document.getElementById("notesBox");
   const notesStatus = document.getElementById("notesStatus");
   const achievementGrid = document.getElementById("achievementGrid");
+  const eggList = document.getElementById("eggList");
+  const eggStatus = document.getElementById("eggStatus");
   const speedRange = document.getElementById("speedRange");
   const trailRange = document.getElementById("trailRange");
   const fontRange = document.getElementById("fontRange");
@@ -1173,11 +1324,21 @@
   const fontValue = document.getElementById("fontValue");
   const toast = document.getElementById("toast");
 
-  const LS_USER = "mtrx_user_v3";
-  const LS_ATTEMPTS = "mtrx_attempts_v3";
-  const LS_SETTINGS = "mtrx_settings_v3";
-  const LS_NOTES = "mtrx_notes_v3";
-  const LS_CODEFLAG = "mtrx_codeflag_v3";
+  const signalField = document.getElementById("signalField");
+  const signalTarget = document.getElementById("signalTarget");
+  const signalHud = document.getElementById("signalHud");
+  const signalMsg = document.getElementById("signalMsg");
+  const sequenceHud = document.getElementById("sequenceHud");
+  const sequenceDisplay = document.getElementById("sequenceDisplay");
+  const sequenceMsg = document.getElementById("sequenceMsg");
+
+  const LS_USER = "mtrx_user_v4";
+  const LS_ATTEMPTS = "mtrx_attempts_v4";
+  const LS_SETTINGS = "mtrx_settings_v4";
+  const LS_NOTES = "mtrx_notes_v4";
+  const LS_CODEFLAG = "mtrx_codeflag_v4";
+  const LS_GAMES = "mtrx_games_v4";
+  const LS_EGGS = "mtrx_eggs_v4";
 
   const state = {
     activeScreen: "home",
@@ -1294,6 +1455,38 @@
     }
   };
 
+  const eggDefs = [
+    { id: "title_surge", title: "Title Surge", desc: "Click the home title several times and it wakes up." },
+    { id: "konami_bloom", title: "Retro Bloom", desc: "A classic key sequence bends the grid a little." },
+    { id: "void_note", title: "Void Whisper", desc: "Write the hidden word in Notes and the machine notices." },
+    { id: "signal_sprinter", title: "Signal Sprinter", desc: "Hit a strong score in Signal Tap." },
+    { id: "sequence_hacker", title: "Sequence Hacker", desc: "Clear a longer round in Sequence Lock." },
+    { id: "save_archivist", title: "Archivist", desc: "Generate or load a save code." }
+  ];
+
+  const achievementDefs = () => {
+    const attempts = getAttempts();
+    const notes = getNotes().trim().toLowerCase();
+    const stats = computeStats();
+    const user = getUser();
+    const eggs = getEggs();
+
+    return [
+      { title: "First Login", desc: "Set a username and enter the grid.", done: !!user, progress: user ? "Unlocked" : "Locked" },
+      { title: "First Quiz", desc: "Finish one quiz on any course.", done: attempts.length > 0, progress: attempts.length ? "Unlocked" : "Locked" },
+      { title: "Perfect Run", desc: "Score 100% on any attempt.", done: attempts.some(a => a.score === a.total), progress: attempts.some(a => a.score === a.total) ? "Unlocked" : "Locked" },
+      { title: "Explorer", desc: "Complete 3 attempts.", done: attempts.length >= 3, progress: `${Math.min(attempts.length, 3)}/3 attempts` },
+      { title: "Archivist", desc: "Generate or load a save code.", done: localStorage.getItem(LS_CODEFLAG) === "1", progress: localStorage.getItem(LS_CODEFLAG) === "1" ? "Unlocked" : "Locked" },
+      { title: "Note Taker", desc: "Write something in Notes.", done: notes.length > 0, progress: notes.length ? "Unlocked" : "Locked" },
+      { title: "Matrix Scholar", desc: "Reach an average score of 80% or better.", done: stats.avg >= 80 && attempts.length > 0, progress: attempts.length ? `${stats.avg}% average` : "Locked" },
+      { title: "Collector", desc: "Build up 5 attempts.", done: attempts.length >= 5, progress: `${Math.min(attempts.length, 5)}/5 attempts` },
+      { title: "Signal Sprinter", desc: "Score 10 or more in Signal Tap.", done: getGames().signalBest >= 10, progress: `${getGames().signalBest}/10` },
+      { title: "Sequence Hacker", desc: "Reach level 4 in Sequence Lock.", done: getGames().sequenceBest >= 4, progress: `${getGames().sequenceBest}/4` },
+      { title: "Egg Hunter", desc: "Discover 3 easter eggs.", done: eggs.length >= 3, progress: `${eggs.length}/3 eggs` },
+      { title: "Glitch Poet", desc: "Turn on glitch mode and change the title.", done: state.glitch && homeTitle.textContent !== "How to escape the matrix", progress: state.glitch ? "Unlocked-ish" : "Locked" }
+    ];
+  };
+
   let currentQuizState = {
     answers: [],
     submitted: false
@@ -1302,6 +1495,27 @@
   let drops = [];
   let color = getAccent();
   let notesTimer = null;
+  let titleClicks = 0;
+  let keyBuffer = [];
+
+  const game = {
+    signal: {
+      running: false,
+      timeLeft: 20,
+      score: 0,
+      timer: null,
+      best: 0
+    },
+    sequence: {
+      running: false,
+      showing: false,
+      level: 1,
+      best: 0,
+      sequence: [],
+      inputIndex: 0,
+      timer: null
+    }
+  };
 
   function showToast(message){
     toast.textContent = message;
@@ -1355,6 +1569,65 @@
     localStorage.setItem(LS_SETTINGS, JSON.stringify(data));
   }
 
+  function getGames(){
+    try{
+      const raw = JSON.parse(localStorage.getItem(LS_GAMES) || "{}");
+      return {
+        signalBest: raw.signalBest || 0,
+        signalPlays: raw.signalPlays || 0,
+        sequenceBest: raw.sequenceBest || 0,
+        sequenceWins: raw.sequenceWins || 0
+      };
+    }catch{
+      return { signalBest: 0, signalPlays: 0, sequenceBest: 0, sequenceWins: 0 };
+    }
+  }
+
+  function saveGames(data){
+    localStorage.setItem(LS_GAMES, JSON.stringify(data));
+  }
+
+  function getEggs(){
+    try{
+      return JSON.parse(localStorage.getItem(LS_EGGS) || "[]");
+    }catch{
+      return [];
+    }
+  }
+
+  function setEggs(arr){
+    localStorage.setItem(LS_EGGS, JSON.stringify(arr));
+  }
+
+  function unlockEgg(id){
+    const eggs = getEggs();
+    if(!eggs.includes(id)){
+      eggs.push(id);
+      setEggs(eggs);
+      showToast(`Easter egg unlocked: ${eggLabel(id)}`);
+      renderEggs();
+      renderAchievements();
+    }
+  }
+
+  function eggLabel(id){
+    const found = eggDefs.find(e => e.id === id);
+    return found ? found.title : id;
+  }
+
+  function scanEggs(){
+    if(titleClicks >= 5) unlockEgg("title_surge");
+    if(keyBuffer.join("").includes("ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba")) unlockEgg("konami_bloom");
+    if(getNotes().toLowerCase().includes("void")) unlockEgg("void_note");
+    if(getGames().signalBest >= 10) unlockEgg("signal_sprinter");
+    if(getGames().sequenceBest >= 4) unlockEgg("sequence_hacker");
+    if(localStorage.getItem(LS_CODEFLAG) === "1") unlockEgg("save_archivist");
+    if(getAttempts().length > 0 && getAttempts().some(a => a.score === a.total)) unlockEgg("perfect_run");
+    showToast("Egg scan complete.");
+    renderEggs();
+    renderAchievements();
+  }
+
   function setUser(name){
     localStorage.setItem(LS_USER, name);
     syncProfileUI();
@@ -1400,64 +1673,6 @@
     }, 0);
 
     return { user, totalAttempts, avg, best, perfect, xp, attempts };
-  }
-
-  function achievementDefs(){
-    const attempts = getAttempts();
-    const notes = getNotes().trim();
-    const stats = computeStats();
-    const user = getUser();
-
-    return [
-      {
-        title: "First Login",
-        desc: "Set a username and enter the grid.",
-        done: !!user,
-        progress: user ? "Unlocked" : "Locked"
-      },
-      {
-        title: "First Quiz",
-        desc: "Finish one quiz on any course.",
-        done: attempts.length > 0,
-        progress: attempts.length ? "Unlocked" : "Locked"
-      },
-      {
-        title: "Perfect Run",
-        desc: "Score 100% on any attempt.",
-        done: attempts.some(a => a.score === a.total),
-        progress: attempts.some(a => a.score === a.total) ? "Unlocked" : "Locked"
-      },
-      {
-        title: "Explorer",
-        desc: "Complete 3 attempts.",
-        done: attempts.length >= 3,
-        progress: `${Math.min(attempts.length, 3)}/3 attempts`
-      },
-      {
-        title: "Archivist",
-        desc: "Generate or load a save code.",
-        done: localStorage.getItem(LS_CODEFLAG) === "1",
-        progress: localStorage.getItem(LS_CODEFLAG) === "1" ? "Unlocked" : "Locked"
-      },
-      {
-        title: "Note Taker",
-        desc: "Write something in Notes.",
-        done: notes.length > 0,
-        progress: notes.length ? "Unlocked" : "Locked"
-      },
-      {
-        title: "Matrix Scholar",
-        desc: "Reach an average score of 80% or better.",
-        done: stats.avg >= 80 && attempts.length > 0,
-        progress: attempts.length ? `${stats.avg}% average` : "Locked"
-      },
-      {
-        title: "Collector",
-        desc: "Build up 5 attempts.",
-        done: attempts.length >= 5,
-        progress: `${Math.min(attempts.length, 5)}/5 attempts`
-      }
-    ];
   }
 
   function getAccent(){
@@ -1531,21 +1746,6 @@
     osc.stop(audioCtx.currentTime + duration);
   }
 
-  function updateClock(){
-    const user = getUser();
-    document.getElementById("menuProfile").textContent = user
-      ? `Logged in as ${user}. All progress in this build stays local to this browser.`
-      : "Guest mode. Login to keep a local profile.";
-  }
-
-  function updateHomeAndMenu(){
-    syncProfileUI();
-  }
-
-  function toggleSidebar(){
-    sidebar.classList.toggle("active");
-  }
-
   function showScreen(id){
     document.querySelectorAll(".screen").forEach(s => s.classList.remove("active"));
     const screen = document.getElementById(id);
@@ -1558,6 +1758,8 @@
     if(id === "settings") renderSettings();
     if(id === "achievements") renderAchievements();
     if(id === "notes") renderNotes();
+    if(id === "games") renderGames();
+    if(id === "eggs") renderEggs();
     if(id === "menu") syncProfileUI();
     if(id === "help") showToast("Shortcut panel open.");
     if(id === "courseScreen") courseWrap.scrollTop = 0;
@@ -1724,10 +1926,7 @@
     resultBar.classList.remove("hidden");
     resultBar.style.borderColor = "rgba(53,224,111,0.40)";
     resultBar.style.background = "rgba(53,224,111,0.10)";
-    resultBar.innerHTML = `
-      <b>Score:</b> ${score}/${total}<br>
-      Answers revealed. Attempt saved locally in this browser.
-    `;
+    resultBar.innerHTML = `<b>Score:</b> ${score}/${total}<br>Answers revealed. Attempt saved locally in this browser.`;
 
     currentQuizState.submitted = true;
     submitQuizBtn.disabled = true;
@@ -1737,6 +1936,7 @@
     syncProfileUI();
     renderStats();
     renderAchievements();
+    scanEggs();
     showToast(`Saved: ${score}/${total}`);
     beep(880, 0.08, "triangle", 0.04);
     setTimeout(() => beep(1100, 0.07, "sine", 0.03), 120);
@@ -1760,6 +1960,11 @@
     statBest.textContent = `${stats.best}%`;
     statXp.textContent = String(stats.xp);
     statPerfect.textContent = String(stats.perfect);
+
+    const games = getGames();
+    statSignal.textContent = String(games.signalBest);
+    statSequence.textContent = String(games.sequenceBest);
+    statEggs.textContent = String(getEggs().length);
 
     if(!stats.attempts.length){
       historyList.innerHTML = `<div class="history-item">No attempts yet. Run a quiz and the summary will wake up.</div>`;
@@ -1785,9 +1990,20 @@
       <div class="badge ${item.done ? "done" : "locked"}">
         <h4>${item.done ? "✓ " : "◻ "} ${item.title}</h4>
         <p>${item.desc}</p>
-        <p style="margin-top:8px; color: ${item.done ? "var(--ok)" : "var(--muted)"};">${item.progress}</p>
+        <p style="margin-top:8px; color:${item.done ? "var(--ok)" : "var(--muted)"};">${item.progress}</p>
       </div>
     `).join("");
+  }
+
+  function renderEggs(){
+    const unlocked = getEggs();
+    eggList.innerHTML = eggDefs.map(egg => `
+      <div class="egg-item ${unlocked.includes(egg.id) ? "done" : ""}">
+        <h4>${unlocked.includes(egg.id) ? "✓ " : "◻ "} ${egg.title}</h4>
+        <p>${egg.desc}</p>
+      </div>
+    `).join("");
+    eggStatus.textContent = `Found ${unlocked.length}/${eggDefs.length}.`;
   }
 
   function renderNotes(){
@@ -1799,6 +2015,7 @@
     setNotes(notesBox.value);
     notesStatus.textContent = "Notes saved locally.";
     renderAchievements();
+    scanEggs();
     showToast("Notes saved.");
   }
 
@@ -1814,7 +2031,7 @@
     if(!saveCodeBox.value.trim()){
       saveCodeBox.value = encodeSaveData(buildSaveData());
     }
-    saveStatus.textContent = "Generate or paste a code. The code includes your username, attempts, notes, and settings.";
+    saveStatus.textContent = "Generate or paste a code. The code includes your username, attempts, notes, settings, minigame stats, and eggs.";
   }
 
   function renderSettings(){
@@ -1896,9 +2113,8 @@
     showToast("Matrix burst!");
     beep(1000, 0.08, "square", 0.04);
     setTimeout(() => {
-      state.trailAlpha = Math.min(state.trailAlpha, 0.08);
       const saved = getSettings();
-      if(typeof saved.trailAlpha === "number") state.trailAlpha = saved.trailAlpha;
+      state.trailAlpha = typeof saved.trailAlpha === "number" ? saved.trailAlpha : 0.08;
       saveSettings();
       if(document.getElementById("settings").classList.contains("active")) renderSettings();
     }, 1800);
@@ -1927,10 +2143,12 @@
 
   function buildSaveData(){
     return {
-      v: 3,
+      v: 4,
       user: getUser(),
       attempts: getAttempts(),
       notes: getNotes(),
+      games: getGames(),
+      eggs: getEggs(),
       settings: {
         accentIndex: state.accentIndex,
         fontSize: state.fontSize,
@@ -1955,12 +2173,12 @@
       .replace(/\+/g, "-")
       .replace(/\//g, "_")
       .replace(/=+$/g, "");
-    return `MTRX3.${b64}`;
+    return `MTRX4.${b64}`;
   }
 
   function decodeSaveData(code){
     const cleaned = code.trim().replace(/\s+/g, "");
-    if(!cleaned.startsWith("MTRX3.")) throw new Error("Bad save code prefix");
+    if(!cleaned.startsWith("MTRX4.")) throw new Error("Bad save code prefix");
 
     let b64 = cleaned.slice(6).replace(/-/g, "+").replace(/_/g, "/");
     while(b64.length % 4 !== 0) b64 += "=";
@@ -2002,7 +2220,7 @@
 
     try{
       const data = decodeSaveData(code);
-      if(!data || data.v !== 3) throw new Error("Unsupported version");
+      if(!data || data.v !== 4) throw new Error("Unsupported version");
 
       if(typeof data.user === "string"){
         if(data.user){
@@ -2020,6 +2238,20 @@
       if(typeof data.notes === "string"){
         setNotes(data.notes);
         notesBox.value = data.notes;
+      }
+
+      if(data.games){
+        const games = {
+          signalBest: Number(data.games.signalBest || 0),
+          signalPlays: Number(data.games.signalPlays || 0),
+          sequenceBest: Number(data.games.sequenceBest || 0),
+          sequenceWins: Number(data.games.sequenceWins || 0)
+        };
+        saveGames(games);
+      }
+
+      if(Array.isArray(data.eggs)){
+        setEggs(data.eggs);
       }
 
       if(data.settings){
@@ -2055,10 +2287,10 @@
       syncProfileUI();
       renderStats();
       renderAchievements();
+      renderEggs();
       renderSettings();
       renderNotes();
       renderSave();
-      saveCodeBox.value = code;
       saveStatus.textContent = "Save code loaded successfully.";
       showToast("Save restored.");
       beep(880, 0.08, "triangle", 0.04);
@@ -2076,6 +2308,8 @@
     localStorage.removeItem(LS_SETTINGS);
     localStorage.removeItem(LS_NOTES);
     localStorage.removeItem(LS_CODEFLAG);
+    localStorage.removeItem(LS_GAMES);
+    localStorage.removeItem(LS_EGGS);
 
     state.accentIndex = 0;
     state.fontSize = 18;
@@ -2091,9 +2325,12 @@
     usernameInput.value = "";
     notesBox.value = "";
     saveCodeBox.value = "";
+    titleClicks = 0;
+    keyBuffer = [];
     syncProfileUI();
     renderStats();
     renderAchievements();
+    renderEggs();
     renderSettings();
     renderNotes();
     renderSave();
@@ -2151,7 +2388,220 @@
     saveSettings();
   }
 
-  menuBtn.addEventListener("click", toggleSidebar);
+  function renderGames(){
+    const games = getGames();
+    signalHud.textContent = `Best: ${games.signalBest} | Plays: ${games.signalPlays} | Time: ${game.signal.timeLeft}`;
+    sequenceHud.textContent = `Best: ${games.sequenceBest} | Level: ${game.sequence.level}`;
+  }
+
+  function startSignalGame(){
+    clearInterval(game.signal.timer);
+    game.signal.running = true;
+    game.signal.timeLeft = 20;
+    game.signal.score = 0;
+    game.signal.timer = setInterval(() => {
+      game.signal.timeLeft--;
+      updateSignalHud();
+      if(game.signal.timeLeft <= 0){
+        endSignalGame();
+      }
+    }, 1000);
+    moveSignalTarget();
+    signalMsg.textContent = "Go!";
+    updateSignalHud();
+    showToast("Signal Tap started.");
+  }
+
+  function endSignalGame(){
+    clearInterval(game.signal.timer);
+    game.signal.running = false;
+    const games = getGames();
+    games.signalPlays += 1;
+    if(game.signal.score > games.signalBest) games.signalBest = game.signal.score;
+    saveGames(games);
+    updateSignalHud();
+    signalMsg.textContent = `Time! Score: ${game.signal.score}`;
+    renderStats();
+    renderAchievements();
+    scanEggs();
+    showToast(`Signal Tap done: ${game.signal.score}`);
+  }
+
+  function resetSignalGame(){
+    clearInterval(game.signal.timer);
+    game.signal.running = false;
+    game.signal.timeLeft = 20;
+    game.signal.score = 0;
+    moveSignalTarget();
+    signalMsg.textContent = "Ready.";
+    updateSignalHud();
+    showToast("Signal Tap reset.");
+  }
+
+  function updateSignalHud(){
+    const games = getGames();
+    signalHud.textContent = `Best: ${games.signalBest} | Plays: ${games.signalPlays} | Time: ${game.signal.timeLeft}`;
+    signalTarget.textContent = game.signal.running ? "HIT" : "GO";
+    signalTarget.style.display = "block";
+  }
+
+  function moveSignalTarget(){
+    const field = signalField.getBoundingClientRect();
+    const size = 64;
+    const maxX = Math.max(0, field.width - size - 12);
+    const maxY = Math.max(0, field.height - size - 12);
+    const x = Math.floor(Math.random() * (maxX + 1)) + 6;
+    const y = Math.floor(Math.random() * (maxY + 1)) + 6;
+    signalTarget.style.left = `${x}px`;
+    signalTarget.style.top = `${y}px`;
+  }
+
+  function hitSignal(){
+    if(!game.signal.running) return;
+    game.signal.score += 1;
+    signalMsg.textContent = `Score: ${game.signal.score}`;
+    moveSignalTarget();
+    updateSignalHud();
+    beep(720 + game.signal.score * 10, 0.04, "triangle", 0.02);
+    if(game.signal.score >= 10){
+      unlockEgg("signal_sprinter");
+      renderAchievements();
+    }
+  }
+
+  function startSequenceGame(){
+    clearTimeout(game.sequence.timer);
+    game.sequence.running = true;
+    game.sequence.showing = true;
+    game.sequence.inputIndex = 0;
+    game.sequence.sequence = buildSequence(game.sequence.level);
+    sequenceMsg.textContent = "Watch the pattern.";
+    showSequence(game.sequence.sequence);
+  }
+
+  function resetSequenceGame(){
+    clearTimeout(game.sequence.timer);
+    game.sequence.running = false;
+    game.sequence.showing = false;
+    game.sequence.level = 1;
+    game.sequence.inputIndex = 0;
+    game.sequence.sequence = [];
+    sequenceDisplay.textContent = "Press Start Sequence.";
+    sequenceMsg.textContent = "Ready.";
+    updateSequenceHud();
+    showToast("Sequence Lock reset.");
+  }
+
+  function updateSequenceHud(){
+    const games = getGames();
+    sequenceHud.textContent = `Best: ${games.sequenceBest} | Level: ${game.sequence.level}`;
+  }
+
+  function buildSequence(level){
+    const length = Math.min(3 + level, 8);
+    return Array.from({length}, () => Math.floor(Math.random() * 4));
+  }
+
+  function sleep(ms){
+    return new Promise(res => setTimeout(res, ms));
+  }
+
+  async function showSequence(seq){
+    sequenceDisplay.textContent = "Watch...";
+    const labels = ["Red", "Green", "Blue", "Yellow"];
+    const pads = document.querySelectorAll(".color-pad");
+    for(const idx of seq){
+      sequenceDisplay.textContent = labels[idx];
+      pads[idx].classList.add("pad-flash");
+      beep(350 + idx * 130, 0.07, "sine", 0.02);
+      await sleep(520);
+      pads[idx].classList.remove("pad-flash");
+      sequenceDisplay.textContent = "Watch...";
+      await sleep(180);
+    }
+    game.sequence.showing = false;
+    sequenceMsg.textContent = "Your turn.";
+    sequenceDisplay.textContent = "Repeat the pattern now.";
+    updateSequenceHud();
+  }
+
+  function pickSequence(index){
+    if(!game.sequence.running || game.sequence.showing) return;
+    const expected = game.sequence.sequence[game.sequence.inputIndex];
+    const labels = ["Red", "Green", "Blue", "Yellow"];
+    if(index === expected){
+      game.sequence.inputIndex += 1;
+      sequenceMsg.textContent = `Good. ${game.sequence.inputIndex}/${game.sequence.sequence.length}`;
+      beep(620 + index * 70, 0.05, "triangle", 0.02);
+      if(game.sequence.inputIndex >= game.sequence.sequence.length){
+        completeSequenceRound();
+      }
+    }else{
+      failSequenceRound();
+    }
+  }
+
+  function completeSequenceRound(){
+    const games = getGames();
+    game.sequence.level += 1;
+    games.sequenceWins += 1;
+    if(game.sequence.level > games.sequenceBest) games.sequenceBest = game.sequence.level;
+    saveGames(games);
+    renderStats();
+    renderAchievements();
+    scanEggs();
+    sequenceMsg.textContent = `Round clear. Level ${game.sequence.level}`;
+    sequenceDisplay.textContent = "Next round loading...";
+    updateSequenceHud();
+    showToast(`Sequence clear: level ${game.sequence.level}`);
+    game.sequence.timer = setTimeout(() => {
+      game.sequence.showing = true;
+      game.sequence.sequence = buildSequence(game.sequence.level);
+      game.sequence.inputIndex = 0;
+      showSequence(game.sequence.sequence);
+    }, 900);
+  }
+
+  function failSequenceRound(){
+    const games = getGames();
+    if(game.sequence.level > games.sequenceBest) games.sequenceBest = game.sequence.level;
+    saveGames(games);
+    renderStats();
+    renderAchievements();
+    sequenceMsg.textContent = "Wrong note. Reset and try again.";
+    sequenceDisplay.textContent = "Sequence broken.";
+    game.sequence.running = false;
+    game.sequence.showing = false;
+    showToast("Sequence failed.");
+    updateSequenceHud();
+  }
+
+  function renderSave(){
+    if(!saveCodeBox.value.trim()){
+      saveCodeBox.value = encodeSaveData(buildSaveData());
+    }
+    saveStatus.textContent = "Generate or paste a code. The code includes your username, attempts, notes, settings, minigame stats, and eggs.";
+  }
+
+  function renderEggs(){
+    const unlocked = getEggs();
+    eggList.innerHTML = eggDefs.map(egg => `
+      <div class="egg-item ${unlocked.includes(egg.id) ? "done" : ""}">
+        <h4>${unlocked.includes(egg.id) ? "✓ " : "◻ "} ${egg.title}</h4>
+        <p>${egg.desc}</p>
+      </div>
+    `).join("");
+    eggStatus.textContent = `Found ${unlocked.length}/${eggDefs.length}.`;
+  }
+
+  function updateClock(){
+    const user = getUser();
+    document.getElementById("menuProfile").textContent = user
+      ? `Logged in as ${user}. All progress in this build stays local to this browser.`
+      : "Guest mode. Login to keep a local profile.";
+  }
+
+  menuBtn.addEventListener("click", () => sidebar.classList.toggle("active"));
 
   window.addEventListener("click", (e) => {
     if(!sidebar.contains(e.target) && e.target !== menuBtn){
@@ -2175,6 +2625,14 @@
     if(e.key === "h" || e.key === "H") showScreen("menu");
     if(e.key === "Escape") sidebar.classList.remove("active");
     if(e.key === "Enter" && state.activeScreen === "login") loginUser();
+
+    keyBuffer.push(e.key);
+    if(keyBuffer.length > 32) keyBuffer.shift();
+    if(keyBuffer.join("").includes("ArrowUpArrowUpArrowDownArrowDownArrowLeftArrowRightArrowLeftArrowRightba")){
+      unlockEgg("konami_bloom");
+      renderEggs();
+      showToast("Retro Bloom unlocked.");
+    }
   });
 
   speedRange.addEventListener("input", (e) => {
@@ -2196,7 +2654,22 @@
     rebuildDrops();
   });
 
-  notesBox.addEventListener("input", saveNotesDebounced);
+  notesBox.addEventListener("input", () => {
+    saveNotesDebounced();
+    if(notesBox.value.toLowerCase().includes("void")){
+      unlockEgg("void_note");
+      renderEggs();
+    }
+  });
+
+  homeTitle.addEventListener("click", () => {
+    titleClicks += 1;
+    if(titleClicks >= 5){
+      unlockEgg("title_surge");
+      showToast("Title Surge unlocked.");
+      renderEggs();
+    }
+  });
 
   function init(){
     initSettingsFromStorage();
@@ -2205,21 +2678,46 @@
     syncProfileUI();
     renderStats();
     renderAchievements();
+    renderEggs();
     renderNotes();
     renderSave();
     renderSettings();
     updateSettingsLabels();
     renderCourse(1);
+    renderGames();
     updateClock();
     setInterval(updateClock, 1000);
     requestAnimationFrame(loop);
 
-    if(getUser()){
-      homeSub.textContent = `A clean neon doorway. The machine remembers ${getUser()}.`;
-    }
+    const saved = getSettings();
+    if(saved.glitch) applyGlitchState();
+  }
+
+  function renderGamesSafe(){
+    renderGames();
+    updateSignalHud();
+    updateSequenceHud();
+  }
+
+  function renderSaveSafe(){
+    renderSave();
+  }
+
+  function renderEggsSafe(){
+    renderEggs();
   }
 
   init();
+
+  function buildSummaryText(){
+    const attempts = getAttempts();
+    if(!attempts.length) return "No attempts yet.";
+
+    const last = attempts[0];
+    const avg = Math.round(attempts.reduce((a,b) => a + (b.score / b.total), 0) / attempts.length * 100);
+    const best = Math.max(...attempts.map(a => Math.round((a.score / a.total) * 100)));
+    return `Last run: ${last.courseTitle} • ${last.score}/${last.total} • Average across attempts: ${avg}% • Best: ${best}%`;
+  }
 </script>
 </body>
 </html>
